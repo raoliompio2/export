@@ -215,8 +215,8 @@ export default function EmpresaViewModal({ empresa, onClose, onEdit }: EmpresaVi
                       alt={`Logo da ${empresa.nome}`}
                       className="max-h-20 object-contain"
                       onError={(e) => {
-                        (e.currentTarget as HTMLElement).style.display = 'none'
-                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'block'
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'block';
                       }}
                     />
                     <p className="text-sm text-gray-500 hidden">Logo não pôde ser carregada</p>
