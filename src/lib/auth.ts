@@ -9,7 +9,6 @@ export type AuthUser = {
   email: string
   nome: string
   role: UserRole
-  status: string
   telefone?: string
   avatar?: string
   ativo: boolean
@@ -77,14 +76,13 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       // Se não encontrou nem por clerkId nem por email, criar novo usuário
       console.log('🆕 Criando novo usuário')
       user = await prisma.user.create({
-        data: {
-          clerkId: clerkUser.id,
-          email: userEmail,
-          nome: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
-          avatar: clerkUser.imageUrl,
-          role: UserRole.CLIENTE, // Padrão é cliente
-          status: 'PENDENTE', // Aguarda aprovação
-        },
+      data: {
+        clerkId: clerkUser.id,
+        email: userEmail,
+        nome: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+        avatar: clerkUser.imageUrl,
+        role: UserRole.CLIENTE, // Padrão é cliente
+      },
         include: {
           clienteProfile: true,
           vendedorProfile: true,
@@ -141,7 +139,6 @@ export async function approveUser(userId: string, role: UserRole, adminId: strin
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        status: 'APROVADO',
         role: role,
         aprovadoPor: adminId,
         aprovadoEm: new Date(),
@@ -178,7 +175,6 @@ export async function rejectUser(userId: string, motivo: string, adminId: string
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        status: 'REJEITADO',
         aprovadoPor: adminId,
         aprovadoEm: new Date(),
         motivoRejeicao: motivo,
@@ -194,15 +190,15 @@ export async function rejectUser(userId: string, motivo: string, adminId: string
 }
 
 // Função para verificar se usuário está aprovado
-export function isUserApproved(user: { status?: string }): boolean {
-  return user?.status === 'APROVADO'
+export function isUserApproved(user: { aprovadoEm?: Date | null; motivoRejeicao?: string | null }): boolean {
+  return !!user?.aprovadoEm && !user?.motivoRejeicao
 }
 
 // Função para obter usuários pendentes (para admins)
 export async function getPendingUsers() {
   try {
     return await prisma.user.findMany({
-      where: { status: 'PENDENTE' },
+      where: { aprovadoEm: null },
       orderBy: { createdAt: 'desc' },
       include: {
         clienteProfile: true,

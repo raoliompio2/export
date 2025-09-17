@@ -11,7 +11,7 @@ export default async function AguardandoAprovacao() {
   }
 
   // Se não está mais pendente, redirecionar
-  if (user.status !== 'PENDENTE') {
+  if (user.aprovadoEm) {
     redirect('/')
   }
 

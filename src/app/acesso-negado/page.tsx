@@ -11,7 +11,7 @@ export default async function AcessoNegado() {
   }
 
   // Se não está rejeitado, redirecionar
-  if (user.status !== 'REJEITADO') {
+  if (!user.motivoRejeicao) {
     redirect('/')
   }
 

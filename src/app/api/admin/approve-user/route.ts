@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
           email: user.email,
           nome: user.nome,
           role: user.role,
-          status: user.status,
+          status: 'APROVADO',
         }
       })
 
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
           id: user.id,
           email: user.email,
           nome: user.nome,
-          status: user.status,
+          status: 'REJEITADO',
           motivoRejeicao: user.motivoRejeicao,
         }
       })

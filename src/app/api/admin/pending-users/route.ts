@@ -19,7 +19,7 @@ export async function GET() {
         nome: user.nome,
         telefone: user.telefone,
         avatar: user.avatar,
-        status: user.status,
+        status: user.aprovadoEm ? (user.motivoRejeicao ? 'REJEITADO' : 'APROVADO') : 'PENDENTE',
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       })),

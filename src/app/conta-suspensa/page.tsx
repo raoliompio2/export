@@ -11,7 +11,7 @@ export default async function ContaSuspensa() {
   }
 
   // Se não está suspenso, redirecionar
-  if (user.status !== 'SUSPENSO') {
+  if (user.aprovadoEm && !user.motivoRejeicao) {
     redirect('/')
   }
 

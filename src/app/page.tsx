@@ -8,12 +8,10 @@ export default async function Home() {
 
   if (user) {
     // Verificar status de aprovação
-    if (user.status === 'PENDENTE') {
+    if (!user.aprovadoEm) {
       redirect('/aguardando-aprovacao')
-    } else if (user.status === 'REJEITADO') {
+    } else if (user.motivoRejeicao) {
       redirect('/acesso-negado')
-    } else if (user.status === 'SUSPENSO') {
-      redirect('/conta-suspensa')
     } else if (isUserApproved(user)) {
       // Redirecionar baseado no role do usuário (só se aprovado)
       if (user.role === UserRole.ADMIN) {
