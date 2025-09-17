@@ -3,6 +3,47 @@ import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
+interface VendedorStats {
+  totalClientes: number
+  totalOrcamentos: number
+  orcamentosAprovados: number
+  totalVendas: number
+}
+
+interface OrcamentoWithRelations {
+  id: string
+  numero: string
+  titulo: string
+  total: number
+  status: string
+  createdAt: Date
+  cliente: {
+    id: string
+    empresa?: string
+    user: {
+      id: string
+      nome: string
+      email: string
+    }
+  }
+  empresa: {
+    id: string
+    nome: string
+  }
+}
+
+interface ClienteWithUser {
+  id: string
+  empresa?: string
+  cnpj?: string
+  user: {
+    id: string
+    nome: string
+    email: string
+  }
+  createdAt: Date
+}
+
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 GET /api/perfil - Iniciando...')
@@ -73,9 +114,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Buscar estatísticas se for vendedor ou admin
-    let stats: any = null
-    let orcamentos: any[] = []
-    let clientes: any[] = []
+    let stats: VendedorStats | null = null
+    let orcamentos: OrcamentoWithRelations[] = []
+    let clientes: ClienteWithUser[] = []
     
     if ((user.role === 'VENDEDOR' || user.role === 'ADMIN') && userData.vendedorProfile) {
       const vendedorId = userData.vendedorProfile.id
@@ -260,7 +301,11 @@ export async function PUT(request: NextRequest) {
     }
 
     // Atualizar dados do usuário
-    const userUpdateData: any = {
+    const userUpdateData: {
+      nome: string
+      email?: string
+      telefone?: string
+    } = {
       nome: validatedData.userData.nome,
     }
     

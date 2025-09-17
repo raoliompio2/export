@@ -87,8 +87,8 @@ export default function AdminRepresentacoes() {
         const associacoesData = await associacoesRes.json()
         setAssociacoes(associacoesData.associacoes || [])
       }
-    } catch (err: any) {
-      error('Erro ao carregar dados', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar dados', err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setLoading(false)
     }
@@ -113,8 +113,8 @@ export default function AdminRepresentacoes() {
 
       success('Solicitação aprovada!', 'Vendedor agora representa a empresa')
       fetchData()
-    } catch (err: any) {
-      error('Erro ao aprovar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao aprovar', err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setProcessing(null)
     }
@@ -139,8 +139,8 @@ export default function AdminRepresentacoes() {
 
       success('Solicitação rejeitada', 'Vendedor foi notificado')
       fetchData()
-    } catch (err: any) {
-      error('Erro ao rejeitar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao rejeitar', err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setProcessing(null)
     }
@@ -168,8 +168,8 @@ export default function AdminRepresentacoes() {
         `Vendedor ${novoStatus ? 'pode' : 'não pode'} mais representar a empresa`
       )
       fetchData()
-    } catch (err: any) {
-      error('Erro ao alterar status', err.message)
+    } catch (err: unknown) {
+      error('Erro ao alterar status', err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setProcessing(null)
     }

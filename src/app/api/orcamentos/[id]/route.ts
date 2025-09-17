@@ -4,6 +4,14 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { calcularTotalItem, calcularTotaisOrcamento } from '@/utils/safe-formatting'
 
+interface OrcamentoItemInput {
+  produtoId: string
+  quantidade: number | string
+  precoUnit: number | string
+  desconto?: number | string
+  observacoes?: string
+}
+
 const updateStatusSchema = z.object({
   status: z.enum(['RASCUNHO', 'ENVIADO', 'APROVADO', 'REJEITADO', 'EXPIRADO'])
 })
@@ -127,7 +135,7 @@ export async function PUT(
       })
 
       // Calcular totais dos itens usando função segura
-      const processedItens = itens.map((item: any) => {
+      const processedItens = itens.map((item: OrcamentoItemInput) => {
         const quantidade = Number(item.quantidade) || 0
         const precoUnit = Number(item.precoUnit) || 0
         const descontoItem = Number(item.desconto) || 0
@@ -186,7 +194,7 @@ export async function PUT(
       // Criar novos itens
       if (processedItens.length > 0) {
         await tx.orcamentoItem.createMany({
-          data: processedItens.map((item: any) => ({
+          data: processedItens.map((item) => ({
             ...item,
             orcamentoId: id
           }))

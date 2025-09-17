@@ -26,6 +26,7 @@ import ModernButton from '@/components/ui/modern-button'
 import ModernCard, { StatsCard } from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
 import UsuarioForm from '@/components/forms/usuario-form'
+import { Cliente, Vendedor } from '@/types/common'
 
 interface Usuario {
   id: string
@@ -36,9 +37,9 @@ interface Usuario {
   ativo: boolean
   avatar?: string
   createdAt: string
-  clienteProfile?: any
-  vendedorProfile?: any
-        _count: {
+  clienteProfile?: Cliente
+  vendedorProfile?: Vendedor
+  _count: {
     orcamentos: number
   }
 }
@@ -93,8 +94,8 @@ export default function AdminUsuarios() {
       const data = await response.json()
       setUsuarios(Array.isArray(data) ? data : [])
       success('Usuários carregados', `${data.length} usuários encontrados`)
-    } catch (err: any) {
-      error('Erro ao carregar usuários', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar usuários', err instanceof Error ? err.message : 'Erro desconhecido')
       setUsuarios([])
     } finally {
       setLoading(false)
@@ -122,8 +123,8 @@ export default function AdminUsuarios() {
 
       setUsuarios(prev => prev.filter(u => u.id !== usuario.id))
       success('Usuário excluído', `${usuario.nome} foi removido com sucesso`)
-    } catch (err: any) {
-      error('Erro ao excluir', err.message)
+    } catch (err: unknown) {
+      error('Erro ao excluir', err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setDeleting(null)
     }
@@ -194,7 +195,7 @@ export default function AdminUsuarios() {
           {getRoleIcon(usuario.role)}
           <StatusBadge
             status={getRoleLabel(usuario.role)}
-            variant={getRoleColor(usuario.role) as any}
+            variant={getRoleColor(usuario.role) as 'success' | 'warning' | 'danger' | 'info'}
           />
         </div>
       )

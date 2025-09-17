@@ -127,7 +127,7 @@ export default function AdminConfig() {
     }
   }
 
-  const updateConfig = (section: keyof ConfigData, field: string, value: any) => {
+  const updateConfig = (section: keyof ConfigData, field: string, value: string | number | boolean) => {
     if (!config) return
     
     setConfig(prev => ({

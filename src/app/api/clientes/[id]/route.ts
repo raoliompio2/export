@@ -100,7 +100,7 @@ export async function PUT(
     }
 
     // Atualizar dados do usuário
-    const userUpdateData: any = {}
+    const userUpdateData: { nome?: string; email?: string; telefone?: string } = {}
     if (validatedData.nome) userUpdateData.nome = validatedData.nome
     if (validatedData.email) userUpdateData.email = validatedData.email
     if (validatedData.telefone !== undefined) userUpdateData.telefone = validatedData.telefone

@@ -44,7 +44,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    let whereCondition: any = {}
+    let whereCondition: { vendedorId?: string; clienteId?: string } = {}
 
     if (user.role === 'VENDEDOR' && user.vendedorProfile) {
       // Vendedor vê apenas seus orçamentos

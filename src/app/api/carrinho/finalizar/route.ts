@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       }
       acc[empresaId].itens.push(item)
       return acc
-    }, {} as Record<string, { empresa: any, itens: any[] }>)
+    }, {} as Record<string, { empresa: { id: string, nome: string }, itens: Array<{ id: string, quantidade: number, observacoes?: string, produto: { id: string, nome: string, preco: number, precoPromocional?: number, empresa: { id: string, nome: string } } }> }>)
 
     console.log(`🏢 Agrupado em ${Object.keys(itensPorEmpresa).length} empresas:`)
     Object.entries(itensPorEmpresa).forEach(([empresaId, grupo]) => {

@@ -42,8 +42,8 @@ export default function AprovacaoUsuarios() {
       
       const data = await response.json()
       setUsers(data.users || [])
-    } catch (err: any) {
-      error('Erro ao carregar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar', err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setLoading(false)
     }

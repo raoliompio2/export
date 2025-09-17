@@ -28,7 +28,7 @@ export async function POST() {
       LEFT JOIN vendedores v ON u.id = v."userId" 
       LEFT JOIN empresas e ON v."empresaId" = e.id
       WHERE u.email = 'rafael.popeartstudio@gmail.com'
-    ` as any[]
+    ` as { id: string; nome: string; email: string; role: string }[]
 
     return NextResponse.json({
       success: true,
