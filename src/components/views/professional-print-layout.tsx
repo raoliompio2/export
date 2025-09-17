@@ -548,15 +548,6 @@ export default function ProfessionalPrintLayout({
               <p><strong>Observações específicas:</strong> {orcamento.observacoes}</p>
             )}
             
-            {/* Cotação dinâmica */}
-            {exchangeRateDate && (
-              <p><strong>Cotação Dólar ({new Date(exchangeRateDate).toLocaleDateString('pt-BR')}):</strong> BRL {exchangeRate.toFixed(2)}</p>
-            )}
-            
-            {/* TOTAL CIF dinâmico */}
-            {totalCIF > (orcamento.total / exchangeRate) && (
-              <p><strong>TOTAL CIF (USD):</strong> US$ {totalCIF.toFixed(2)}</p>
-            )}
             
             {/* Observações personalizáveis por empresa */}
             <p><strong>Importante:</strong> {orcamento.empresa.observacaoDesaduanagem || t.customsNote}</p>
