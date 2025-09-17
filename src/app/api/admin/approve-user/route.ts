@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser, approveUser, rejectUser } from '@/lib/auth'
-import { UserRole } from '@prisma/client'
 import { z } from 'zod'
 
 const approveUserSchema = z.object({
@@ -34,7 +33,7 @@ export async function POST(request: NextRequest) {
 
       const user = await approveUser(
         userId,
-        role as UserRole,
+        role as 'ADMIN' | 'VENDEDOR' | 'CLIENTE',
         currentUser.id
       )
 

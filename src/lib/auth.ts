@@ -1,6 +1,5 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { prisma } from './prisma'
-import { UserRole } from '@prisma/client'
 
 // Tipo para o retorno do getCurrentUser
 export type AuthUser = {
@@ -8,7 +7,7 @@ export type AuthUser = {
   clerkId: string
   email: string
   nome: string
-  role: UserRole
+  role: 'ADMIN' | 'VENDEDOR' | 'CLIENTE'
   telefone?: string
   avatar?: string
   ativo: boolean
@@ -81,7 +80,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
         email: userEmail,
         nome: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
         avatar: clerkUser.imageUrl,
-        role: UserRole.CLIENTE, // Padrão é cliente
+        role: 'CLIENTE', // Padrão é cliente
       },
         include: {
           clienteProfile: true,
@@ -110,7 +109,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   }
 }
 
-export async function updateUserRole(userId: string, newRole: UserRole) {
+export async function updateUserRole(userId: string, newRole: 'ADMIN' | 'VENDEDOR' | 'CLIENTE') {
   const user = await prisma.user.update({
     where: { id: userId },
     data: { role: newRole },
@@ -121,7 +120,7 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
   })
 
   // Criar perfil específico se necessário
-  if (newRole === UserRole.VENDEDOR && !user.vendedorProfile) {
+  if (newRole === 'VENDEDOR' && !user.vendedorProfile) {
     await prisma.vendedor.create({
       data: {
         userId: user.id,
@@ -133,7 +132,7 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
 }
 
 // Função para aprovar usuário
-export async function approveUser(userId: string, role: UserRole, adminId: string) {
+export async function approveUser(userId: string, role: 'ADMIN' | 'VENDEDOR' | 'CLIENTE', adminId: string) {
   try {
     // Atualizar status e role do usuário
     const user = await prisma.user.update({
@@ -151,11 +150,11 @@ export async function approveUser(userId: string, role: UserRole, adminId: strin
     })
 
     // Criar perfil baseado no role aprovado
-    if (role === UserRole.CLIENTE && !user.clienteProfile) {
+    if (role === 'CLIENTE' && !user.clienteProfile) {
       await prisma.cliente.create({
         data: { userId: user.id }
       })
-    } else if (role === UserRole.VENDEDOR && !user.vendedorProfile) {
+    } else if (role === 'VENDEDOR' && !user.vendedorProfile) {
       await prisma.vendedor.create({
         data: { userId: user.id }
       })
@@ -225,7 +224,7 @@ export async function requireAuth() {
 
 export async function requireVendedor() {
   const user = await requireAuth()
-  if (user.role !== UserRole.VENDEDOR && user.role !== UserRole.ADMIN) {
+  if (user.role !== 'VENDEDOR' && user.role !== 'ADMIN') {
     throw new Error('Acesso restrito a vendedores')
   }
   return user
@@ -233,7 +232,7 @@ export async function requireVendedor() {
 
 export async function requireAdmin() {
   const user = await requireAuth()
-  if (user.role !== UserRole.ADMIN) {
+  if (user.role !== 'ADMIN') {
     throw new Error('Acesso restrito a administradores')
   }
   return user

@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser, isUserApproved } from '@/lib/auth'
-import { UserRole } from '@prisma/client'
 import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs'
 
 export default async function Home() {
@@ -14,9 +13,9 @@ export default async function Home() {
       redirect('/acesso-negado')
     } else if (isUserApproved(user)) {
       // Redirecionar baseado no role do usuário (só se aprovado)
-      if (user.role === UserRole.ADMIN) {
+      if (user.role === 'ADMIN') {
         redirect('/admin/dashboard')
-      } else if (user.role === UserRole.VENDEDOR) {
+      } else if (user.role === 'VENDEDOR') {
         redirect('/vendedor/dashboard')
       } else {
         redirect('/cliente/produtos')

@@ -14,7 +14,7 @@ export default async function ClienteLayoutPage({
     redirect('/sign-in')
   }
 
-  if (user.role !== UserRole.CLIENTE) {
+  if (user.role !== 'CLIENTE') {
     redirect('/vendedor/dashboard')
   }
 
