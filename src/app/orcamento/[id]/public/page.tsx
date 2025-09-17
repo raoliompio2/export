@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
 import { useParams } from 'next/navigation'
 import ProfessionalPrintLayout from '@/components/views/professional-print-layout'
+import { useLanguage } from '@/hooks/useLanguage'
 import { Loader2, Download, Globe } from 'lucide-react'
 import './globals.css'
 
@@ -96,7 +97,7 @@ export default function PublicOrcamentoPage() {
   const [orcamento, setOrcamento] = useState<Orcamento | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [language, setLanguage] = useState<'pt' | 'en' | 'es'>('pt')
+  const { language, changeLanguage, isLoaded } = useLanguage()
 
   useEffect(() => {
     if (!params.id) {
@@ -135,7 +136,7 @@ export default function PublicOrcamentoPage() {
     fetchOrcamento()
   }, [params.id])
 
-  if (loading) {
+  if (loading || !isLoaded) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -165,7 +166,7 @@ export default function PublicOrcamentoPage() {
     const languages: ('pt' | 'en' | 'es')[] = ['pt', 'en', 'es']
     const currentIndex = languages.indexOf(language)
     const nextIndex = (currentIndex + 1) % languages.length
-    setLanguage(languages[nextIndex])
+    changeLanguage(languages[nextIndex])
   }
 
   const getLanguageDisplay = () => {
@@ -216,7 +217,6 @@ export default function PublicOrcamentoPage() {
 
         <ProfessionalPrintLayout 
           orcamento={orcamento}
-          language={language}
         />
       </div>
     </>

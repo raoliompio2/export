@@ -93,7 +93,7 @@ interface Orcamento {
 
 interface ProfessionalPrintLayoutProps {
   orcamento: Orcamento
-  language?: 'pt' | 'en' | 'es'
+  language?: 'pt' | 'en' | 'es' // Opcional para compatibilidade
 }
 
 const translations = {
