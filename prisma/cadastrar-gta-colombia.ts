@@ -53,8 +53,7 @@ async function cadastrarGTAColombia() {
         endereco: 'TV 34 A SUR 32 D 13 IN 101',
         cidade: 'Mosquera',
         estado: 'Cundinamarca',
-        cep: '250047',
-        pais: 'Colombia'
+        cep: '250047'
       }
     })
 
