@@ -34,8 +34,13 @@
   }
   
   .print-hide,
-  .print\:hidden {
+  .print\:hidden,
+  .floating-buttons,
+  button,
+  [class*="fixed"],
+  [class*="absolute"] {
     display: none !important;
+    visibility: hidden !important;
   }
   
   .print-show {

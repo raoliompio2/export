@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
 import { useParams } from 'next/navigation'
 import ProfessionalPrintLayout from '@/components/views/professional-print-layout'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Download, Globe } from 'lucide-react'
 import './globals.css'
 
 interface Orcamento {
@@ -93,6 +93,7 @@ export default function PublicOrcamentoPage() {
   const [orcamento, setOrcamento] = useState<Orcamento | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [language, setLanguage] = useState<'pt' | 'en' | 'es'>('pt')
 
   useEffect(() => {
     if (!params.id) {
@@ -153,12 +154,68 @@ export default function PublicOrcamentoPage() {
     )
   }
 
+  const handleGeneratePDF = () => {
+    window.print()
+  }
+
+  const handleLanguageChange = () => {
+    const languages: ('pt' | 'en' | 'es')[] = ['pt', 'en', 'es']
+    const currentIndex = languages.indexOf(language)
+    const nextIndex = (currentIndex + 1) % languages.length
+    setLanguage(languages[nextIndex])
+  }
+
+  const getLanguageDisplay = () => {
+    const flags = { pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸' }
+    const names = { pt: 'Português', en: 'English', es: 'Español' }
+    return `${flags[language]} ${names[language]}`
+  }
+
   return (
-    <div className="min-h-screen bg-white">
-      <ProfessionalPrintLayout 
-        orcamento={orcamento}
-        language="en" // Inglês para clientes internacionais - DEVE TER TODAS AS TRADUÇÕES
-      />
-    </div>
+    <>
+      {/* CSS global para garantir que botões desapareçam na impressão */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @media print {
+            .floating-buttons,
+            button,
+            .no-print {
+              display: none !important;
+              visibility: hidden !important;
+            }
+          }
+        `
+      }} />
+      
+      <div className="min-h-screen bg-white relative">
+        {/* Botões flutuantes - só aparecem na tela, não na impressão */}
+        <div className="floating-buttons fixed top-4 right-4 z-50 flex gap-2 print:hidden no-print">
+        {/* Botão de idioma */}
+        <button
+          onClick={handleLanguageChange}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-colors duration-200"
+          title="Trocar idioma"
+        >
+          <Globe className="w-4 h-4" />
+          <span className="text-sm font-medium">{getLanguageDisplay()}</span>
+        </button>
+
+        {/* Botão de PDF */}
+        <button
+          onClick={handleGeneratePDF}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-colors duration-200"
+          title="Gerar PDF"
+        >
+          <Download className="w-4 h-4" />
+          <span className="text-sm font-medium">PDF</span>
+        </button>
+        </div>
+
+        <ProfessionalPrintLayout 
+          orcamento={orcamento}
+          language={language}
+        />
+      </div>
+    </>
   )
 }

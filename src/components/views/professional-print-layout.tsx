@@ -207,15 +207,15 @@ export default function ProfessionalPrintLayout({
       <div className="print-page">
         
         {/* CABEÇALHO */}
-        <header className="page-header">
-          <div className="company-info">
+        <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '30px', paddingBottom: '20px', borderBottom: '2px solid #e5e7eb' }}>
+          <div className="company-info" style={{ flex: '1', marginRight: '30px' }}>
             {orcamento.empresa.logo && (
               <div className="company-logo">
                 <img src={orcamento.empresa.logo} alt={orcamento.empresa.nome} />
               </div>
             )}
             <div className="company-details">
-              <h1 className="company-name">{orcamento.empresa.nome}</h1>
+              <h1 className="company-name" style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px', color: '#1f2937' }}>{orcamento.empresa.nome}</h1>
               <div className="company-address">
                 <p>{orcamento.empresa.endereco}, {orcamento.empresa.numero}</p>
                 <p>{orcamento.empresa.cidade}, {orcamento.empresa.estado} - {orcamento.empresa.cep}</p>
@@ -224,8 +224,8 @@ export default function ProfessionalPrintLayout({
               </div>
             </div>
           </div>
-          <div className="document-info">
-            <h2 className="document-title">{t.title}</h2>
+          <div className="document-info" style={{ flex: '0 0 300px', textAlign: 'right' }}>
+            <h2 className="document-title" style={{ fontSize: '28px', fontWeight: 'bold', color: '#3b82f6', marginBottom: '15px' }}>{t.title}</h2>
             <div className="document-details">
               <p><strong>Nº:</strong> {orcamento.numero}</p>
               <p><strong>{t.date}:</strong> {formatDate(orcamento.createdAt)}</p>
