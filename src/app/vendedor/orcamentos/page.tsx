@@ -223,14 +223,14 @@ export default function VendedorOrcamentos() {
       icon: <Edit className="h-4 w-4" />,
       variant: 'primary' as const,
       onClick: handleEdit,
-      show: (orcamento: Orcamento) => orcamento.status === 'RASCUNHO'
+      show: (orcamento: Orcamento) => orcamento.status !== 'APROVADO'
     },
     {
       label: tc('excluir'),
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'danger' as const,
       onClick: handleDelete,
-      show: (orcamento: Orcamento) => orcamento.status === 'RASCUNHO'
+      show: (orcamento: Orcamento) => orcamento.status !== 'APROVADO'
     }
   ]
 
