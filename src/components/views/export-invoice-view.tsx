@@ -500,9 +500,9 @@ export default function ExportInvoiceView({
                   <div>
                     <span className="font-semibold text-gray-700">{t.enderecoEnvio}</span>
                     <p className="text-gray-900">
-                      {(orcamento.cliente as any).enderecoEntrega || orcamento.cliente.endereco}
+                      {(orcamento.cliente as { enderecoEntrega?: string }).enderecoEntrega || orcamento.cliente.endereco}
                     </p>
-                    <p className="text-gray-900">{orcamento.cliente.cidade}, {orcamento.cliente.estado} {(orcamento.cliente as any).pais || ''}</p>
+                    <p className="text-gray-900">{orcamento.cliente.cidade}, {orcamento.cliente.estado} {(orcamento.cliente as { pais?: string }).pais || ''}</p>
                   </div>
                 </div>
                 
@@ -519,13 +519,13 @@ export default function ExportInvoiceView({
                   
                   <div>
                     <span className="font-semibold text-gray-700">{t.nomeContato}</span>
-                    <p className="text-gray-900">{(orcamento.cliente as any).contato || orcamento.cliente.user.nome}</p>
+                    <p className="text-gray-900">{(orcamento.cliente as { contato?: string }).contato || orcamento.cliente.user.nome}</p>
                   </div>
                   
                   <div>
                     <span className="font-semibold text-gray-700">{t.emailTelefone}</span>
                     <p className="text-gray-900">{orcamento.cliente.user.email}</p>
-                    {(orcamento.cliente as any).telefone && <p className="text-gray-900">{(orcamento.cliente as any).telefone}</p>}
+                    {(orcamento.cliente as { telefone?: string }).telefone && <p className="text-gray-900">{(orcamento.cliente as { telefone?: string }).telefone}</p>}
                   </div>
                 </div>
               </div>

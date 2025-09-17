@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { 
   X, 
   Package, 
@@ -10,7 +11,6 @@ import {
   Ruler,
   Weight,
   Calendar,
-  TrendingUp,
   AlertTriangle,
   CheckCircle,
   XCircle,
@@ -28,7 +28,21 @@ interface ProdutoViewProps {
 }
 
 export default function ProdutoView({ produtoId, onClose, onEdit }: ProdutoViewProps) {
-  const [produto, setProduto] = useState<any>(null)
+  const [produto, setProduto] = useState<{
+    id: string
+    nome: string
+    descricao?: string
+    codigo: string
+    preco: number
+    precoPromocional?: number
+    unidade: string
+    estoque: number
+    peso?: number
+    dimensoes?: string
+    imagens?: string[]
+    categoria?: { nome: string }
+    empresa?: { nome: string }
+  } | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -117,9 +131,11 @@ export default function ProdutoView({ produtoId, onClose, onEdit }: ProdutoViewP
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 bg-purple-100 rounded-lg flex items-center justify-center">
               {produto.imagens && produto.imagens.length > 0 ? (
-                <img 
+                <Image 
                   src={produto.imagens[0]} 
                   alt={produto.nome}
+                  width={64}
+                  height={64}
                   className="w-full h-full object-cover rounded-lg"
                 />
               ) : (
@@ -352,9 +368,11 @@ export default function ProdutoView({ produtoId, onClose, onEdit }: ProdutoViewP
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {produto.imagens.map((imagem: string, index: number) => (
                   <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                    <img 
+                    <Image 
                       src={imagem} 
                       alt={`${produto.nome} - Imagem ${index + 1}`}
+                      width={200}
+                      height={200}
                       className="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
                     />
                   </div>

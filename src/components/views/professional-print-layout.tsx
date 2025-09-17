@@ -200,8 +200,8 @@ export default function ProfessionalPrintLayout({
   // Dados de exportação seguros
   const exportData = createSafeExportData(orcamento)
 
-  const totalCIF = (orcamento.total / exchangeRate) + 
-                   (exportData.freteInternacional + exportData.seguroInternacional + exportData.taxasDesaduanagem)
+  // const totalCIF = (orcamento.total / exchangeRate) + 
+  //                 (exportData.freteInternacional + exportData.seguroInternacional + exportData.taxasDesaduanagem)
 
   return (
     <div className="professional-print-layout">

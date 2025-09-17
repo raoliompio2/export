@@ -26,19 +26,35 @@ import { StatusBadge } from '@/components/ui/modern-table'
 import { debugCalculations, formatCurrencySafe, detectarDescontoReal } from '@/utils/safe-formatting'
 
 interface OrcamentoViewProps {
-  orcamento: any
+  orcamento: {
+    id: string
+    numero: string
+    titulo: string
+    status: string
+    subtotal: number
+    desconto: number
+    total: number
+    frete?: number
+    itens?: Array<{
+      id: string
+      quantidade: number
+      precoUnit: number
+      desconto: number
+      total: number
+      produto?: { nome?: string }
+    }>
+  }
   onClose: () => void
 }
 
 export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps) {
-  const [loading, setLoading] = useState(false)
   
   // DEBUG: Para investigar problemas nos cálculos E DESCONTO
   if (process.env.NODE_ENV === 'development' && orcamento) {
     debugCalculations(orcamento, 'OrcamentoView')
     console.log('🔍 DEBUG DESCONTO - OrcamentoView:', {
       itensCount: orcamento.itens?.length,
-      itens: orcamento.itens?.map((item: any) => ({
+      itens: orcamento.itens?.map((item: { id: string; quantidade: number; precoUnit: number; desconto: number; total: number; produto?: { nome?: string } }) => ({
         id: item.id,
         produto: item.produto?.nome,
         quantidade: item.quantidade,
@@ -49,7 +65,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
     })
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'success' | 'warning' | 'danger' | 'default' => {
     switch (status) {
       case 'APROVADO': return 'success'
       case 'ENVIADO': return 'warning'
@@ -109,7 +125,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
               {getStatusIcon(orcamento.status)}
               <StatusBadge
                 status={orcamento.status}
-                variant={getStatusColor(orcamento.status) as any}
+                variant={getStatusColor(orcamento.status)}
               />
             </div>
             
@@ -307,7 +323,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
                   {getStatusIcon(orcamento.status)}
                   <StatusBadge
                     status={orcamento.status}
-                    variant={getStatusColor(orcamento.status) as any}
+                    variant={getStatusColor(orcamento.status)}
                   />
                 </div>
               </div>
@@ -373,7 +389,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {orcamento.itens?.map((item: any) => (
+                  {orcamento.itens?.map((item: { id: string; quantidade: number; precoUnit: number; desconto: number; total: number; produto?: { nome?: string } }) => (
                     <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-4">
                         <div>
