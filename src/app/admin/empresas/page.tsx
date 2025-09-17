@@ -16,7 +16,8 @@ import {
   Loader2,
   Users,
   FileText,
-  Eye
+  Eye,
+  Settings
 } from 'lucide-react'
 import ModernEmpresaForm from '@/components/forms/modern-empresa-form'
 import EmpresaViewModal from '@/components/views/empresa-view'
@@ -157,13 +158,23 @@ export default function AdminEmpresas() {
           <Building2 className="h-6 w-6 text-gray-500" />
           <h1 className="text-2xl font-bold text-gray-900">Empresas</h1>
         </div>
-        <button 
-          onClick={() => setShowForm(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <Plus className="h-5 w-5" />
-          Nova Empresa
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={() => window.location.href = '/admin/config-observacoes'}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            title="Configurar observações dos orçamentos"
+          >
+            <Settings className="h-5 w-5" />
+            Config. Observações
+          </button>
+          <button 
+            onClick={() => setShowForm(true)}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <Plus className="h-5 w-5" />
+            Nova Empresa
+          </button>
+        </div>
       </div>
 
       <p className="text-gray-600">Gerencie as empresas representadas pelo sistema.</p>

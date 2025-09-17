@@ -88,6 +88,11 @@ model Empresa {
   corPrimaria     String   @default("#3B82F6")
   ativa           Boolean  @default(true)
   
+  // Observações personalizáveis por empresa para orçamentos de exportação
+  observacaoDesaduanagem  String?
+  observacaoMercosul      String?
+  observacaoValidade      String?
+  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   

@@ -83,6 +83,9 @@ interface Orcamento {
     email: string
     telefone?: string
     logo?: string
+    observacaoDesaduanagem?: string
+    observacaoMercosul?: string
+    observacaoValidade?: string
   }
   itens: OrcamentoItem[]
 }
@@ -172,6 +175,7 @@ export default function ProfessionalPrintLayout({
     debugCalculations(orcamento, 'ProfessionalPrintLayout')
   }
   const [exchangeRate, setExchangeRate] = useState(5.42)
+  const [exchangeRateDate, setExchangeRateDate] = useState<string>('')
   const t = translations[language as keyof typeof translations] || translations.en
 
   useEffect(() => {
@@ -181,9 +185,12 @@ export default function ProfessionalPrintLayout({
         if (response.ok) {
           const data = await response.json()
           setExchangeRate(data.convertedAmount)
+          setExchangeRateDate(data.lastUpdated)
         }
       } catch (error) {
         console.error('Erro ao buscar cotação:', error)
+        // Fallback com data atual se falhar
+        setExchangeRateDate(new Date().toISOString())
       }
     }
     fetchExchangeRate()
@@ -461,6 +468,11 @@ export default function ProfessionalPrintLayout({
               <div className="exchange-rate">
                 <strong>{t.exchangeRate}:</strong>
                 <span>USD 1 = BRL {exchangeRate.toFixed(4)}</span>
+                {exchangeRateDate && (
+                  <small className="text-gray-500 ml-2">
+                    ({new Date(exchangeRateDate).toLocaleDateString('pt-BR')})
+                  </small>
+                )}
               </div>
             </div>
             
@@ -512,9 +524,10 @@ export default function ProfessionalPrintLayout({
               
               {totalCIF > (orcamento.total / exchangeRate) && (
                 <div className="total-row cif-total">
-                  <span>TOTAL CIF (c/ frete internacional):</span>
+                  <span>TOTAL CIF (USD):</span>
                   <div className="price-display">
-                    <span><strong>{formatCurrency(totalCIF * exchangeRate, 'USD')}</strong></span>
+                    <span><strong>US$ {totalCIF.toFixed(2)}</strong></span>
+                    <small>({formatCurrency(totalCIF * exchangeRate, 'BRL')})</small>
                   </div>
                 </div>
               )}
@@ -529,9 +542,21 @@ export default function ProfessionalPrintLayout({
             {orcamento.observacoes && (
               <p><strong>Observações específicas:</strong> {orcamento.observacoes}</p>
             )}
-            <p><strong>Importante:</strong> {t.customsNote}</p>
-            <p><strong>Mercosul:</strong> {t.mercosurNote}</p>
-            <p><strong>Validade:</strong> {t.quoteNote}</p>
+            
+            {/* Cotação dinâmica */}
+            {exchangeRateDate && (
+              <p><strong>Cotação Dólar ({new Date(exchangeRateDate).toLocaleDateString('pt-BR')}):</strong> BRL {exchangeRate.toFixed(2)}</p>
+            )}
+            
+            {/* TOTAL CIF dinâmico */}
+            {totalCIF > (orcamento.total / exchangeRate) && (
+              <p><strong>TOTAL CIF (USD):</strong> US$ {totalCIF.toFixed(2)}</p>
+            )}
+            
+            {/* Observações personalizáveis por empresa */}
+            <p><strong>Importante:</strong> {orcamento.empresa.observacaoDesaduanagem || t.customsNote}</p>
+            <p><strong>Mercosul:</strong> {orcamento.empresa.observacaoMercosul || t.mercosurNote}</p>
+            <p><strong>Validade:</strong> {orcamento.empresa.observacaoValidade || t.quoteNote}</p>
           </div>
         </section>
 

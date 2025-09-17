@@ -69,6 +69,9 @@ interface Orcamento {
     email: string
     telefone?: string
     logo?: string
+    observacaoDesaduanagem?: string
+    observacaoMercosul?: string
+    observacaoValidade?: string
   }
   itens: Array<{
     id: string

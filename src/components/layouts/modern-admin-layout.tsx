@@ -79,6 +79,12 @@ export default function ModernAdminLayout({ children }: ModernAdminLayoutProps) 
       icon: Settings,
       description: 'Config. do sistema'
     },
+    { 
+      name: 'Config. Observações', 
+      href: '/admin/config-observacoes', 
+      icon: Settings,
+      description: 'Textos dos orçamentos'
+    },
   ]
 
   return (

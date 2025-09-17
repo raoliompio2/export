@@ -13,7 +13,8 @@ import {
   Globe,
   TrendingUp,
   Users,
-  FileText
+  FileText,
+  Settings
 } from 'lucide-react'
 import ModernTable, { StatusBadge, AvatarCell } from '@/components/ui/modern-table'
 import ModernButton from '@/components/ui/modern-button'
@@ -243,13 +244,24 @@ export default function ModernAdminEmpresas() {
           </p>
         </div>
         
-        <ModernButton
-          onClick={() => setShowForm(true)}
-          icon={<Plus className="h-4 w-4" />}
-          animation="glow"
-        >
-          Nova Empresa
-        </ModernButton>
+        <div className="flex gap-3">
+          <ModernButton
+            onClick={() => window.location.href = '/admin/config-observacoes'}
+            icon={<Settings className="h-4 w-4" />}
+            variant="secondary"
+            animation="pulse"
+            title="Configurar observações dos orçamentos"
+          >
+            Config. Observações
+          </ModernButton>
+          <ModernButton
+            onClick={() => setShowForm(true)}
+            icon={<Plus className="h-4 w-4" />}
+            animation="glow"
+          >
+            Nova Empresa
+          </ModernButton>
+        </div>
       </div>
 
       {/* Estatísticas */}
@@ -347,14 +359,14 @@ export default function ModernAdminEmpresas() {
           </div>
         </ModernCard>
 
-        <ModernCard variant="bordered" interactive className="p-6">
+        <ModernCard variant="bordered" interactive className="p-6" onClick={() => window.location.href = '/admin/config-observacoes'}>
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-              <Users className="h-6 w-6" />
+            <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+              <Settings className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">Gestão de Vendedores</h3>
-              <p className="text-sm text-gray-600">Atribuir representantes</p>
+              <h3 className="font-semibold text-gray-900">Configurar Observações</h3>
+              <p className="text-sm text-gray-600">Personalizar textos dos orçamentos</p>
             </div>
           </div>
         </ModernCard>
