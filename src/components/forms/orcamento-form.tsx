@@ -35,7 +35,7 @@ const orcamentoSchema = z.object({
     produtoId: z.string().min(1, 'Produto é obrigatório'),
     quantidade: z.number().min(1, 'Quantidade deve ser maior que zero'),
     precoUnit: z.number().min(0, 'Preço deve ser positivo'),
-    desconto: z.number().min(0).max(100).default(0)
+    desconto: z.number().min(0).max(100)
   })).min(1, 'Adicione pelo menos um item')
 })
 

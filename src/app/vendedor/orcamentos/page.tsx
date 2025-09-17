@@ -381,7 +381,7 @@ export default function VendedorOrcamentos() {
       {/* Modal de Visualização Profissional */}
       {viewingOrcamento && (
         <ExportInvoiceView
-          orcamento={viewingOrcamento}
+          orcamento={viewingOrcamento as any}
           onClose={() => setViewingOrcamento(null)}
         />
       )}

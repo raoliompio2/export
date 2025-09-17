@@ -11,7 +11,7 @@ const usuarioSchema = z.object({
   email: z.string().email('Email inválido'),
   telefone: z.string().optional(),
   role: z.enum(['ADMIN', 'VENDEDOR', 'CLIENTE']),
-  ativo: z.boolean().default(true)
+  ativo: z.boolean()
 })
 
 interface UsuarioFormProps {
