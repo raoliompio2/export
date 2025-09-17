@@ -417,7 +417,7 @@ export default function VendedorCrm() {
       {/* Formulário de CRM */}
       {showForm && (
         <CrmForm
-          crmItem={editingItem}
+          item={editingItem}
           onClose={handleFormClose}
           onSuccess={() => {
             fetchCrmItems()

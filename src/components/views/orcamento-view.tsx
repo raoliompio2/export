@@ -38,7 +38,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
     debugCalculations(orcamento, 'OrcamentoView')
     console.log('🔍 DEBUG DESCONTO - OrcamentoView:', {
       itensCount: orcamento.itens?.length,
-      itens: orcamento.itens?.map(item => ({
+      itens: orcamento.itens?.map((item: any) => ({
         id: item.id,
         produto: item.produto?.nome,
         quantidade: item.quantidade,
@@ -411,7 +411,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
           </ModernCard>
 
           {/* Resumo Financeiro */}
-          <ModernCard variant="primary" className="p-6 text-white">
+          <ModernCard variant="gradient" className="p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 rounded-xl bg-white bg-opacity-20">
                 <Calculator className="h-5 w-5" />

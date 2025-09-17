@@ -20,8 +20,50 @@ import {
 import ModernCard, { StatsCard, ActionCard } from '@/components/ui/modern-card'
 import ModernButton from '@/components/ui/modern-button'
 
+interface OrcamentoRecente {
+  id: string
+  numero: string
+  cliente: {
+    nome: string
+  }
+  empresa: {
+    nome: string
+  }
+  total: number
+  status: string
+  createdAt: string
+}
+
+interface ClienteRecente {
+  id: string
+  user: {
+    nome: string
+    email: string
+    telefone?: string
+  }
+}
+
+interface VendedorData {
+  user: {
+    nome: string
+  }
+  vendedorProfile: {
+    meta: number
+  }
+}
+
+interface DashboardData {
+  totalClientes: number
+  totalProdutos: number
+  totalOrcamentos: number
+  totalVendas: number
+  orcamentosRecentes: OrcamentoRecente[]
+  clientesRecentes: ClienteRecente[]
+  vendedorData: VendedorData
+}
+
 export default function ModernVendedorDashboard() {
-  const [data, setData] = useState({
+  const [data, setData] = useState<DashboardData>({
     totalClientes: 0,
     totalProdutos: 0,
     totalOrcamentos: 0,

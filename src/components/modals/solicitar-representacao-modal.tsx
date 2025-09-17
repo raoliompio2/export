@@ -160,7 +160,7 @@ export default function SolicitarRepresentacaoModal({
                 filteredEmpresas.map((empresa) => (
                   <ModernCard
                     key={empresa.id}
-                    variant={selectedEmpresa?.id === empresa.id ? 'primary' : 'bordered'}
+                    variant={selectedEmpresa?.id === empresa.id ? 'gradient' : 'bordered'}
                     interactive
                     className={`p-4 cursor-pointer transition-all ${
                       selectedEmpresa?.id === empresa.id

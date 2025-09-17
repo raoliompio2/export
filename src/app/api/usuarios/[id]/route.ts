@@ -51,6 +51,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getCurrentUser()
     if (!user || user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
@@ -61,7 +62,7 @@ export async function PUT(
 
     // Verificar se usuário existe
     const existingUser = await prisma.user.findUnique({
-      where: { id: id }
+      where: { id }
     })
 
     if (!existingUser) {
@@ -84,7 +85,7 @@ export async function PUT(
 
     // Atualizar usuário
     const usuarioAtualizado = await prisma.user.update({
-      where: { id: id },
+      where: { id },
       data: validatedData,
       include: {
         clienteProfile: true,
@@ -145,6 +146,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getCurrentUser()
     if (!user || user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
@@ -152,7 +154,7 @@ export async function DELETE(
 
     // Verificar se usuário existe
     const existingUser = await prisma.user.findUnique({
-      where: { id: id }
+      where: { id }
     })
 
     if (!existingUser) {
@@ -169,7 +171,7 @@ export async function DELETE(
 
     // Deletar usuário (cascade vai deletar os perfis)
     await prisma.user.delete({
-      where: { id: id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Usuário deletado com sucesso' })

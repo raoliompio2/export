@@ -140,8 +140,8 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
     // Calcular volume a partir das dimensões (formato: "1.2x0.8x0.5")
     let volumeProduto = 0
     if (dimensoesProduto) {
-      const dimensoes = dimensoesProduto.split('x').map(d => parseFloat(d.trim()))
-      if (dimensoes.length === 3 && dimensoes.every(d => !isNaN(d))) {
+      const dimensoes = dimensoesProduto.split('x').map((d: string) => parseFloat(d.trim()))
+      if (dimensoes.length === 3 && dimensoes.every((d: number) => !isNaN(d))) {
         volumeProduto = dimensoes[0] * dimensoes[1] * dimensoes[2]
       }
     }

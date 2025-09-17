@@ -72,9 +72,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Buscar estatísticas se for vendedor ou admin
-    let stats = null
-    let orcamentos = []
-    let clientes = []
+    let stats: any = null
+    let orcamentos: any[] = []
+    let clientes: any[] = []
     
     if ((user.role === 'VENDEDOR' || user.role === 'ADMIN') && userData.vendedorProfile) {
       const vendedorId = userData.vendedorProfile.id

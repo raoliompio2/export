@@ -421,6 +421,10 @@ export default function VendedorEmpresas() {
         <EmpresaViewModal
           empresa={viewingEmpresa}
           onClose={handleCloseForms}
+          onEdit={() => {
+            setEditingConfig(viewingEmpresa)
+            setViewingEmpresa(null)
+          }}
         />
       )}
 

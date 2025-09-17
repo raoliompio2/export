@@ -10,8 +10,8 @@ const crmSchema = z.object({
   titulo: z.string().min(1, 'Título é obrigatório'),
   descricao: z.string().optional(),
   clienteId: z.string().min(1, 'Cliente é obrigatório'),
-  status: z.enum(['ABERTO', 'EM_ANDAMENTO', 'AGUARDANDO_CLIENTE', 'RESOLVIDO', 'FECHADO']).default('ABERTO'),
-  prioridade: z.enum(['BAIXA', 'MEDIA', 'ALTA', 'URGENTE']).default('MEDIA'),
+  status: z.enum(['ABERTO', 'EM_ANDAMENTO', 'AGUARDANDO_CLIENTE', 'RESOLVIDO', 'FECHADO']),
+  prioridade: z.enum(['BAIXA', 'MEDIA', 'ALTA', 'URGENTE']),
   dataVencimento: z.string().optional(),
 })
 
@@ -41,7 +41,9 @@ export default function CrmForm({ item, onClose, onSuccess }: CrmFormProps) {
   const [clientes, setClientes] = useState<any[]>([])
   const [loadingClientes, setLoadingClientes] = useState(true)
 
-  const form = useForm<z.infer<typeof crmSchema>>({
+  type CrmFormData = z.infer<typeof crmSchema>
+  
+  const form = useForm<CrmFormData>({
     resolver: zodResolver(crmSchema),
     defaultValues: {
       titulo: item?.titulo || '',
@@ -69,7 +71,7 @@ export default function CrmForm({ item, onClose, onSuccess }: CrmFormProps) {
     fetchClientes()
   }, [])
 
-  const onSubmit = async (values: z.infer<typeof crmSchema>) => {
+  const onSubmit = async (values: CrmFormData) => {
     setIsSubmitting(true)
     try {
       const url = item ? `/api/crm/${item.id}` : '/api/crm'
@@ -261,7 +263,7 @@ export default function CrmForm({ item, onClose, onSuccess }: CrmFormProps) {
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-600">Vencimento:</span>
                   <span className="text-sm font-medium">
-                    {new Date(form.watch('dataVencimento')).toLocaleDateString('pt-BR')}
+                    {new Date(form.watch('dataVencimento') || new Date()).toLocaleDateString('pt-BR')}
                   </span>
                 </div>
               )}

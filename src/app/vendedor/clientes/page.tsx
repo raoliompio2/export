@@ -365,7 +365,7 @@ export default function VendedorClientes() {
       {/* Modal de Visualização */}
       {viewingCliente && (
         <ClienteView
-          cliente={viewingCliente}
+          clienteId={viewingCliente.id}
           onClose={() => setViewingCliente(null)}
         />
       )}
