@@ -50,10 +50,21 @@ async function main() {
     const vendedor = await prisma.vendedor.create({
       data: {
         userId: adminUser.id,
-        empresaId: empresa.id,
         comissao: 5.0,
         meta: 10000.0,
         ativo: true
+      }
+    })
+
+    // 3.1. Vincular vendedor à empresa
+    console.log('🔗 Vinculando vendedor à empresa...')
+    await prisma.vendedorEmpresa.create({
+      data: {
+        vendedorId: vendedor.id,
+        empresaId: empresa.id,
+        ativo: true,
+        comissao: 5.0,
+        meta: 10000.0
       }
     })
 

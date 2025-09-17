@@ -13,7 +13,7 @@ const updateCrmSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -21,8 +21,9 @@ export async function GET(
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
+    const { id } = await params
     const crmItem = await prisma.crmItem.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         cliente: { include: { user: true } },
         vendedor: { include: { user: true } },
@@ -51,7 +52,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -59,12 +60,13 @@ export async function PUT(
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const validatedData = updateCrmSchema.parse(body)
 
     // Verificar se item existe
     const existingItem = await prisma.crmItem.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingItem) {
@@ -78,7 +80,7 @@ export async function PUT(
 
     // Atualizar item
     const updatedItem = await prisma.crmItem.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...validatedData,
         dataVencimento: validatedData.dataVencimento ? new Date(validatedData.dataVencimento) : undefined,
@@ -98,7 +100,7 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados inválidos', details: error.issues },
         { status: 400 }
       )
     }
@@ -110,7 +112,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -118,9 +120,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
+    const { id } = await params
     // Verificar se item existe
     const existingItem = await prisma.crmItem.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingItem) {
@@ -134,7 +137,7 @@ export async function DELETE(
 
     // Excluir item
     await prisma.crmItem.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Item CRM excluído com sucesso' })

@@ -29,16 +29,18 @@ const empresaUpdateSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
+    // Busca a empresa pelo ID, garantindo que o ID seja do tipo correto
     const empresa = await prisma.empresa.findUnique({
-      where: { id: params.id }
+      where: { id: String(id) }
     })
 
     if (!empresa) {
@@ -46,8 +48,18 @@ export async function GET(
     }
 
     // Verificar se o usuário tem acesso à empresa
-    if (user.role === 'VENDEDOR' && user.vendedorProfile?.empresaId !== empresa.id) {
-      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    if (user.role === 'VENDEDOR' && user.vendedorProfile) {
+      const temAcesso = await prisma.vendedorEmpresa.findFirst({
+        where: {
+          vendedorId: user.vendedorProfile.id,
+          empresaId: id,
+          ativo: true
+        }
+      })
+      
+      if (!temAcesso) {
+        return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+      }
     }
 
     return NextResponse.json(empresa)
@@ -59,9 +71,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getCurrentUser()
     if (!user || user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
@@ -72,18 +85,19 @@ export async function PUT(
 
     // Verificar se empresa existe
     const existingEmpresa = await prisma.empresa.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingEmpresa) {
       return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 404 })
     }
 
+
     // Verificar se CNPJ já existe em outra empresa
     const empresaComMesmoCNPJ = await prisma.empresa.findFirst({
       where: { 
         cnpj: validatedData.cnpj,
-        id: { not: params.id }
+        id: { not: id }
       }
     })
 
@@ -95,7 +109,7 @@ export async function PUT(
     }
 
     const empresa = await prisma.empresa.update({
-      where: { id: params.id },
+      where: { id: id },
       data: validatedData
     })
 
@@ -103,7 +117,7 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados inválidos', details: error.issues },
         { status: 400 }
       )
     }
@@ -114,9 +128,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const user = await getCurrentUser()
     if (!user || user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
@@ -124,7 +139,7 @@ export async function DELETE(
 
     // Verificar se empresa existe
     const existingEmpresa = await prisma.empresa.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         vendedores: true,
         produtos: true,
@@ -147,7 +162,7 @@ export async function DELETE(
     }
 
     await prisma.empresa.delete({
-      where: { id: params.id }
+      where: { id: id }
     })
 
     return NextResponse.json({ message: 'Empresa excluída com sucesso' })

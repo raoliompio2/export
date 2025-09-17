@@ -136,7 +136,7 @@ async function populateRealData() {
         peso: 0.202,
         dimensoes: '158.2 x 76.7 x 8.2 mm',
         imagens: ['https://images.samsung.com/is/image/samsung/p6pim/br/sm-a546ezkqzto/gallery/br-galaxy-a54-5g-sm-a546e-447253-sm-a546ezkqzto-535285080'],
-        status: 'ATIVO',
+        status: 'ATIVO' as const,
         destaque: true
       },
       {
@@ -151,7 +151,7 @@ async function populateRealData() {
         estoqueMinimo: 50,
         peso: 0.3,
         dimensoes: '10 x 8 x 8 cm',
-        status: 'ATIVO',
+        status: 'ATIVO' as const,
         destaque: false
       },
       {
@@ -167,7 +167,7 @@ async function populateRealData() {
         estoqueMinimo: 5,
         peso: 1.5,
         dimensoes: '25 x 8 x 20 cm',
-        status: 'ATIVO',
+        status: 'ATIVO' as const,
         destaque: true
       },
       {
@@ -183,7 +183,7 @@ async function populateRealData() {
         estoqueMinimo: 3,
         peso: 3.2,
         dimensoes: '30 x 30 x 15 cm',
-        status: 'ATIVO',
+        status: 'ATIVO' as const,
         destaque: false
       }
     ]

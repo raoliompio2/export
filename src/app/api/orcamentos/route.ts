@@ -116,6 +116,18 @@ export async function POST(request: NextRequest) {
     )
     const { subtotal, desconto, frete, total } = totaisCalculados
 
+    // Buscar empresa do vendedor
+    const vendedorEmpresa = await prisma.vendedorEmpresa.findFirst({
+      where: {
+        vendedorId: user.vendedorProfile.id,
+        ativo: true
+      }
+    })
+
+    if (!vendedorEmpresa) {
+      return NextResponse.json({ error: 'Vendedor não está vinculado a nenhuma empresa' }, { status: 400 })
+    }
+
     // Criar orçamento
     const orcamento = await prisma.orcamento.create({
       data: {
@@ -124,7 +136,7 @@ export async function POST(request: NextRequest) {
         descricao: validatedData.descricao,
         clienteId: validatedData.clienteId,
         vendedorId: user.vendedorProfile.id,
-        empresaId: user.vendedorProfile.empresaId,
+        empresaId: vendedorEmpresa.empresaId,
         userId: cliente.userId,
         subtotal,
         desconto,
@@ -177,7 +189,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados inválidos', details: error.issues },
         { status: 400 }
       )
     }

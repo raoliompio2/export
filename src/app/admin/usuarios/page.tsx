@@ -165,7 +165,6 @@ export default function AdminUsuarios() {
           src={usuario.avatar}
           name={usuario.nome}
           subtitle={usuario.email}
-          fallback={<User className="h-5 w-5" />}
         />
       )
     },

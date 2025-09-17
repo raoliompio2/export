@@ -195,7 +195,6 @@ export default function AdminProdutos() {
           src={produto.imagens?.[0]}
           name={produto.nome}
           subtitle={produto.codigo}
-          fallback={<Package className="h-5 w-5" />}
         />
       )
     },
@@ -520,7 +519,7 @@ export default function AdminProdutos() {
       {/* Modal de Visualização */}
       {viewingProduto && (
         <ProdutoView
-          produto={viewingProduto}
+          produtoId={viewingProduto.id}
           onClose={handleViewClose}
           onEdit={() => {
             setEditingProduto(viewingProduto)

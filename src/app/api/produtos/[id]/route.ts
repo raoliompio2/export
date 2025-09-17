@@ -23,7 +23,7 @@ const produtoSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -31,8 +31,9 @@ export async function GET(
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
+    const { id } = await params
     const produto = await prisma.produto.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         categoria: true,
         empresa: true
@@ -52,7 +53,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -60,12 +61,13 @@ export async function PUT(
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
     
+    const { id } = await params
     const body = await request.json()
     const validatedData = produtoSchema.parse(body)
 
     // Verificar se produto existe
     const existingProduto = await prisma.produto.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingProduto) {
@@ -76,7 +78,7 @@ export async function PUT(
     const produtoComMesmoCodigo = await prisma.produto.findFirst({
       where: { 
         codigo: validatedData.codigo,
-        id: { not: params.id }
+        id: { not: id }
       }
     })
 
@@ -88,7 +90,7 @@ export async function PUT(
     }
 
     const produto = await prisma.produto.update({
-      where: { id: params.id },
+      where: { id },
       data: validatedData,
       include: {
         categoria: true,
@@ -100,7 +102,7 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados inválidos', details: error.issues },
         { status: 400 }
       )
     }
@@ -112,7 +114,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser()
@@ -120,9 +122,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
+    const { id } = await params
     // Verificar se produto existe
     const existingProduto = await prisma.produto.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingProduto) {
@@ -131,7 +134,7 @@ export async function DELETE(
 
     // Verificar se produto está em orçamentos
     const orcamentosComProduto = await prisma.orcamentoItem.findFirst({
-      where: { produtoId: params.id }
+      where: { produtoId: id }
     })
 
     if (orcamentosComProduto) {
@@ -142,7 +145,7 @@ export async function DELETE(
     }
 
     await prisma.produto.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Produto excluído com sucesso' })

@@ -37,14 +37,37 @@ export async function POST() {
     const vendedor = await prisma.vendedor.upsert({
       where: { userId: adminUser.id },
       update: {
-        empresaId: empresa.id
-      },
-      create: {
-        userId: adminUser.id,
-        empresaId: empresa.id,
         comissao: 5.0,
         meta: 10000.0,
         ativo: true
+      },
+      create: {
+        userId: adminUser.id,
+        comissao: 5.0,
+        meta: 10000.0,
+        ativo: true
+      }
+    })
+
+    // 3.1. Vincular vendedor à empresa
+    await prisma.vendedorEmpresa.upsert({
+      where: {
+        vendedorId_empresaId: {
+          vendedorId: vendedor.id,
+          empresaId: empresa.id
+        }
+      },
+      update: {
+        ativo: true,
+        comissao: 5.0,
+        meta: 10000.0
+      },
+      create: {
+        vendedorId: vendedor.id,
+        empresaId: empresa.id,
+        ativo: true,
+        comissao: 5.0,
+        meta: 10000.0
       }
     })
 
@@ -71,7 +94,7 @@ export async function POST() {
       data: {
         usuario: adminUser.email,
         vendedorId: vendedor.id,
-        empresaId: vendedor.empresaId,
+        empresaId: empresa.id,
         empresaNome: empresa.nome
       }
     })

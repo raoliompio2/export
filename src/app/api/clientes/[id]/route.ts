@@ -136,7 +136,7 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados inválidos', details: error.issues },
         { status: 400 }
       )
     }
@@ -188,7 +188,7 @@ export async function DELETE(
 
     // Excluir cliente (o usuário será excluído automaticamente por cascade)
     await prisma.cliente.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Cliente excluído com sucesso' })

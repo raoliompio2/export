@@ -368,6 +368,10 @@ export default function ModernAdminEmpresas() {
         <EmpresaViewModal
           empresa={viewingEmpresa}
           onClose={() => setViewingEmpresa(null)}
+          onEdit={() => {
+            setEditingEmpresa(viewingEmpresa)
+            setViewingEmpresa(null)
+          }}
         />
       )}
     </div>

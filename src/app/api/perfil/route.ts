@@ -57,8 +57,17 @@ export async function GET(request: NextRequest) {
         }
       })
 
-      // Atualizar userData para incluir o vendedorProfile
-      userData.vendedorProfile = vendedorProfile
+      // Buscar empresas do vendedor
+      const empresas = await prisma.vendedorEmpresa.findMany({
+        where: { vendedorId: vendedorProfile.id, ativo: true },
+        include: { empresa: true }
+      })
+
+      // Atualizar userData para incluir o vendedorProfile com empresas
+      userData.vendedorProfile = {
+        ...vendedorProfile,
+        empresas
+      }
       console.log('✅ Perfil de vendedor criado para ADMIN')
     }
 

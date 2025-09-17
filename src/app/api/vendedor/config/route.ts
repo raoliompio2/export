@@ -49,9 +49,9 @@ export async function PUT(request: NextRequest) {
     console.log('❌ Erro capturado:', error)
     
     if (error instanceof z.ZodError) {
-      console.log('🔍 Erro de validação Zod:', error.errors)
+      console.log('🔍 Erro de validação Zod:', error.issues)
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados inválidos', details: error.issues },
         { status: 400 }
       )
     }
