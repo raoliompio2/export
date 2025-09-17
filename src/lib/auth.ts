@@ -2,7 +2,27 @@ import { currentUser } from '@clerk/nextjs/server'
 import { prisma } from './prisma'
 import { UserRole } from '@prisma/client'
 
-export async function getCurrentUser() {
+// Tipo para o retorno do getCurrentUser
+export type AuthUser = {
+  id: string
+  clerkId: string
+  email: string
+  nome: string
+  role: UserRole
+  status: string
+  telefone?: string
+  avatar?: string
+  ativo: boolean
+  aprovadoPor?: string
+  aprovadoEm?: Date
+  motivoRejeicao?: string
+  createdAt: Date
+  updatedAt: Date
+  clienteProfile?: any
+  vendedorProfile?: any
+}
+
+export async function getCurrentUser(): Promise<AuthUser | null> {
   try {
     const clerkUser = await currentUser()
     
