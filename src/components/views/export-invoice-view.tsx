@@ -500,9 +500,9 @@ export default function ExportInvoiceView({
                   <div>
                     <span className="font-semibold text-gray-700">{t.enderecoEnvio}</span>
                     <p className="text-gray-900">
-                      {orcamento.cliente.enderecoEntrega || orcamento.cliente.endereco}
+                      {(orcamento.cliente as any).enderecoEntrega || orcamento.cliente.endereco}
                     </p>
-                    <p className="text-gray-900">{orcamento.cliente.cidade}, {orcamento.cliente.estado} {orcamento.cliente.pais}</p>
+                    <p className="text-gray-900">{orcamento.cliente.cidade}, {orcamento.cliente.estado} {(orcamento.cliente as any).pais || ''}</p>
                   </div>
                 </div>
                 
@@ -519,13 +519,13 @@ export default function ExportInvoiceView({
                   
                   <div>
                     <span className="font-semibold text-gray-700">{t.nomeContato}</span>
-                    <p className="text-gray-900">{orcamento.cliente.contato || orcamento.cliente.user.nome}</p>
+                    <p className="text-gray-900">{(orcamento.cliente as any).contato || orcamento.cliente.user.nome}</p>
                   </div>
                   
                   <div>
                     <span className="font-semibold text-gray-700">{t.emailTelefone}</span>
                     <p className="text-gray-900">{orcamento.cliente.user.email}</p>
-                    {orcamento.cliente.telefone && <p className="text-gray-900">{orcamento.cliente.telefone}</p>}
+                    {(orcamento.cliente as any).telefone && <p className="text-gray-900">{(orcamento.cliente as any).telefone}</p>}
                   </div>
                 </div>
               </div>

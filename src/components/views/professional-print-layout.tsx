@@ -230,7 +230,7 @@ export default function ProfessionalPrintLayout({
               <p><strong>Nº:</strong> {orcamento.numero}</p>
               <p><strong>{t.date}:</strong> {formatDate(orcamento.createdAt)}</p>
               {orcamento.validadeAte && (
-                <p><strong>{t.validity}:</strong> {formatDate(orcamento.validadeAte)}</p>
+                <p><strong>{(t as any).validity || 'Validity'}:</strong> {formatDate(orcamento.validadeAte)}</p>
               )}
             </div>
           </div>
