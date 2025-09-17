@@ -178,6 +178,10 @@ export async function rejectUser(userId: string, motivo: string, adminId: string
         aprovadoPor: adminId,
         aprovadoEm: new Date(),
         motivoRejeicao: motivo,
+      },
+      include: {
+        clienteProfile: true,
+        vendedorProfile: true,
       }
     })
 

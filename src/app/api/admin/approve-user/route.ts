@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
           email: user.email,
           nome: user.nome,
           status: 'REJEITADO',
-          motivoRejeicao: user.motivoRejeicao,
+          motivoRejeicao: motivo,
         }
       })
     }
