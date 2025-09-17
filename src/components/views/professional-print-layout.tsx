@@ -527,15 +527,6 @@ export default function ProfessionalPrintLayout({
                 </div>
               </div>
               
-              {totalCIF > (orcamento.total / exchangeRate) && (
-                <div className="total-row cif-total">
-                  <span>TOTAL CIF (USD):</span>
-                  <div className="price-display">
-                    <span><strong>US$ {totalCIF.toFixed(2)}</strong></span>
-                    <small>({formatCurrency(totalCIF * exchangeRate, 'BRL')})</small>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </section>
