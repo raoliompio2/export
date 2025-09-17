@@ -41,8 +41,8 @@ const empresaSchema = z.object({
   
   // Visual
   logo: z.string().url('URL inválida').optional().or(z.literal('')),
-  corPrimaria: z.string().default('#3B82F6'),
-  ativa: z.boolean().default(true)
+  corPrimaria: z.string(),
+  ativa: z.boolean()
 })
 
 type EmpresaFormData = z.infer<typeof empresaSchema>
