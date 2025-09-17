@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useLanguage } from '@/hooks/useLanguage'
 import { createSafeExportData, safeToFixed, formatCurrencySafe, debugCalculations, detectarDescontoReal } from '@/utils/safe-formatting'
 
 interface OrcamentoItem {
@@ -176,7 +177,11 @@ export default function ProfessionalPrintLayout({
   }
   const [exchangeRate, setExchangeRate] = useState(5.42)
   const [exchangeRateDate, setExchangeRateDate] = useState<string>('')
-  const t = translations[language as keyof typeof translations] || translations.en
+  const { language: currentLanguage, isLoaded } = useLanguage()
+  
+  // Usar o idioma do hook personalizado, com fallback para o prop
+  const activeLanguage = isLoaded ? currentLanguage : language
+  const t = translations[activeLanguage as keyof typeof translations] || translations.pt
 
   useEffect(() => {
     const fetchExchangeRate = async () => {
@@ -308,12 +313,12 @@ export default function ProfessionalPrintLayout({
 
         {/* TABELA DE ITENS */}
         <section className="items-section">
-          <h3 className="section-title">{t.items || (language === 'en' ? 'QUOTATION ITEMS' : 'ITENS DO ORÇAMENTO')}</h3>
+          <h3 className="section-title">{t.items || (activeLanguage === 'en' ? 'QUOTATION ITEMS' : 'ITENS DO ORÇAMENTO')}</h3>
           <table className="items-table">
             <thead>
               <tr>
                 <th className="col-product">{t.product}</th>
-                <th className="col-image">{t.image || (language === 'en' ? 'IMAGE' : 'IMAGEM')}</th>
+                <th className="col-image">{t.image || (activeLanguage === 'en' ? 'IMAGE' : 'IMAGEM')}</th>
                 <th className="col-origin">{t.origin}</th>
                 <th className="col-qty">{t.qty}</th>
                 <th className="col-price">{t.unitPrice}</th>
@@ -508,7 +513,7 @@ export default function ProfessionalPrintLayout({
               <div className="total-row grand-total">
                 <span>{t.grandTotal}:</span>
                 <div className="price-display">
-                  {language === 'en' ? (
+                  {activeLanguage === 'en' ? (
                     <>
                       <span><strong>{formatCurrency(orcamento.total, 'USD')}</strong></span>
                       <small>(<strong>{formatCurrency(orcamento.total, 'BRL')}</strong>)</small>

@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { Globe, Check } from 'lucide-react'
-import { useTranslations } from 'next-intl'
-import { useRouter, usePathname } from 'next/navigation'
+import { useLanguage } from '@/hooks/useLanguage'
 
 interface Language {
   code: string
@@ -29,45 +28,37 @@ export default function LanguageSelector({
   className = ''
 }: LanguageSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const router = useRouter()
-  const pathname = usePathname()
-  const t = useTranslations('common')
+  const { language, changeLanguage, isLoaded } = useLanguage()
 
   const handleLanguageChange = (locale: string) => {
-    // Remove locale prefix from pathname if it exists
-    const pathnameWithoutLocale = pathname.replace(/^\/[a-z]{2}/, '') || '/'
-    
-    // Create new path with selected locale
-    const newPath = locale === 'pt' ? pathnameWithoutLocale : `/${locale}${pathnameWithoutLocale}`
-    
-    // Store language preference
-    localStorage.setItem('preferred-language', locale)
-    document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000` // 1 year
-    
-    // Navigate to new path
-    router.push(newPath)
+    changeLanguage(locale as 'pt' | 'en' | 'es')
     setIsOpen(false)
   }
 
-  const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0]
+  // Aguardar carregamento inicial
+  if (!isLoaded) {
+    return <div className="w-32 h-10 bg-gray-100 rounded-lg animate-pulse" />
+  }
+
+  const currentLanguage = languages.find(lang => lang.code === language) || languages[0]
 
   if (variant === 'buttons') {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
-        {languages.map((language) => (
+        {languages.map((lang) => (
           <button
-            key={language.code}
-            onClick={() => handleLanguageChange(language.code)}
+            key={lang.code}
+            onClick={() => handleLanguageChange(lang.code)}
             className={`
               px-3 py-2 rounded-lg text-sm font-medium transition-colors
-              ${currentLocale === language.code
+              ${language === lang.code
                 ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
               }
             `}
           >
-            <span className="mr-1">{language.flag}</span>
-            {language.name}
+            <span className="mr-1">{lang.flag}</span>
+            {lang.name}
           </button>
         ))}
       </div>
@@ -104,15 +95,15 @@ export default function LanguageSelector({
           {/* Dropdown */}
           <div className="absolute right-0 z-20 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
             <div className="py-1">
-              {languages.map((language) => (
+              {languages.map((lang) => (
                 <button
-                  key={language.code}
-                  onClick={() => handleLanguageChange(language.code)}
+                  key={lang.code}
+                  onClick={() => handleLanguageChange(lang.code)}
                   className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
-                  <span>{language.flag}</span>
-                  <span className="flex-1 text-left">{language.name}</span>
-                  {currentLocale === language.code && (
+                  <span>{lang.flag}</span>
+                  <span className="flex-1 text-left">{lang.name}</span>
+                  {language === lang.code && (
                     <Check className="h-4 w-4 text-emerald-600" />
                   )}
                 </button>
@@ -124,3 +115,4 @@ export default function LanguageSelector({
     </div>
   )
 }
+
