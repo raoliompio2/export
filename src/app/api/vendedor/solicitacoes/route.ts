@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { SolicitacaoStatus } from '@prisma/client'
 import { z } from 'zod'
 
 const solicitacaoSchema = z.object({
@@ -63,14 +62,14 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingSolicitacao) {
-      if (existingSolicitacao.status === SolicitacaoStatus.PENDENTE) {
+      if (existingSolicitacao.status === 'PENDENTE') {
         return NextResponse.json({ error: 'Você já tem uma solicitação pendente para esta empresa' }, { status: 400 })
-      } else if (existingSolicitacao.status === SolicitacaoStatus.REJEITADA) {
+      } else if (existingSolicitacao.status === 'REJEITADA') {
         // Permitir nova solicitação se foi rejeitada
         await prisma.solicitacaoRepresentacao.update({
           where: { id: existingSolicitacao.id },
           data: {
-            status: SolicitacaoStatus.PENDENTE,
+            status: 'PENDENTE',
             mensagem: validatedData.mensagem,
             processadoEm: null,
             processadoPor: null
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
       data: {
         vendedorId: user.vendedorProfile.id,
         empresaId: validatedData.empresaId,
-        status: SolicitacaoStatus.PENDENTE,
+        status: 'PENDENTE',
         mensagem: validatedData.mensagem
       },
       include: {

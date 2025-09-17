@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { X, Save, Loader2, Upload } from 'lucide-react'
-import { ProdutoStatus } from '@prisma/client'
 
 const produtoSchema = z.object({
   codigo: z.string().min(1, 'Código é obrigatório'),
@@ -21,7 +20,7 @@ const produtoSchema = z.object({
   peso: z.number().min(0).optional().or(z.literal('')),
   dimensoes: z.string().optional(),
   imagemUrl: z.string().url('URL inválida').optional().or(z.literal('')),
-  status: z.nativeEnum(ProdutoStatus),
+  status: z.enum(['ATIVO', 'INATIVO', 'DESCONTINUADO']),
   destaque: z.boolean(),
 })
 

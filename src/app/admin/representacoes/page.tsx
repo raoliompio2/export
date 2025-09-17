@@ -16,13 +16,11 @@ import {
 import ModernCard from '@/components/ui/modern-card'
 import ModernButton from '@/components/ui/modern-button'
 import { useToast } from '@/components/ui/modern-toast'
-import { SolicitacaoStatus } from '@prisma/client'
-
 interface SolicitacaoRepresentacao {
   id: string
   vendedorId: string
   empresaId: string
-  status: SolicitacaoStatus
+  status: 'PENDENTE' | 'APROVADA' | 'REJEITADA'
   mensagem?: string
   createdAt: string
   vendedor: {
@@ -191,7 +189,7 @@ export default function AdminRepresentacoes() {
     )
   }
 
-  const solicitacoesPendentes = solicitacoes.filter(s => s.status === SolicitacaoStatus.PENDENTE)
+  const solicitacoesPendentes = solicitacoes.filter(s => s.status === 'PENDENTE')
   const associacoesAtivas = associacoes.filter(a => a.ativo)
 
   return (
