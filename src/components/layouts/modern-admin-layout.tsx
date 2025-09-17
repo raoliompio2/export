@@ -15,9 +15,11 @@ import {
   Menu,
   X,
   ChevronRight,
+  UserCheck,
   Bell,
   Search,
-  Globe
+  Globe,
+  Link as LinkIcon
 } from 'lucide-react'
 import LanguageSelector from '@/components/ui/language-selector'
 import ExchangeRateDisplay from '@/components/ui/exchange-rate-display'
@@ -36,10 +38,16 @@ export default function ModernAdminLayout({ children }: ModernAdminLayoutProps) 
 
   const navigation = [
     { 
-      name: t('dashboard'), 
+      name: 'Dashboard', 
       href: '/admin/dashboard', 
       icon: BarChart3,
       description: 'Visão geral do sistema'
+    },
+    { 
+      name: 'Aprovação de Usuários', 
+      href: '/admin/aprovacao-usuarios', 
+      icon: UserCheck,
+      description: 'Aprovar novos usuários'
     },
     { 
       name: 'Usuários', 
@@ -48,19 +56,25 @@ export default function ModernAdminLayout({ children }: ModernAdminLayoutProps) 
       description: 'Gestão de usuários'
     },
     { 
-      name: t('empresas'), 
+      name: 'Representações', 
+      href: '/admin/representacoes', 
+      icon: LinkIcon,
+      description: 'Aprovar vendedores'
+    },
+    { 
+      name: 'Empresas', 
       href: '/admin/empresas', 
       icon: Building2,
       description: 'Empresas cadastradas'
     },
     { 
-      name: t('produtos'), 
+      name: 'Produtos', 
       href: '/admin/produtos', 
       icon: Package,
       description: 'Catálogo de produtos'
     },
     { 
-      name: t('configuracoes'), 
+      name: 'Configurações', 
       href: '/admin/config', 
       icon: Settings,
       description: 'Config. do sistema'

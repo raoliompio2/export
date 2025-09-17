@@ -62,12 +62,18 @@ export default function VendedorEmpresas() {
 
   const fetchEmpresas = async () => {
     try {
+      // Buscar TODAS as empresas (não apenas as representadas)
       const response = await fetch('/api/empresas')
       if (!response.ok) throw new Error('Erro ao carregar empresas')
       
       const data = await response.json()
       setEmpresas(Array.isArray(data) ? data : [])
-      success('Empresas carregadas', `${data.length} empresas encontradas`)
+      
+      // Contar empresas representadas
+      const representadas = data.filter((e: Empresa) => e.vendedorEmpresa?.ativo).length
+      const disponiveis = data.length - representadas
+      
+      success('Empresas carregadas', `${representadas} representadas, ${disponiveis} disponíveis`)
     } catch (err: any) {
       error('Erro ao carregar', err.message)
       setEmpresas([])

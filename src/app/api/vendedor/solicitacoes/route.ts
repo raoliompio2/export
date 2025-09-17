@@ -51,14 +51,41 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Criar nova relação (aprovação automática por enquanto)
-    const vendedorEmpresa = await prisma.vendedorEmpresa.create({
+    // Verificar se já existe solicitação pendente
+    const existingSolicitacao = await prisma.solicitacaoRepresentacao.findUnique({
+      where: {
+        vendedorId_empresaId: {
+          vendedorId: user.vendedorProfile.id,
+          empresaId: validatedData.empresaId
+        }
+      }
+    })
+
+    if (existingSolicitacao) {
+      if (existingSolicitacao.status === 'PENDENTE') {
+        return NextResponse.json({ error: 'Você já tem uma solicitação pendente para esta empresa' }, { status: 400 })
+      } else if (existingSolicitacao.status === 'REJEITADA') {
+        // Permitir nova solicitação se foi rejeitada
+        await prisma.solicitacaoRepresentacao.update({
+          where: { id: existingSolicitacao.id },
+          data: {
+            status: 'PENDENTE',
+            mensagem: validatedData.mensagem,
+            processadoEm: null,
+            processadoPor: null
+          }
+        })
+        return NextResponse.json({ message: 'Nova solicitação enviada para análise' })
+      }
+    }
+
+    // Criar nova solicitação pendente
+    const solicitacao = await prisma.solicitacaoRepresentacao.create({
       data: {
         vendedorId: user.vendedorProfile.id,
         empresaId: validatedData.empresaId,
-        ativo: true,
-        comissao: 0,
-        meta: 0
+        status: 'PENDENTE',
+        mensagem: validatedData.mensagem
       },
       include: {
         empresa: true,
@@ -68,7 +95,12 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    return NextResponse.json(vendedorEmpresa, { status: 201 })
+    console.log(`📨 Nova solicitação criada: ${user.nome} → ${empresa.nome}`)
+
+    return NextResponse.json({
+      message: 'Solicitação enviada com sucesso! Aguarde a aprovação do administrador.',
+      solicitacao
+    }, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -89,7 +121,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
-    const solicitacoes = await prisma.vendedorEmpresa.findMany({
+    const solicitacoes = await prisma.solicitacaoRepresentacao.findMany({
       where: {
         vendedorId: user.vendedorProfile.id
       },

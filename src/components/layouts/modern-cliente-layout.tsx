@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import LanguageSelector from '@/components/ui/language-selector'
 import ExchangeRateDisplay from '@/components/ui/exchange-rate-display'
+import { useCarrinho } from '@/hooks/useCarrinho'
 
 interface ModernClienteLayoutProps {
   children: ReactNode
@@ -33,6 +34,7 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const t = useTranslations('navigation')
+  const { totalItens } = useCarrinho()
   
   const navigation = [
     { 
@@ -40,6 +42,12 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
       href: '/cliente/produtos', 
       icon: Package,
       description: 'Catálogo disponível'
+    },
+    { 
+      name: 'Carrinho', 
+      href: '/cliente/carrinho', 
+      icon: ShoppingCart,
+      description: 'Produtos selecionados'
     },
     { 
       name: t('orcamentos'), 
@@ -136,7 +144,14 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
                 </div>
                 
                 <div className="flex-1">
-                  <div className="font-medium">{item.name}</div>
+                  <div className="font-medium flex items-center gap-2">
+                    {item.name}
+                    {item.href === '/cliente/carrinho' && totalItens > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] h-5 flex items-center justify-center">
+                        {totalItens > 99 ? '99+' : totalItens}
+                      </span>
+                    )}
+                  </div>
                   <div className={`text-xs ${
                     isActive ? 'text-purple-100' : 'text-gray-400 group-hover:text-gray-300'
                   }`}>

@@ -9,6 +9,7 @@ const produtoSchema = z.object({
   nome: z.string().min(1, 'Nome é obrigatório'),
   descricao: z.string().optional(),
   categoriaId: z.string().min(1, 'Categoria é obrigatória'),
+  empresaId: z.string().min(1, 'Empresa é obrigatória'), // ADICIONADO
   preco: z.number().min(0, 'Preço deve ser positivo'),
   precoPromocional: z.number().min(0).optional(),
   unidade: z.string().default('UN'),
@@ -63,7 +64,9 @@ export async function PUT(
     
     const { id } = await params
     const body = await request.json()
+    console.log('🔧 PUT /api/produtos/[id] - Dados recebidos:', JSON.stringify(body, null, 2))
     const validatedData = produtoSchema.parse(body)
+    console.log('✅ Dados validados - empresaId:', validatedData.empresaId)
 
     // Verificar se produto existe
     const existingProduto = await prisma.produto.findUnique({

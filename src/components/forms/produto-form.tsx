@@ -126,6 +126,7 @@ export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoForm
   }
 
   const onSubmit = async (data: ProdutoFormData) => {
+    console.log('🔧 PRODUTO FORM - Dados a serem enviados:', JSON.stringify(data, null, 2))
     setIsSubmitting(true)
     try {
       // Limpar valores vazios
@@ -144,11 +145,16 @@ export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoForm
       const url = produto ? `/api/produtos/${produto.id}` : '/api/produtos'
       const method = produto ? 'PUT' : 'POST'
 
+      console.log(`🚀 Fazendo ${method} para ${url}`)
+      console.log('📦 Payload:', JSON.stringify(cleanData, null, 2))
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cleanData),
       })
+
+      console.log(`📡 Response status: ${response.status}`)
 
       if (!response.ok) {
         const error = await response.json()
@@ -231,7 +237,7 @@ export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoForm
                   )}
                 </div>
 
-                {userRole === 'ADMIN' && (
+                {(userRole === 'ADMIN' || userRole === 'VENDEDOR') && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Empresa *
@@ -239,6 +245,7 @@ export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoForm
                     <select
                       {...form.register('empresaId')}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={userRole === 'VENDEDOR' && empresas.length <= 1}
                     >
                       <option value="">Selecione uma empresa</option>
                       {empresas.map((empresa) => (
@@ -249,6 +256,11 @@ export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoForm
                     </select>
                     {form.formState.errors.empresaId && (
                       <p className="text-red-500 text-sm mt-1">{form.formState.errors.empresaId.message}</p>
+                    )}
+                    {userRole === 'VENDEDOR' && empresas.length <= 1 && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Produto será associado à sua empresa automaticamente
+                      </p>
                     )}
                   </div>
                 )}

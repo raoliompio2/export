@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser, isUserApproved } from '@/lib/auth'
 import { UserRole } from '@prisma/client'
 import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs'
 
@@ -7,13 +7,22 @@ export default async function Home() {
   const user = await getCurrentUser()
 
   if (user) {
-    // Redirecionar baseado no role do usuário
-    if (user.role === UserRole.ADMIN) {
-      redirect('/admin/dashboard')
-    } else if (user.role === UserRole.VENDEDOR) {
-      redirect('/vendedor/dashboard')
-    } else {
-      redirect('/cliente/produtos')
+    // Verificar status de aprovação
+    if (user.status === 'PENDENTE') {
+      redirect('/aguardando-aprovacao')
+    } else if (user.status === 'REJEITADO') {
+      redirect('/acesso-negado')
+    } else if (user.status === 'SUSPENSO') {
+      redirect('/conta-suspensa')
+    } else if (isUserApproved(user)) {
+      // Redirecionar baseado no role do usuário (só se aprovado)
+      if (user.role === UserRole.ADMIN) {
+        redirect('/admin/dashboard')
+      } else if (user.role === UserRole.VENDEDOR) {
+        redirect('/vendedor/dashboard')
+      } else {
+        redirect('/cliente/produtos')
+      }
     }
   }
 

@@ -21,6 +21,7 @@ import Image from 'next/image'
 import ModernButton from '@/components/ui/modern-button'
 import ModernCard from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
+import { useCarrinho } from '@/hooks/useCarrinho'
 
 interface Produto {
   id: string
@@ -64,6 +65,7 @@ export default function ClienteProdutos() {
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null)
   const [favoritos, setFavoritos] = useState<Set<string>>(new Set())
   const { success, error } = useToast()
+  const { adicionarItem, recarregar } = useCarrinho()
 
   useEffect(() => {
     fetchProdutos()
@@ -98,9 +100,14 @@ export default function ClienteProdutos() {
     }
   }
 
-  const handleSolicitarOrcamento = (produto: Produto) => {
-    // Aqui poderia abrir um modal de orçamento ou redirecionar
-    success('Solicitação enviada!', `Orçamento para ${produto.nome} foi solicitado`)
+  const adicionarAoCarrinho = async (produto: Produto, quantidade: number = 1) => {
+    const sucesso = await adicionarItem(produto.id, quantidade)
+    
+    if (sucesso) {
+      success('Adicionado ao carrinho!', `${produto.nome} foi adicionado ao carrinho`)
+    } else {
+      error('Erro ao adicionar ao carrinho', 'Tente novamente')
+    }
   }
 
   const toggleFavorito = (produtoId: string) => {
@@ -265,12 +272,12 @@ export default function ClienteProdutos() {
         
         <div className="space-y-2">
           <ModernButton
-            onClick={() => handleSolicitarOrcamento(produto)}
+            onClick={() => adicionarAoCarrinho(produto)}
             disabled={produto.estoque === 0}
             className="w-full"
             icon={<ShoppingCart className="h-4 w-4" />}
           >
-            {produto.estoque === 0 ? 'Indisponível' : 'Solicitar Orçamento'}
+            {produto.estoque === 0 ? 'Indisponível' : 'Adicionar ao Carrinho'}
           </ModernButton>
           
           {produto.estoque > 0 && (

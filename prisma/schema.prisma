@@ -17,6 +17,13 @@ enum UserRole {
   ADMIN
 }
 
+enum UserStatus {
+  PENDENTE
+  APROVADO
+  REJEITADO
+  SUSPENSO
+}
+
 // Enum para status dos orçamentos
 enum OrcamentoStatus {
   RASCUNHO
@@ -88,22 +95,27 @@ model Empresa {
   vendedores      VendedorEmpresa[]  @relation("VendedorEmpresas")
   orcamentos      Orcamento[]
   produtos        Produto[]
+  solicitacoesRepresentacao SolicitacaoRepresentacao[]
   
   @@map("empresas")
 }
 
 // Modelo de usuários (integrado com Clerk)
 model User {
-  id          String   @id @default(cuid())
-  clerkId     String   @unique
-  email       String   @unique
+  id          String     @id @default(cuid())
+  clerkId     String     @unique
+  email       String     @unique
   nome        String
-  role        UserRole @default(CLIENTE)
+  role        UserRole   @default(CLIENTE)
+  status      UserStatus @default(PENDENTE)
   telefone    String?
   avatar      String?
-  ativo       Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  ativo       Boolean    @default(true)
+  aprovadoPor String?    // ID do admin que aprovou
+  aprovadoEm  DateTime?  // Data da aprovação
+  motivoRejeicao String? // Motivo se rejeitado
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   // Relacionamentos
   clienteProfile    Cliente?
@@ -111,6 +123,7 @@ model User {
   orcamentos        Orcamento[]
   crmInteracoes     CrmInteracao[]
   notificacoes      Notificacao[]
+  solicitacoesProcessadas SolicitacaoRepresentacao[] @relation(name: "ProcessadoPor")
 
   @@map("users")
 }
@@ -129,6 +142,7 @@ model Vendedor {
   clientes   Cliente[]
   orcamentos Orcamento[]
   crmItems   CrmItem[]
+  solicitacoesRepresentacao SolicitacaoRepresentacao[]
 
   @@map("vendedores")
 }
@@ -175,6 +189,7 @@ model Cliente {
   vendedor      Vendedor?   @relation(fields: [vendedorId], references: [id])
   orcamentos    Orcamento[]
   crmItems      CrmItem[]
+  carrinhoItens CarrinhoItem[]
 
   @@map("clientes")
 }
@@ -219,6 +234,7 @@ model Produto {
   categoria       Categoria      @relation(fields: [categoriaId], references: [id])
   empresa         Empresa        @relation(fields: [empresaId], references: [id])
   orcamentoItens  OrcamentoItem[]
+  carrinhoItens   CarrinhoItem[]
 
   @@map("produtos")
 }
@@ -330,6 +346,24 @@ model CrmInteracao {
   @@map("crm_interacoes")
 }
 
+// Modelo de carrinho de orçamentos (temporário para clientes)
+model CarrinhoItem {
+  id          String   @id @default(cuid())
+  clienteId   String
+  produtoId   String
+  quantidade  Int      @default(1)
+  observacoes String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  produto     Produto  @relation(fields: [produtoId], references: [id])
+
+  @@unique([clienteId, produtoId]) // Um produto por cliente no carrinho
+  @@map("carrinho_itens")
+}
+
 // Modelo de notificações
 model Notificacao {
   id        String   @id @default(cuid())
@@ -358,4 +392,31 @@ model Configuracao {
   updatedAt DateTime @updatedAt
 
   @@map("configuracoes")
+}
+
+// Modelo de solicitações de representação
+model SolicitacaoRepresentacao {
+  id           String   @id @default(cuid())
+  vendedorId   String
+  empresaId    String
+  status       SolicitacaoStatus @default(PENDENTE)
+  mensagem     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  processadoEm DateTime?
+  processadoPor String?
+
+  // Relacionamentos
+  vendedor     Vendedor @relation(fields: [vendedorId], references: [id])
+  empresa      Empresa  @relation(fields: [empresaId], references: [id])
+  processadoPorUser User? @relation(name: "ProcessadoPor", fields: [processadoPor], references: [id])
+
+  @@unique([vendedorId, empresaId]) // Evita solicitações duplicadas
+  @@map("solicitacoes_representacao")
+}
+
+enum SolicitacaoStatus {
+  PENDENTE
+  APROVADA
+  REJEITADA
 }

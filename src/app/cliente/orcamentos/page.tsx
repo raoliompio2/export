@@ -270,7 +270,7 @@ export default function ClienteOrcamentos() {
       {/* Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <StatsCard
-          title={t('totalOrcamentos')}
+          title="Total de Orçamentos"
           value={stats.total}
           subtitle="Propostas recebidas"
           icon={<FileText className="h-5 w-5" />}
@@ -292,7 +292,7 @@ export default function ClienteOrcamentos() {
         />
         
         <StatsCard
-          title={t('valorTotal')}
+          title="Valor Total"
           value={formatCurrency(stats.valorTotal / 5.5, 'USD')}
           subtitle="Em propostas"
           icon={<DollarSign className="h-5 w-5" />}

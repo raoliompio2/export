@@ -34,26 +34,26 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    // Admin vê todas as empresas, vendedor vê apenas as suas
-    let whereCondition = {}
-    if (user.role === 'VENDEDOR' && user.vendedorProfile) {
-      // Buscar apenas empresas que o vendedor representa
-      whereCondition = {
-        vendedores: {
-          some: {
-            vendedorId: user.vendedorProfile.id,
-            ativo: true
-          }
-        }
-      }
-    } else if (user.role !== 'ADMIN') {
+    // Admin vê todas as empresas, vendedor também vê todas (mas com info sobre representação)
+    if (user.role !== 'ADMIN' && user.role !== 'VENDEDOR') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
     const empresas = await prisma.empresa.findMany({
-      where: whereCondition,
+      where: { ativa: true }, // Apenas empresas ativas
       include: {
-        vendedores: {
+        vendedores: user.vendedorProfile ? {
+          where: {
+            vendedorId: user.vendedorProfile.id
+          },
+          include: {
+            vendedor: {
+              include: {
+                user: true
+              }
+            }
+          }
+        } : {
           include: {
             vendedor: {
               include: {
@@ -73,7 +73,19 @@ export async function GET() {
       orderBy: { nome: 'asc' }
     })
 
-    return NextResponse.json(empresas)
+    // Para vendedores, adicionar campo vendedorEmpresa se aplicável
+    const empresasComInfo = empresas.map(empresa => {
+      if (user.vendedorProfile) {
+        const vendedorEmpresa = empresa.vendedores.find(ve => ve.vendedorId === user.vendedorProfile.id)
+        return {
+          ...empresa,
+          vendedorEmpresa: vendedorEmpresa || null
+        }
+      }
+      return empresa
+    })
+
+    return NextResponse.json(empresasComInfo)
   } catch (error) {
     console.error('Erro ao buscar empresas:', error)
     return NextResponse.json({ 

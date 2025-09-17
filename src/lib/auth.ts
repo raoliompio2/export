@@ -63,6 +63,7 @@ export async function getCurrentUser() {
           nome: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
           avatar: clerkUser.imageUrl,
           role: UserRole.CLIENTE, // Padrão é cliente
+          status: 'PENDENTE', // Aguarda aprovação
         },
         include: {
           clienteProfile: true,
@@ -70,13 +71,8 @@ export async function getCurrentUser() {
         }
       })
 
-      // Criar perfil de cliente por padrão
-      await prisma.cliente.create({
-        data: {
-          userId: user.id,
-        }
-      })
-      console.log('✅ Novo usuário e perfil cliente criados')
+      // NÃO criar perfil automaticamente - só após aprovação
+      console.log('✅ Novo usuário criado (PENDENTE aprovação)')
     }
   }
 
@@ -116,6 +112,87 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
   }
 
   return user
+}
+
+// Função para aprovar usuário
+export async function approveUser(userId: string, role: UserRole, adminId: string) {
+  try {
+    // Atualizar status e role do usuário
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        status: 'APROVADO',
+        role: role,
+        aprovadoPor: adminId,
+        aprovadoEm: new Date(),
+        motivoRejeicao: null, // Limpar se havia
+      },
+      include: {
+        clienteProfile: true,
+        vendedorProfile: true,
+      }
+    })
+
+    // Criar perfil baseado no role aprovado
+    if (role === UserRole.CLIENTE && !user.clienteProfile) {
+      await prisma.cliente.create({
+        data: { userId: user.id }
+      })
+    } else if (role === UserRole.VENDEDOR && !user.vendedorProfile) {
+      await prisma.vendedor.create({
+        data: { userId: user.id }
+      })
+    }
+
+    console.log(`✅ Usuário ${user.email} aprovado como ${role}`)
+    return user
+  } catch (error) {
+    console.error('❌ Erro ao aprovar usuário:', error)
+    throw error
+  }
+}
+
+// Função para rejeitar usuário
+export async function rejectUser(userId: string, motivo: string, adminId: string) {
+  try {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        status: 'REJEITADO',
+        aprovadoPor: adminId,
+        aprovadoEm: new Date(),
+        motivoRejeicao: motivo,
+      }
+    })
+
+    console.log(`❌ Usuário ${user.email} rejeitado: ${motivo}`)
+    return user
+  } catch (error) {
+    console.error('❌ Erro ao rejeitar usuário:', error)
+    throw error
+  }
+}
+
+// Função para verificar se usuário está aprovado
+export function isUserApproved(user: any): boolean {
+  return user?.status === 'APROVADO'
+}
+
+// Função para obter usuários pendentes (para admins)
+export async function getPendingUsers() {
+  try {
+    return await prisma.user.findMany({
+      where: { status: 'PENDENTE' },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        clienteProfile: true,
+        vendedorProfile: true,
+      }
+    })
+  } catch (error) {
+    console.error('❌ Erro ao buscar usuários pendentes:', error)
+    return []
+  }
 }
 
 export async function requireAuth() {
