@@ -6,25 +6,25 @@ import { z } from 'zod'
 const empresaSchema = z.object({
   nome: z.string().min(1, 'Nome é obrigatório'),
   nomeFantasia: z.string().optional(),
-  cnpj: z.string().min(1, 'CNPJ é obrigatório'),
+  cnpj: z.string().min(14, 'CNPJ deve ter 14 dígitos'),
   inscricaoEstadual: z.string().optional(),
   inscricaoMunicipal: z.string().optional(),
   email: z.string().email('Email inválido'),
-  telefone: z.string().optional(),
-  website: z.string().optional(),
+  telefone: z.string().min(10, 'Telefone inválido'),
+  website: z.string().url('Website inválido').optional().or(z.literal('')),
   endereco: z.string().min(1, 'Endereço é obrigatório'),
-  numero: z.string().optional(),
+  numero: z.string().min(1, 'Número é obrigatório'),
   complemento: z.string().optional(),
   bairro: z.string().min(1, 'Bairro é obrigatório'),
   cidade: z.string().min(1, 'Cidade é obrigatória'),
-  estado: z.string().length(2, 'Estado deve ter 2 caracteres'),
-  cep: z.string().min(1, 'CEP é obrigatório'),
+  estado: z.string().min(2, 'Estado é obrigatório'),
+  cep: z.string().min(8, 'CEP deve ter 8 dígitos'),
   banco: z.string().optional(),
   agencia: z.string().optional(),
   conta: z.string().optional(),
-  logo: z.string().optional(),
-  corPrimaria: z.string().default('#3B82F6'),
-  ativa: z.boolean().default(true)
+  logo: z.string().url('URL inválida').optional().or(z.literal('')),
+  corPrimaria: z.string(),
+  ativa: z.boolean()
 })
 
 export async function GET() {
