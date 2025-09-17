@@ -11,14 +11,14 @@ const empresaSchema = z.object({
   inscricaoMunicipal: z.string().optional(),
   email: z.string().email('Email inválido'),
   telefone: z.string().min(10, 'Telefone inválido'),
-  website: z.string().url('Website inválido').optional().or(z.literal('')),
+  website: z.string().optional(),
   endereco: z.string().min(1, 'Endereço é obrigatório'),
   numero: z.string().min(1, 'Número é obrigatório'),
   complemento: z.string().optional(),
   bairro: z.string().min(1, 'Bairro é obrigatório'),
   cidade: z.string().min(1, 'Cidade é obrigatória'),
   estado: z.string().min(2, 'Estado é obrigatório'),
-  cep: z.string().min(8, 'CEP deve ter 8 dígitos'),
+  cep: z.string().min(1, 'CEP é obrigatório'),
   banco: z.string().optional(),
   agencia: z.string().optional(),
   conta: z.string().optional(),
@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+    console.log('📥 Dados recebidos para criar empresa:', body)
     const validatedData = empresaSchema.parse(body)
 
     // Verificar se CNPJ já existe
@@ -120,6 +121,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(empresa, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error('❌ Erro de validação Zod:', error.issues)
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.issues },
         { status: 400 }

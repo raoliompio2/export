@@ -23,7 +23,7 @@ const empresaSchema = z.object({
   // Contato
   email: z.string().email('Email inválido'),
   telefone: z.string().min(10, 'Telefone inválido'),
-  website: z.string().url('Website inválido').optional().or(z.literal('')),
+  website: z.string().optional(),
   
   // Endereço
   endereco: z.string().min(1, 'Endereço é obrigatório'),
@@ -32,7 +32,7 @@ const empresaSchema = z.object({
   bairro: z.string().min(1, 'Bairro é obrigatório'),
   cidade: z.string().min(1, 'Cidade é obrigatória'),
   estado: z.string().min(2, 'Estado é obrigatório'),
-  cep: z.string().min(8, 'CEP deve ter 8 dígitos'),
+  cep: z.string().min(1, 'CEP é obrigatório'),
   
   // Financeiro
   banco: z.string().optional(),
@@ -120,6 +120,8 @@ export default function ModernEmpresaForm({ empresa, onClose, onSuccess }: Moder
     
     try {
       const values = form.getValues()
+      console.log('📤 Dados sendo enviados:', JSON.stringify(values, null, 2))
+      
       const url = empresa ? `/api/empresas/${empresa.id}` : '/api/empresas'
       const method = empresa ? 'PUT' : 'POST'
 
@@ -131,6 +133,13 @@ export default function ModernEmpresaForm({ empresa, onClose, onSuccess }: Moder
 
       if (!response.ok) {
         const error = await response.json()
+        console.error('❌ Erro da API:', JSON.stringify(error, null, 2))
+        if (error.details) {
+          console.error('❌ Detalhes da validação:', JSON.stringify(error.details, null, 2))
+          error.details.forEach((detail, index) => {
+            console.error(`❌ Erro ${index + 1}:`, JSON.stringify(detail, null, 2))
+          })
+        }
         throw new Error(error.error || 'Erro ao salvar empresa')
       }
 

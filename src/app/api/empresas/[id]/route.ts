@@ -11,14 +11,14 @@ const empresaUpdateSchema = z.object({
   inscricaoMunicipal: z.string().optional(),
   email: z.string().email('Email inválido'),
   telefone: z.string().min(10, 'Telefone inválido'),
-  website: z.string().url('Website inválido').optional().or(z.literal('')),
+  website: z.string().optional(),
   endereco: z.string().min(1, 'Endereço é obrigatório'),
   numero: z.string().min(1, 'Número é obrigatório'),
   complemento: z.string().optional(),
   bairro: z.string().min(1, 'Bairro é obrigatório'),
   cidade: z.string().min(1, 'Cidade é obrigatória'),
   estado: z.string().min(2, 'Estado é obrigatório'),
-  cep: z.string().min(8, 'CEP deve ter 8 dígitos'),
+  cep: z.string().min(1, 'CEP é obrigatório'),
   banco: z.string().optional(),
   agencia: z.string().optional(),
   conta: z.string().optional(),
@@ -81,6 +81,7 @@ export async function PUT(
     }
 
     const body = await request.json()
+    console.log('📥 Dados recebidos para atualizar empresa:', body)
     const validatedData = empresaUpdateSchema.parse(body)
 
     // Verificar se empresa existe
@@ -94,6 +95,7 @@ export async function PUT(
 
 
     // Verificar se CNPJ já existe em outra empresa
+    console.log('🔍 Verificando CNPJ:', validatedData.cnpj, 'para empresa ID:', id)
     const empresaComMesmoCNPJ = await prisma.empresa.findFirst({
       where: { 
         cnpj: validatedData.cnpj,
@@ -102,11 +104,14 @@ export async function PUT(
     })
 
     if (empresaComMesmoCNPJ) {
+      console.log('❌ CNPJ duplicado encontrado:', empresaComMesmoCNPJ.nome)
       return NextResponse.json(
         { error: 'CNPJ já cadastrado para outra empresa' },
         { status: 400 }
       )
     }
+    
+    console.log('✅ CNPJ válido, prosseguindo com update...')
 
     const empresa = await prisma.empresa.update({
       where: { id: id },
@@ -116,6 +121,7 @@ export async function PUT(
     return NextResponse.json(empresa)
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error('❌ Erro de validação Zod na atualização:', error.issues)
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.issues },
         { status: 400 }
