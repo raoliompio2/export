@@ -34,6 +34,7 @@ async function cadastrarGTAColombia() {
       where: { email: 'export@vibromak.com.br' },
       update: {},
       create: {
+        clerkId: 'user_gta_colombia_paulina',
         nome: 'Paulina',
         email: 'export@vibromak.com.br',
         telefone: '+57 (1) 234-5678',
