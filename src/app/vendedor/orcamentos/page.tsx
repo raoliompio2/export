@@ -172,7 +172,10 @@ export default function VendedorOrcamentos() {
       render: (orcamento: Orcamento) => (
         <div className="text-right">
           <div className="font-semibold text-gray-900">
-            R$ {orcamento.total.toLocaleString('pt-BR')}
+            R$ {orcamento.total.toLocaleString('pt-BR', { 
+              minimumFractionDigits: 2, 
+              maximumFractionDigits: 2 
+            })}
           </div>
           <div className="text-sm text-gray-500">
             {orcamento._count?.items || 0} itens
@@ -287,7 +290,7 @@ export default function VendedorOrcamentos() {
         
         <StatsCard
           title="Valor Total"
-          value={`R$ ${(stats.valorTotal / 1000).toFixed(0)}k`}
+          value={`R$ ${Math.round(stats.valorTotal / 1000)}k`}
           subtitle="Em propostas"
           icon={<DollarSign className="h-5 w-5" />}
           trend={{ value: 18.7, label: 'vs mês anterior' }}
