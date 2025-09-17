@@ -1,0 +1,128 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "produtos": "Produtos",
+    "orcamentos": "Orçamentos",
+    "clientes": "Clientes",
+    "empresas": "Empresas",
+    "crm": "CRM",
+    "perfil": "Perfil",
+    "configuracoes": "Configurações",
+    "sair": "Sair"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bem-vindo",
+    "totalOrcamentos": "Total de Orçamentos",
+    "orcamentosEnviados": "Orçamentos Enviados",
+    "orcamentosAprovados": "Orçamentos Aprovados",
+    "valorTotal": "Valor Total",
+    "vendas": "Vendas",
+    "receita": "Receita",
+    "meta": "Meta"
+  },
+  "orcamentos": {
+    "title": "Orçamentos",
+    "meusOrcamentos": "Meus Orçamentos",
+    "novoOrcamento": "Novo Orçamento",
+    "numero": "Número",
+    "cliente": "Cliente",
+    "vendedor": "Vendedor",
+    "empresa": "Empresa",
+    "valor": "Valor",
+    "status": {
+      "rascunho": "Rascunho",
+      "enviado": "Enviado",
+      "aprovado": "Aprovado",
+      "rejeitado": "Rejeitado",
+      "expirado": "Expirado"
+    },
+    "acoes": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "aprovar": "Aprovar",
+      "rejeitar": "Rejeitar",
+      "exportar": "Exportar"
+    },
+    "proforma": {
+      "title": "Proforma Invoice",
+      "invoice": "Invoice",
+      "numero": "Nº",
+      "data": "Data",
+      "validadeAte": "Válido até",
+      "vendedor": "Vendedor",
+      "empresa": "Empresa",
+      "cliente": "Cliente",
+      "produto": "Produto",
+      "quantidade": "Qtd",
+      "precoUnitario": "Preço Unit.",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "desconto": "Desconto",
+      "frete": "Frete",
+      "valorTotal": "Valor Total",
+      "condicoesPagamento": "Condições de Pagamento",
+      "prazoEntrega": "Prazo de Entrega",
+      "observacoes": "Observações"
+    }
+  },
+  "produtos": {
+    "title": "Produtos",
+    "codigo": "Código",
+    "nome": "Nome",
+    "descricao": "Descrição",
+    "categoria": "Categoria",
+    "preco": "Preço",
+    "precoPromocional": "Preço Promocional",
+    "precoReal": "Preço (R$)",
+    "precoDolar": "Preço (US$)",
+    "unidade": "Unidade",
+    "estoque": "Estoque",
+    "status": "Status",
+    "moedas": {
+      "real": "Real (R$)",
+      "dolar": "Dólar (US$)"
+    }
+  },
+  "clientes": {
+    "title": "Clientes",
+    "nome": "Nome",
+    "empresa": "Empresa",
+    "email": "E-mail",
+    "telefone": "Telefone",
+    "endereco": "Endereço",
+    "cidade": "Cidade",
+    "estado": "Estado"
+  },
+  "common": {
+    "salvar": "Salvar",
+    "cancelar": "Cancelar",
+    "editar": "Editar",
+    "excluir": "Excluir",
+    "buscar": "Buscar",
+    "filtrar": "Filtrar",
+    "carregando": "Carregando...",
+    "erro": "Erro",
+    "sucesso": "Sucesso",
+    "confirmar": "Confirmar",
+    "voltar": "Voltar",
+    "proximo": "Próximo",
+    "anterior": "Anterior",
+    "todos": "Todos",
+    "nenhum": "Nenhum",
+    "selecionar": "Selecionar",
+    "moeda": "Moeda",
+    "idioma": "Idioma",
+    "portugues": "Português",
+    "ingles": "Inglês",
+    "espanhol": "Espanhol"
+  },
+  "toast": {
+    "sucesso": "Operação realizada com sucesso!",
+    "erro": "Ocorreu um erro. Tente novamente.",
+    "carregandoOrcamentos": "Carregando orçamentos...",
+    "orcamentosCarregados": "Orçamentos carregados",
+    "orcamentoAprovado": "Orçamento aprovado!",
+    "orcamentoRejeitado": "Orçamento rejeitado!"
+  }
+}

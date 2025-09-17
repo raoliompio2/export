@@ -1,0 +1,128 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "produtos": "Productos",
+    "orcamentos": "Cotizaciones",
+    "clientes": "Clientes",
+    "empresas": "Empresas",
+    "crm": "CRM",
+    "perfil": "Perfil",
+    "configuracoes": "Configuración",
+    "sair": "Cerrar Sesión"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bienvenido",
+    "totalOrcamentos": "Total de Cotizaciones",
+    "orcamentosEnviados": "Cotizaciones Enviadas",
+    "orcamentosAprovados": "Cotizaciones Aprobadas",
+    "valorTotal": "Valor Total",
+    "vendas": "Ventas",
+    "receita": "Ingresos",
+    "meta": "Meta"
+  },
+  "orcamentos": {
+    "title": "Cotizaciones",
+    "meusOrcamentos": "Mis Cotizaciones",
+    "novoOrcamento": "Nueva Cotización",
+    "numero": "Número",
+    "cliente": "Cliente",
+    "vendedor": "Vendedor",
+    "empresa": "Empresa",
+    "valor": "Valor",
+    "status": {
+      "rascunho": "Borrador",
+      "enviado": "Enviado",
+      "aprovado": "Aprobado",
+      "rejeitado": "Rechazado",
+      "expirado": "Expirado"
+    },
+    "acoes": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "aprovar": "Aprobar",
+      "rejeitar": "Rechazar",
+      "exportar": "Exportar"
+    },
+    "proforma": {
+      "title": "Factura Proforma",
+      "invoice": "Factura",
+      "numero": "Nº",
+      "data": "Fecha",
+      "validadeAte": "Válido hasta",
+      "vendedor": "Vendedor",
+      "empresa": "Empresa",
+      "cliente": "Cliente",
+      "produto": "Producto",
+      "quantidade": "Cant",
+      "precoUnitario": "Precio Unit.",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "desconto": "Descuento",
+      "frete": "Envío",
+      "valorTotal": "Valor Total",
+      "condicoesPagamento": "Condiciones de Pago",
+      "prazoEntrega": "Plazo de Entrega",
+      "observacoes": "Observaciones"
+    }
+  },
+  "produtos": {
+    "title": "Productos",
+    "codigo": "Código",
+    "nome": "Nombre",
+    "descricao": "Descripción",
+    "categoria": "Categoría",
+    "preco": "Precio",
+    "precoPromocional": "Precio Promocional",
+    "precoReal": "Precio (R$)",
+    "precoDolar": "Precio (US$)",
+    "unidade": "Unidad",
+    "estoque": "Stock",
+    "status": "Estado",
+    "moedas": {
+      "real": "Real (R$)",
+      "dolar": "Dólar (US$)"
+    }
+  },
+  "clientes": {
+    "title": "Clientes",
+    "nome": "Nombre",
+    "empresa": "Empresa",
+    "email": "Correo",
+    "telefone": "Teléfono",
+    "endereco": "Dirección",
+    "cidade": "Ciudad",
+    "estado": "Estado"
+  },
+  "common": {
+    "salvar": "Guardar",
+    "cancelar": "Cancelar",
+    "editar": "Editar",
+    "excluir": "Eliminar",
+    "buscar": "Buscar",
+    "filtrar": "Filtrar",
+    "carregando": "Cargando...",
+    "erro": "Error",
+    "sucesso": "Éxito",
+    "confirmar": "Confirmar",
+    "voltar": "Volver",
+    "proximo": "Siguiente",
+    "anterior": "Anterior",
+    "todos": "Todos",
+    "nenhum": "Ninguno",
+    "selecionar": "Seleccionar",
+    "moeda": "Moneda",
+    "idioma": "Idioma",
+    "portugues": "Portugués",
+    "ingles": "Inglés",
+    "espanhol": "Español"
+  },
+  "toast": {
+    "sucesso": "¡Operación completada con éxito!",
+    "erro": "Ocurrió un error. Inténtalo de nuevo.",
+    "carregandoOrcamentos": "Cargando cotizaciones...",
+    "orcamentosCarregados": "Cotizaciones cargadas",
+    "orcamentoAprovado": "¡Cotización aprobada!",
+    "orcamentoRejeitado": "¡Cotización rechazada!"
+  }
+}

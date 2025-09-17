@@ -1,0 +1,826 @@
+/* ===============================================
+   LAYOUT PROFISSIONAL PARA IMPRESSÃO A4
+   Otimizado para geração de PDF de qualidade AAA+
+   =============================================== */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm 20mm;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 10pt;
+    line-height: 1.3;
+    color: #000;
+    background: #fff;
+  }
+}
+
+/* ===============================================
+   LAYOUT PRINCIPAL
+   =============================================== */
+
+.professional-print-layout {
+  width: 210mm;
+  margin: 0 auto;
+  background: white;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  font-size: 10pt;
+  line-height: 1.3;
+  color: #000;
+}
+
+@media print {
+  .professional-print-layout {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+.print-page {
+  width: 100%;
+  background: white;
+  padding: 20pt;
+  box-sizing: border-box;
+}
+
+@media print {
+  .print-page {
+    padding: 0;
+  }
+}
+
+/* ===============================================
+   CABEÇALHO
+   =============================================== */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 15pt;
+  border-bottom: 2pt solid #000;
+  margin-bottom: 20pt;
+  page-break-inside: avoid;
+}
+
+.company-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12pt;
+  flex: 1;
+}
+
+.company-logo {
+  width: 60pt;
+  height: 60pt;
+  flex-shrink: 0;
+}
+
+.company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.company-details {
+  flex: 1;
+}
+
+.company-name {
+  font-size: 16pt;
+  font-weight: bold;
+  margin: 0 0 6pt 0;
+  color: #000;
+}
+
+.company-address {
+  font-size: 9pt;
+  line-height: 1.2;
+}
+
+.company-address p {
+  margin: 1pt 0;
+  color: #333;
+}
+
+.document-info {
+  text-align: right;
+  min-width: 120pt;
+}
+
+.document-title {
+  font-size: 14pt;
+  font-weight: bold;
+  margin: 0 0 8pt 0;
+  color: #2563eb;
+  letter-spacing: 0.5pt;
+}
+
+.document-details {
+  font-size: 9pt;
+  line-height: 1.3;
+}
+
+.document-details p {
+  margin: 2pt 0;
+  color: #333;
+}
+
+/* ===============================================
+   SEÇÕES DE INFORMAÇÃO
+   =============================================== */
+
+.main-info {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 15pt;
+  margin-bottom: 20pt;
+}
+
+.info-block {
+  background: #f8f9fa;
+  padding: 12pt;
+  border-left: 3pt solid #2563eb;
+}
+
+.section-title {
+  font-size: 11pt;
+  font-weight: bold;
+  margin: 0 0 8pt 0;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 0.3pt;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6pt;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1pt;
+}
+
+.info-item strong {
+  font-size: 8pt;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2pt;
+}
+
+.info-item span {
+  font-size: 9pt;
+  color: #000;
+  font-weight: 500;
+}
+
+/* ===============================================
+   CONDIÇÕES COMERCIAIS
+   =============================================== */
+
+.commercial-conditions {
+  background: #e1f5fe;
+  padding: 12pt;
+  margin-bottom: 20pt;
+  border-left: 3pt solid #0277bd;
+}
+
+.conditions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8pt 15pt;
+}
+
+.condition-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9pt;
+}
+
+.condition-item strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.condition-item span {
+  color: #000;
+  font-weight: 500;
+}
+
+/* ===============================================
+   TABELA DE ITENS
+   =============================================== */
+
+.items-section {
+  margin-bottom: 20pt;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8pt;
+  font-size: 9pt;
+  border: 1pt solid #333;
+}
+
+.items-table thead {
+  background: #f1f5f9;
+}
+
+.items-table th {
+  padding: 8pt 6pt;
+  text-align: left;
+  font-weight: bold;
+  font-size: 8pt;
+  color: #000;
+  border: 1pt solid #333;
+  text-transform: uppercase;
+  letter-spacing: 0.2pt;
+}
+
+.items-table td {
+  padding: 6pt;
+  border: 1pt solid #ddd;
+  vertical-align: top;
+}
+
+.row-even {
+  background: #fff;
+}
+
+.row-odd {
+  background: #f8f9fa;
+}
+
+/* Colunas específicas */
+.col-product { width: 25%; }
+.col-image { width: 15%; text-align: center; }
+.col-origin { width: 8%; text-align: center; }
+.col-qty { width: 8%; text-align: center; }
+.col-price { width: 20%; text-align: right; }
+.col-discount { width: 8%; text-align: center; }
+.col-total { width: 16%; text-align: right; }
+
+.product-cell {
+  font-size: 9pt;
+}
+
+.product-info strong {
+  font-weight: 600;
+  color: #000;
+}
+
+.product-info small {
+  font-size: 7pt;
+  color: #666;
+}
+
+.image-cell {
+  text-align: center;
+  vertical-align: middle;
+  padding: 4pt;
+}
+
+.product-image {
+  width: 40pt;
+  height: 30pt;
+  object-fit: cover;
+  border-radius: 2pt;
+  border: 1pt solid #ddd;
+  display: block;
+  margin: 0 auto;
+}
+
+.no-image {
+  width: 40pt;
+  height: 30pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border: 1pt solid #ddd;
+  border-radius: 2pt;
+  font-size: 16pt;
+  color: #999;
+  margin: 0 auto;
+}
+
+@media print {
+  .product-image {
+    width: 30pt;
+    height: 22pt;
+  }
+  
+  .no-image {
+    width: 30pt;
+    height: 22pt;
+    font-size: 12pt;
+  }
+}
+
+.origin-cell,
+.qty-cell {
+  text-align: center;
+  font-weight: 600;
+  color: #000;
+}
+
+.price-cell,
+.total-cell {
+  text-align: right;
+}
+
+.price-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1pt;
+}
+
+.price-display div {
+  font-weight: 600;
+  color: #000;
+}
+
+.price-display small {
+  font-size: 7pt;
+  color: #666;
+  font-weight: normal;
+}
+
+/* ===============================================
+   LOGÍSTICA
+   =============================================== */
+
+.logistics-section {
+  background: #f0f9ff;
+  padding: 12pt;
+  margin-bottom: 20pt;
+  border-left: 3pt solid #0891b2;
+}
+
+.logistics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6pt 12pt;
+}
+
+.logistics-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8pt;
+}
+
+.logistics-item strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.logistics-item span {
+  color: #000;
+  font-weight: 500;
+}
+
+/* ===============================================
+   FRETE INTERNACIONAL
+   =============================================== */
+
+.freight-section {
+  margin-top: 12pt;
+  padding-top: 12pt;
+  border-top: 1pt solid #e5e7eb;
+}
+
+.freight-title {
+  font-size: 10pt;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8pt;
+  text-transform: uppercase;
+}
+
+.freight-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6pt;
+}
+
+.freight-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8pt;
+  padding: 3pt 0;
+}
+
+.freight-item strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.freight-item span {
+  color: #000;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.freight-total {
+  grid-column: 1 / -1;
+  border-top: 1pt solid #333;
+  padding-top: 6pt;
+  margin-top: 6pt;
+  font-size: 9pt;
+}
+
+.freight-total strong {
+  color: #000;
+  font-weight: bold;
+}
+
+/* ===============================================
+   LAYOUT COMPACTO - MENOS ESPAÇO
+   =============================================== */
+
+.logistics-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 3pt;
+  font-size: 8pt;
+}
+
+.logistics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12pt;
+}
+
+.logistics-col {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2pt 0;
+}
+
+.logistics-col strong {
+  color: #333;
+  font-weight: 600;
+  margin-right: 6pt;
+}
+
+/* FRETE COMPACTO */
+.freight-compact {
+  margin-top: 6pt;
+}
+
+.freight-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1pt;
+  font-size: 8pt;
+  border: 1pt solid #ddd;
+  border-radius: 2pt;
+  overflow: hidden;
+}
+
+.freight-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3pt 6pt;
+  background: #f9f9f9;
+}
+
+.freight-row:nth-child(even) {
+  background: #f5f5f5;
+}
+
+.freight-row.freight-total {
+  background: #e5e7eb;
+  border-top: 1pt solid #333;
+  font-weight: bold;
+  padding: 4pt 6pt;
+}
+
+.freight-row span {
+  font-family: 'Courier New', monospace;
+}
+
+.freight-row strong {
+  color: #000;
+}
+
+/* ===============================================
+   BLOCO DE INFORMAÇÕES COMPACTO
+   =============================================== */
+
+.main-info-compact {
+  margin: 12pt 0;
+}
+
+.info-table {
+  width: 100%;
+  border: 1pt solid #333;
+  border-radius: 0;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1pt solid #ddd;
+}
+
+.info-cell {
+  padding: 8pt;
+  border-right: 1pt solid #ddd;
+  font-size: 8pt;
+  vertical-align: top;
+}
+
+.info-cell:last-child {
+  border-right: none;
+}
+
+.info-cell strong {
+  display: block;
+  font-size: 7pt;
+  font-weight: bold;
+  color: #333;
+  text-transform: uppercase;
+  margin-bottom: 4pt;
+  border-bottom: 1pt solid #eee;
+  padding-bottom: 2pt;
+}
+
+.client-details,
+.contact-details,
+.seller-details {
+  color: #000;
+  line-height: 1.3;
+  font-family: 'Arial', sans-serif;
+}
+
+.client-details {
+  font-weight: 500;
+}
+
+.contact-details,
+.seller-details {
+  font-size: 7.5pt;
+}
+
+/* ===============================================
+   TOTAIS
+   =============================================== */
+
+.totals-section {
+  background: #f7fee7;
+  padding: 15pt;
+  border-left: 3pt solid #65a30d;
+  margin-bottom: 20pt;
+}
+
+.totals-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.exchange-info {
+  flex: 1;
+}
+
+.exchange-rate {
+  display: flex;
+  flex-direction: column;
+  gap: 2pt;
+  font-size: 9pt;
+}
+
+.exchange-rate strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.exchange-rate span {
+  color: #000;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.totals-table {
+  min-width: 200pt;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3pt 0;
+  border-bottom: 1pt solid #e5e7eb;
+  font-size: 9pt;
+}
+
+.total-row:last-child {
+  border-bottom: none;
+}
+
+.total-row span:first-child {
+  color: #333;
+  font-weight: 500;
+}
+
+.total-row .price-display {
+  align-items: flex-end;
+}
+
+.grand-total {
+  border-top: 2pt solid #333;
+  padding-top: 6pt;
+  margin-top: 6pt;
+  font-size: 10pt;
+}
+
+.grand-total span:first-child {
+  font-weight: bold;
+  color: #000;
+}
+
+.cif-total {
+  background: rgba(37, 99, 235, 0.1);
+  padding: 6pt;
+  margin: 6pt -6pt 0 -6pt;
+  border-radius: 3pt;
+  border: 1pt solid #2563eb;
+}
+
+.cif-total span:first-child {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.discount .price-display span,
+.discount .price-display small {
+  color: #dc2626;
+}
+
+/* ===============================================
+   OBSERVAÇÕES
+   =============================================== */
+
+.notes-section {
+  background: #fef3c7;
+  padding: 12pt;
+  border-left: 3pt solid #f59e0b;
+  margin-bottom: 20pt;
+}
+
+.notes-content {
+  font-size: 8pt;
+  line-height: 1.4;
+}
+
+.notes-content p {
+  margin: 4pt 0;
+  color: #000;
+}
+
+.notes-content strong {
+  font-weight: 600;
+  color: #92400e;
+}
+
+/* ===============================================
+   RODAPÉ
+   =============================================== */
+
+.page-footer {
+  border-top: 1pt solid #ddd;
+  padding-top: 8pt;
+  margin-top: 20pt;
+  text-align: center;
+}
+
+.footer-content {
+  font-size: 8pt;
+  color: #666;
+  line-height: 1.3;
+}
+
+.footer-content p {
+  margin: 2pt 0;
+}
+
+/* ===============================================
+   QUEBRAS DE PÁGINA
+   =============================================== */
+
+@media print {
+  .page-header,
+  .main-info,
+  .commercial-conditions,
+  .items-section,
+  .logistics-section,
+  .totals-section,
+  .notes-section {
+    page-break-inside: avoid;
+  }
+  
+  .items-table tr {
+    page-break-inside: avoid;
+  }
+  
+  .totals-section {
+    page-break-before: avoid;
+  }
+}
+
+/* ===============================================
+   RESPONSIVIDADE PARA PREVIEW
+   =============================================== */
+
+@media screen and (max-width: 768px) {
+  .professional-print-layout {
+    width: 100%;
+    max-width: 100vw;
+    font-size: 12pt;
+  }
+  
+  .print-page {
+    padding: 15pt;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 15pt;
+  }
+  
+  .document-info {
+    text-align: left;
+  }
+  
+  .main-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .conditions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .logistics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .totals-layout {
+    flex-direction: column;
+    gap: 10pt;
+  }
+  
+  .items-table {
+    font-size: 8pt;
+  }
+  
+  .col-description {
+    display: none;
+  }
+  
+  .col-product { width: 30%; }
+  .col-origin { width: 10%; }
+  .col-qty { width: 10%; }
+  .col-price { width: 25%; }
+  .col-total { width: 25%; }
+}
+
+/* ===============================================
+   PREVIEW NA TELA
+   =============================================== */
+
+@media screen {
+  .professional-print-layout {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px auto;
+    max-width: 210mm;
+  }
+  
+  .print-page {
+    min-height: 297mm; /* A4 height */
+  }
+}

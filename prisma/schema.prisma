@@ -1,0 +1,361 @@
+// Schema para Painel de Exportação
+// Sistema completo de vendas com autenticação Clerk
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum para tipos de usuário
+enum UserRole {
+  VENDEDOR
+  CLIENTE
+  ADMIN
+}
+
+// Enum para status dos orçamentos
+enum OrcamentoStatus {
+  RASCUNHO
+  ENVIADO
+  APROVADO
+  REJEITADO
+  EXPIRADO
+}
+
+// Enum para status dos produtos
+enum ProdutoStatus {
+  ATIVO
+  INATIVO
+  DESCONTINUADO
+}
+
+// Enum para prioridade do CRM
+enum CrmPrioridade {
+  BAIXA
+  MEDIA
+  ALTA
+  URGENTE
+}
+
+// Enum para status do CRM
+enum CrmStatus {
+  ABERTO
+  EM_ANDAMENTO
+  AGUARDANDO_CLIENTE
+  RESOLVIDO
+  FECHADO
+}
+
+// Modelo para empresas/representadas
+model Empresa {
+  id              String   @id @default(cuid())
+  nome            String
+  nomeFantasia    String?
+  cnpj            String   @unique
+  inscricaoEstadual String?
+  inscricaoMunicipal String?
+  email           String
+  telefone        String?
+  website         String?
+  
+  // Endereço
+  endereco        String
+  numero          String?
+  complemento     String?
+  bairro          String
+  cidade          String
+  estado          String   @db.Char(2)
+  cep             String
+  
+  // Dados bancários
+  banco           String?
+  agencia         String?
+  conta           String?
+  
+  // Configurações
+  logo            String?
+  corPrimaria     String   @default("#3B82F6")
+  ativa           Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relacionamentos
+  vendedores      VendedorEmpresa[]  @relation("VendedorEmpresas")
+  orcamentos      Orcamento[]
+  produtos        Produto[]
+  
+  @@map("empresas")
+}
+
+// Modelo de usuários (integrado com Clerk)
+model User {
+  id          String   @id @default(cuid())
+  clerkId     String   @unique
+  email       String   @unique
+  nome        String
+  role        UserRole @default(CLIENTE)
+  telefone    String?
+  avatar      String?
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  clienteProfile    Cliente?
+  vendedorProfile   Vendedor?
+  orcamentos        Orcamento[]
+  crmInteracoes     CrmInteracao[]
+  notificacoes      Notificacao[]
+
+  @@map("users")
+}
+
+// Modelo específico para vendedores
+model Vendedor {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  comissao  Decimal @default(0)
+  meta      Decimal @default(0)
+  ativo     Boolean @default(true)
+
+  // Relacionamentos
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  empresas   VendedorEmpresa[]   // N:N com empresas
+  clientes   Cliente[]
+  orcamentos Orcamento[]
+  crmItems   CrmItem[]
+
+  @@map("vendedores")
+}
+
+// Tabela de relacionamento N:N entre Vendedor e Empresa
+model VendedorEmpresa {
+  id          String   @id @default(cuid())
+  vendedorId  String
+  empresaId   String
+  vendedor    Vendedor @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
+  empresa     Empresa  @relation("VendedorEmpresas", fields: [empresaId], references: [id], onDelete: Cascade)
+  ativo       Boolean  @default(true)
+  comissao    Decimal? // Comissão específica para esta empresa
+  meta        Decimal? // Meta específica para esta empresa
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  orcamentos  Orcamento[]
+
+  @@unique([vendedorId, empresaId])
+  @@map("vendedor_empresas")
+}
+
+// Modelo específico para clientes
+model Cliente {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  vendedorId    String?
+  empresa       String?
+  cnpj          String?
+  cpf           String?
+  endereco      String?
+  cidade        String?
+  estado        String?
+  cep           String?
+  observacoes   String?
+  ativo         Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relacionamentos
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendedor      Vendedor?   @relation(fields: [vendedorId], references: [id])
+  orcamentos    Orcamento[]
+  crmItems      CrmItem[]
+
+  @@map("clientes")
+}
+
+// Modelo de categorias de produtos
+model Categoria {
+  id          String   @id @default(cuid())
+  nome        String   @unique
+  descricao   String?
+  ativa       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  produtos    Produto[]
+
+  @@map("categorias")
+}
+
+// Modelo de produtos
+model Produto {
+  id              String         @id @default(cuid())
+  codigo          String         @unique
+  nome            String
+  descricao       String?
+  categoriaId     String
+  empresaId       String
+  preco           Decimal
+  precoPromocional Decimal?
+  unidade         String         @default("UN")
+  estoque         Int            @default(0)
+  estoqueMinimo   Int            @default(0)
+  peso            Decimal?
+  dimensoes       String?
+  imagens         String[]
+  status          ProdutoStatus  @default(ATIVO)
+  destaque        Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relacionamentos
+  categoria       Categoria      @relation(fields: [categoriaId], references: [id])
+  empresa         Empresa        @relation(fields: [empresaId], references: [id])
+  orcamentoItens  OrcamentoItem[]
+
+  @@map("produtos")
+}
+
+// Modelo de orçamentos
+model Orcamento {
+  id              String          @id @default(cuid())
+  numero          String          @unique
+  clienteId       String
+  vendedorId      String
+  empresaId       String
+  vendedorEmpresaId String?        // Referência para VendedorEmpresa específica
+  userId          String
+  titulo          String
+  descricao       String?
+  status          OrcamentoStatus @default(RASCUNHO)
+  subtotal        Decimal         @default(0)
+  desconto        Decimal         @default(0)
+  total           Decimal         @default(0)
+  validadeAte     DateTime?
+  observacoes     String?
+  condicoesPagamento String?
+  prazoEntrega    String?
+  frete           Decimal         @default(0)
+  
+  // Campos de exportação
+  incoterm        String?
+  portoDestino    String?
+  tipoFrete       String?
+  diasTransito    Int?
+  pesoBruto       Decimal?        // Calculado automaticamente dos produtos
+  volume          Decimal?        // Calculado automaticamente dos produtos
+  medidas         String?
+  numeroCaixas    Int?
+  freteInternacional  Decimal?
+  seguroInternacional Decimal?
+  taxasDesaduanagem   Decimal?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relacionamentos
+  cliente         Cliente         @relation(fields: [clienteId], references: [id])
+  vendedor        Vendedor        @relation(fields: [vendedorId], references: [id])
+  empresa         Empresa         @relation(fields: [empresaId], references: [id])
+  vendedorEmpresa VendedorEmpresa? @relation(fields: [vendedorEmpresaId], references: [id])
+  user            User            @relation(fields: [userId], references: [id])
+  itens           OrcamentoItem[]
+
+  @@map("orcamentos")
+}
+
+// Modelo de itens do orçamento
+model OrcamentoItem {
+  id          String    @id @default(cuid())
+  orcamentoId String
+  produtoId   String
+  quantidade  Int
+  precoUnit   Decimal
+  desconto    Decimal   @default(0)
+  total       Decimal
+  observacoes String?
+  createdAt   DateTime  @default(now())
+
+  // Relacionamentos
+  orcamento   Orcamento @relation(fields: [orcamentoId], references: [id], onDelete: Cascade)
+  produto     Produto   @relation(fields: [produtoId], references: [id])
+
+  @@map("orcamento_itens")
+}
+
+// Modelo CRM - gestão de relacionamento
+model CrmItem {
+  id          String        @id @default(cuid())
+  titulo      String
+  descricao   String?
+  clienteId   String
+  vendedorId  String
+  status      CrmStatus     @default(ABERTO)
+  prioridade  CrmPrioridade @default(MEDIA)
+  dataVencimento DateTime?
+  tags        String[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relacionamentos
+  cliente     Cliente       @relation(fields: [clienteId], references: [id])
+  vendedor    Vendedor      @relation(fields: [vendedorId], references: [id])
+  interacoes  CrmInteracao[]
+
+  @@map("crm_itens")
+}
+
+// Modelo de interações do CRM
+model CrmInteracao {
+  id        String   @id @default(cuid())
+  crmItemId String
+  userId    String
+  tipo      String   // CALL, EMAIL, MEETING, NOTE
+  titulo    String
+  descricao String?
+  anexos    String[]
+  createdAt DateTime @default(now())
+
+  // Relacionamentos
+  crmItem   CrmItem  @relation(fields: [crmItemId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("crm_interacoes")
+}
+
+// Modelo de notificações
+model Notificacao {
+  id        String   @id @default(cuid())
+  userId    String
+  titulo    String
+  mensagem  String
+  tipo      String   // INFO, WARNING, ERROR, SUCCESS
+  lida      Boolean  @default(false)
+  url       String?
+  createdAt DateTime @default(now())
+
+  // Relacionamentos
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notificacoes")
+}
+
+// Modelo de configurações do sistema
+model Configuracao {
+  id        String   @id @default(cuid())
+  chave     String   @unique
+  valor     String
+  descricao String?
+  tipo      String   @default("STRING") // STRING, NUMBER, BOOLEAN, JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("configuracoes")
+}

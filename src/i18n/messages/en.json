@@ -1,0 +1,128 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "produtos": "Products",
+    "orcamentos": "Quotes",
+    "clientes": "Clients",
+    "empresas": "Companies",
+    "crm": "CRM",
+    "perfil": "Profile",
+    "configuracoes": "Settings",
+    "sair": "Logout"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "totalOrcamentos": "Total Quotes",
+    "orcamentosEnviados": "Sent Quotes",
+    "orcamentosAprovados": "Approved Quotes",
+    "valorTotal": "Total Value",
+    "vendas": "Sales",
+    "receita": "Revenue",
+    "meta": "Goal"
+  },
+  "orcamentos": {
+    "title": "Quotes",
+    "meusOrcamentos": "My Quotes",
+    "novoOrcamento": "New Quote",
+    "numero": "Number",
+    "cliente": "Client",
+    "vendedor": "Salesperson",
+    "empresa": "Company",
+    "valor": "Value",
+    "status": {
+      "rascunho": "Draft",
+      "enviado": "Sent",
+      "aprovado": "Approved",
+      "rejeitado": "Rejected",
+      "expirado": "Expired"
+    },
+    "acoes": {
+      "ver": "View",
+      "editar": "Edit",
+      "aprovar": "Approve",
+      "rejeitar": "Reject",
+      "exportar": "Export"
+    },
+    "proforma": {
+      "title": "Proforma Invoice",
+      "invoice": "Invoice",
+      "numero": "No.",
+      "data": "Date",
+      "validadeAte": "Valid until",
+      "vendedor": "Salesperson",
+      "empresa": "Company",
+      "cliente": "Client",
+      "produto": "Product",
+      "quantidade": "Qty",
+      "precoUnitario": "Unit Price",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "desconto": "Discount",
+      "frete": "Shipping",
+      "valorTotal": "Total Amount",
+      "condicoesPagamento": "Payment Terms",
+      "prazoEntrega": "Delivery Terms",
+      "observacoes": "Remarks"
+    }
+  },
+  "produtos": {
+    "title": "Products",
+    "codigo": "Code",
+    "nome": "Name",
+    "descricao": "Description",
+    "categoria": "Category",
+    "preco": "Price",
+    "precoPromocional": "Promotional Price",
+    "precoReal": "Price (R$)",
+    "precoDolar": "Price (US$)",
+    "unidade": "Unit",
+    "estoque": "Stock",
+    "status": "Status",
+    "moedas": {
+      "real": "Real (R$)",
+      "dolar": "Dollar (US$)"
+    }
+  },
+  "clientes": {
+    "title": "Clients",
+    "nome": "Name",
+    "empresa": "Company",
+    "email": "Email",
+    "telefone": "Phone",
+    "endereco": "Address",
+    "cidade": "City",
+    "estado": "State"
+  },
+  "common": {
+    "salvar": "Save",
+    "cancelar": "Cancel",
+    "editar": "Edit",
+    "excluir": "Delete",
+    "buscar": "Search",
+    "filtrar": "Filter",
+    "carregando": "Loading...",
+    "erro": "Error",
+    "sucesso": "Success",
+    "confirmar": "Confirm",
+    "voltar": "Back",
+    "proximo": "Next",
+    "anterior": "Previous",
+    "todos": "All",
+    "nenhum": "None",
+    "selecionar": "Select",
+    "moeda": "Currency",
+    "idioma": "Language",
+    "portugues": "Portuguese",
+    "ingles": "English",
+    "espanhol": "Spanish"
+  },
+  "toast": {
+    "sucesso": "Operation completed successfully!",
+    "erro": "An error occurred. Please try again.",
+    "carregandoOrcamentos": "Loading quotes...",
+    "orcamentosCarregados": "Quotes loaded",
+    "orcamentoAprovado": "Quote approved!",
+    "orcamentoRejeitado": "Quote rejected!"
+  }
+}
