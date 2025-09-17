@@ -136,7 +136,7 @@ export default function ModernEmpresaForm({ empresa, onClose, onSuccess }: Moder
         console.error('❌ Erro da API:', JSON.stringify(error, null, 2))
         if (error.details) {
           console.error('❌ Detalhes da validação:', JSON.stringify(error.details, null, 2))
-          error.details.forEach((detail, index) => {
+          error.details.forEach((detail: any, index: number) => {
             console.error(`❌ Erro ${index + 1}:`, JSON.stringify(detail, null, 2))
           })
         }
