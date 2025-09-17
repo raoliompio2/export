@@ -162,25 +162,27 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
       )}
 
       {/* Sidebar Flutuante */}
-      <aside className={`fixed top-4 left-4 bottom-4 z-50 w-72 bg-white/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl transform transition-all duration-300 ${
+      <aside className={`fixed top-4 left-4 bottom-4 z-50 w-72 bg-[#0F1729]/95 backdrop-blur-xl border border-gray-700/30 rounded-2xl shadow-xl transform transition-all duration-300 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
         
         {/* Header da Sidebar */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-sm">
-              <TrendingUp className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="font-bold text-gray-900">{vendedorStats.nome} Pro</h1>
-              <p className="text-xs text-gray-500">Painel de vendas</p>
-            </div>
-          </div>
+        <div className="flex items-center justify-center px-4 py-1 border-b border-gray-700/50 relative">
+          <img 
+            src="https://res.cloudinary.com/dq0bovaz5/image/upload/v1756767669/OPD_1_uu58f5.png" 
+            alt="OPD Logo" 
+            className="h-20 w-auto max-w-full object-contain"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              target.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+          <TrendingUp className="h-20 w-20 text-emerald-400 hidden" />
           
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="lg:hidden absolute right-2 top-2 p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -188,13 +190,13 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
 
         {/* Meta/Status Card */}
         <div className="p-4">
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-4 text-white">
+          <div className="bg-gradient-to-r from-emerald-500/20 to-teal-600/20 border border-emerald-500/30 rounded-xl p-4 text-white backdrop-blur">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <Target className="h-4 w-4" />
-                <span className="text-sm font-medium">Meta do Mês</span>
+                <Target className="h-4 w-4 text-emerald-400" />
+                <span className="text-sm font-medium text-gray-200">Meta do Mês</span>
               </div>
-              <Award className="h-4 w-4 opacity-80" />
+              <Award className="h-4 w-4 opacity-80 text-emerald-400" />
             </div>
             {loading ? (
               <div className="animate-pulse">
@@ -203,13 +205,13 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
               </div>
             ) : (
               <>
-                <div className="text-2xl font-bold mb-1">
+                <div className="text-2xl font-bold mb-1 text-white">
                   R$ {vendedorStats.meta.toLocaleString('pt-BR')}
                 </div>
-                <div className="text-emerald-100 text-sm">
+                <div className="text-gray-300 text-sm">
                   {vendedorStats.percentualMeta.toFixed(1)}% atingido
                 </div>
-                <div className="text-emerald-100 text-xs mt-1">
+                <div className="text-gray-300 text-xs mt-1">
                   R$ {vendedorStats.vendas.toLocaleString('pt-BR')} vendido
                 </div>
               </>
@@ -224,7 +226,7 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
         </div>
 
         {/* Navigation */}
-        <nav className="px-4 pb-4 space-y-2 max-h-[calc(100vh-360px)] overflow-y-auto">
+        <nav className="px-4 pb-4 space-y-2 max-h-[calc(100vh-360px)] overflow-y-auto scrollbar-hide">
           {navigation.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
@@ -236,14 +238,14 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
                 className={`group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
                   isActive
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25'
-                    : 'text-gray-700 hover:bg-gray-100 hover:shadow-sm'
+                    : 'text-gray-300 hover:bg-white/10 hover:text-white hover:shadow-sm'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <div className={`p-2 rounded-lg transition-colors ${
                   isActive 
                     ? 'bg-white/20' 
-                    : 'bg-gray-100 group-hover:bg-gray-200'
+                    : 'bg-white/10 group-hover:bg-white/20'
                 }`}>
                   <Icon className="h-4 w-4" />
                 </div>
@@ -251,7 +253,7 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
                 <div className="flex-1">
                   <div className="font-medium">{item.name}</div>
                   <div className={`text-xs ${
-                    isActive ? 'text-emerald-100' : 'text-gray-500'
+                    isActive ? 'text-emerald-100' : 'text-gray-400 group-hover:text-gray-300'
                   }`}>
                     {item.description}
                   </div>

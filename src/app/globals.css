@@ -54,3 +54,15 @@ body {
 .card-glass {
   @apply bg-white/80 backdrop-blur-sm rounded-xl border border-white/20 shadow-sm;
 }
+
+/* === HIDE SCROLLBAR === */
+.scrollbar-hide {
+  /* Firefox */
+  scrollbar-width: none;
+  /* Safari and Chrome */
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
