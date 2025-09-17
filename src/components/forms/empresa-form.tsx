@@ -32,8 +32,8 @@ const empresaSchema = z.object({
   agencia: z.string().optional(),
   conta: z.string().optional(),
   logo: z.string().optional(),
-  corPrimaria: z.string().default('#3B82F6'),
-  ativa: z.boolean().default(true)
+  corPrimaria: z.string(),
+  ativa: z.boolean()
 })
 
 interface EmpresaFormProps {
@@ -45,7 +45,9 @@ interface EmpresaFormProps {
 export default function EmpresaForm({ empresa, onClose, onSuccess }: EmpresaFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm<z.infer<typeof empresaSchema>>({
+  type EmpresaFormData = z.infer<typeof empresaSchema>
+  
+  const form = useForm<EmpresaFormData>({
     resolver: zodResolver(empresaSchema),
     defaultValues: {
       nome: empresa?.nome || '',
@@ -72,7 +74,7 @@ export default function EmpresaForm({ empresa, onClose, onSuccess }: EmpresaForm
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof empresaSchema>) => {
+  const onSubmit = async (values: EmpresaFormData) => {
     setIsSubmitting(true)
     try {
       const url = empresa ? `/api/empresas/${empresa.id}` : '/api/empresas'

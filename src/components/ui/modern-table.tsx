@@ -220,7 +220,7 @@ export default function ModernTable<T extends Record<string, any>>({
                       key={colIndex}
                       className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${column.className || ''}`}
                     >
-                      {getCellValue(item, column)}
+                      {getCellValue(item, column) as React.ReactNode}
                     </td>
                   ))}
                   

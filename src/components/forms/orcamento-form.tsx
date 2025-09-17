@@ -15,8 +15,8 @@ const orcamentoSchema = z.object({
   observacoes: z.string().optional(),
   condicoesPagamento: z.string().optional(),
   prazoEntrega: z.string().optional(),
-  frete: z.number().min(0).default(0),
-  desconto: z.number().min(0).default(0),
+  frete: z.number().min(0),
+  desconto: z.number().min(0),
   
   // Campos de exportação
   incoterm: z.string().optional(),
@@ -51,7 +51,9 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
   const [produtos, setProdutos] = useState<any[]>([])
   const [loadingData, setLoadingData] = useState(true)
 
-  const form = useForm<z.infer<typeof orcamentoSchema>>({
+  type OrcamentoFormData = z.infer<typeof orcamentoSchema>
+  
+  const form = useForm<OrcamentoFormData>({
     resolver: zodResolver(orcamentoSchema),
     defaultValues: {
       titulo: orcamento?.titulo || '',
@@ -160,7 +162,7 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
 
   const total = subtotal - (watchDesconto || 0) + (watchFrete || 0)
 
-  const onSubmit = async (values: z.infer<typeof orcamentoSchema>) => {
+  const onSubmit = async (values: OrcamentoFormData) => {
     setIsSubmitting(true)
     try {
       const url = orcamento ? `/api/orcamentos/${orcamento.id}` : '/api/orcamentos'

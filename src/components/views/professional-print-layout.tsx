@@ -171,7 +171,7 @@ export default function ProfessionalPrintLayout({
     debugCalculations(orcamento, 'ProfessionalPrintLayout')
   }
   const [exchangeRate, setExchangeRate] = useState(5.42)
-  const t = translations[language]
+  const t = translations[language as keyof typeof translations] || translations.en
 
   useEffect(() => {
     const fetchExchangeRate = async () => {

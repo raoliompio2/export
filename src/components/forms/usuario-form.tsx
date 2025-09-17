@@ -23,7 +23,9 @@ interface UsuarioFormProps {
 export default function UsuarioForm({ usuario, onClose, onSuccess }: UsuarioFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm<z.infer<typeof usuarioSchema>>({
+  type UsuarioFormData = z.infer<typeof usuarioSchema>
+  
+  const form = useForm<UsuarioFormData>({
     resolver: zodResolver(usuarioSchema),
     defaultValues: {
       nome: usuario?.nome || '',
@@ -34,7 +36,7 @@ export default function UsuarioForm({ usuario, onClose, onSuccess }: UsuarioForm
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof usuarioSchema>) => {
+  const onSubmit = async (values: UsuarioFormData) => {
     setIsSubmitting(true)
     try {
       const url = usuario ? `/api/usuarios/${usuario.id}` : '/api/usuarios'

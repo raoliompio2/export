@@ -15,8 +15,8 @@ export default function SimpleCurrencyDisplay({
 }: SimpleCurrencyDisplayProps) {
   
   const formatCurrency = (value: number, curr: string) => {
-    const options = {
-      style: 'currency',
+    const options: Intl.NumberFormatOptions = {
+      style: 'currency' as const,
       currency: curr,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2

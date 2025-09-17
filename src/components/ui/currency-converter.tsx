@@ -54,8 +54,8 @@ export default function CurrencyConverter({
   }, [amount, fromCurrency, toCurrency])
 
   const formatCurrency = (value: number, currency: string) => {
-    const options = {
-      style: 'currency',
+    const options: Intl.NumberFormatOptions = {
+      style: 'currency' as const,
       currency: currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
