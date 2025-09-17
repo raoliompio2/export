@@ -10,6 +10,7 @@ import Image from 'next/image'
 // Schemas de validação
 const userDataSchema = z.object({
   nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+  email: z.string().email('Email inválido'),
   telefone: z.string().optional(),
 })
 
@@ -60,6 +61,7 @@ export default function PerfilForm({ initialData, onClose, onSuccess }: PerfilFo
     resolver: zodResolver(userDataSchema),
     defaultValues: {
       nome: initialData.user.nome,
+      email: initialData.user.email,
       telefone: initialData.user.telefone || '',
     },
   })
@@ -239,15 +241,17 @@ export default function PerfilForm({ initialData, onClose, onSuccess }: PerfilFo
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
+                      Email *
                     </label>
                     <input
                       type="email"
-                      value={initialData.user.email}
-                      disabled
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-100 text-gray-500"
+                      {...userForm.register('email')}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Email não pode ser alterado</p>
+                    {userForm.formState.errors.email && (
+                      <p className="text-red-500 text-sm mt-1">{userForm.formState.errors.email.message}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">Email usado para login e representação pública</p>
                   </div>
 
                   <div>
