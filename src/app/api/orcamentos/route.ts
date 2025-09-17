@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { calcularTotalItem, calcularTotaisOrcamento } from '@/utils/safe-formatting'
+import { gerarNumeroOrcamento } from '@/utils/orcamento-utils'
 
 const orcamentoSchema = z.object({
   titulo: z.string().min(1, 'Título é obrigatório'),
@@ -105,8 +106,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Cliente não pertence a este vendedor' }, { status: 403 })
     }
 
-    // Gerar número único do orçamento
-    const numero = `ORC-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    // Gerar número único do orçamento no formato OPDEXPORT20250917001
+    const numero = await gerarNumeroOrcamento()
 
     // Calcular totais usando funções seguras
     const totaisCalculados = calcularTotaisOrcamento(

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { gerarNumeroOrcamento } from '@/utils/orcamento-utils'
 
 // Schema para finalizar carrinho
 const finalizarCarrinhoSchema = z.object({
@@ -131,8 +132,8 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      // Gerar número único do orçamento
-      const numeroOrcamento = `ORC-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+      // Gerar número único do orçamento no formato OPDEXPORT20250917001
+      const numeroOrcamento = await gerarNumeroOrcamento()
 
       // Criar orçamento
       const orcamento = await prisma.orcamento.create({

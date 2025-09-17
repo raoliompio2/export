@@ -1,4 +1,5 @@
 import { PrismaClient, UserRole, ProdutoStatus, OrcamentoStatus, CrmStatus, CrmPrioridade } from '@prisma/client'
+import { gerarNumeroOrcamento } from '../src/utils/orcamento-utils'
 
 const prisma = new PrismaClient()
 
@@ -187,7 +188,7 @@ async function main() {
       
       const orcamento = await prisma.orcamento.create({
         data: {
-          numero: `ORC-${Date.now()}-${i + 1}`,
+          numero: await gerarNumeroOrcamento(),
           titulo: `Orçamento para ${cliente.empresa}`,
           clienteId: cliente.id,
           vendedorId: vendedor.id,
