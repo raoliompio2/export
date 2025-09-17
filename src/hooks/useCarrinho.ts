@@ -5,11 +5,22 @@ import { useState, useEffect, useCallback } from 'react'
 interface CarrinhoItem {
   id: string
   quantidade: number
+  observacoes?: string
   produto: {
     id: string
     nome: string
+    codigo: string
     preco: number
     precoPromocional?: number
+    unidade: string
+    imagens: string[]
+    categoria: {
+      nome: string
+    }
+    empresa: {
+      id: string
+      nome: string
+    }
   }
 }
 

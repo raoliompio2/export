@@ -26,17 +26,26 @@ interface Empresa {
   nome: string
   nomeFantasia?: string
   cnpj: string
+  inscricaoEstadual?: string
+  inscricaoMunicipal?: string
   email: string
   telefone?: string
   website?: string
   endereco: string
   numero?: string
+  complemento?: string
   bairro: string
   cidade: string
   estado: string
   cep: string
+  banco?: string
+  agencia?: string
+  conta?: string
+  logo?: string
+  corPrimaria: string
   ativa: boolean
-  createdAt: string
+  createdAt: string | Date
+  updatedAt: string | Date
   _count: {
     vendedores: number
     orcamentos: number

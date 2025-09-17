@@ -35,19 +35,65 @@ interface OrcamentoViewProps {
     desconto: number
     total: number
     frete?: number
+    createdAt?: string
+    validadeAte?: string
+    descricao?: string
+    condicoesPagamento?: string
+    prazoEntrega?: string
+    observacoes?: string
+    freteInternacional?: number | string
+    empresa?: {
+      id: string
+      nome: string
+      nomeFantasia?: string
+      cnpj: string
+      endereco: string
+      numero?: string
+      bairro?: string
+      cidade: string
+      estado: string
+      cep: string
+      telefone?: string
+      email: string
+    }
+    cliente?: {
+      id: string
+      empresa?: string
+      cnpj?: string
+      endereco?: string
+      cidade?: string
+      estado?: string
+      cep?: string
+      user: {
+        id: string
+        nome: string
+        email: string
+        telefone?: string
+      }
+    }
+    vendedor?: {
+      id: string
+      user: {
+        id: string
+        nome: string
+        email: string
+        telefone?: string
+      }
+    }
     itens?: Array<{
       id: string
       quantidade: number
       precoUnit: number
       desconto: number
       total: number
-      produto?: { nome?: string }
+      produto?: { nome?: string; codigo?: string }
     }>
   }
   onClose: () => void
 }
 
 export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps) {
+  const [loading, setLoading] = useState(false)
   
   // DEBUG: Para investigar problemas nos cálculos E DESCONTO
   if (process.env.NODE_ENV === 'development' && orcamento) {
@@ -156,10 +202,10 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Razão Social</p>
-                  <p className="font-medium text-gray-900">{orcamento.empresa.nome}</p>
+                  <p className="font-medium text-gray-900">{orcamento.empresa?.nome || 'N/A'}</p>
                 </div>
-                
-                {orcamento.empresa.nomeFantasia && (
+
+                {orcamento.empresa?.nomeFantasia && (
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Nome Fantasia</p>
                     <p className="font-medium text-gray-900">{orcamento.empresa.nomeFantasia}</p>
@@ -168,22 +214,22 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
                 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">CNPJ</p>
-                  <p className="text-sm text-gray-700">{orcamento.empresa.cnpj}</p>
+                  <p className="text-sm text-gray-700">{orcamento.empresa?.cnpj || 'N/A'}</p>
                 </div>
                 
                 <div className="flex items-center gap-2 text-sm text-gray-700">
                   <Mail className="h-4 w-4 text-purple-500" />
-                  <span>{orcamento.empresa.email}</span>
+                  <span>{orcamento.empresa?.email || 'N/A'}</span>
                 </div>
                 
-                {orcamento.empresa.telefone && (
+                {orcamento.empresa?.telefone && (
                   <div className="flex items-center gap-2 text-sm text-gray-700">
                     <Phone className="h-4 w-4 text-purple-500" />
                     <span>{orcamento.empresa.telefone}</span>
                   </div>
                 )}
                 
-                {orcamento.empresa.endereco && (
+                {orcamento.empresa?.endereco && (
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Endereço</p>
                     <div className="flex items-start gap-2 text-sm text-gray-700">
@@ -209,54 +255,58 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
               </div>
               
               <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Nome</p>
-                  <p className="font-medium text-gray-900">{orcamento.cliente.user.nome}</p>
-                </div>
-                
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <Mail className="h-4 w-4 text-blue-500" />
-                  <span>{orcamento.cliente.user.email}</span>
-                </div>
-                
-                {orcamento.cliente.user.telefone && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <Phone className="h-4 w-4 text-blue-500" />
-                    <span>{orcamento.cliente.user.telefone}</span>
-                  </div>
-                )}
-                
-                {orcamento.cliente.empresa && (
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Empresa</p>
+                {orcamento.cliente && (
+                  <>
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Nome</p>
+                      <p className="font-medium text-gray-900">{orcamento.cliente.user.nome}</p>
+                    </div>
+                    
                     <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <Building2 className="h-4 w-4 text-blue-500" />
-                      <span>{orcamento.cliente.empresa}</span>
+                      <Mail className="h-4 w-4 text-blue-500" />
+                      <span>{orcamento.cliente.user.email}</span>
                     </div>
-                  </div>
-                )}
-                
-                {orcamento.cliente.cnpj && (
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">CNPJ</p>
-                    <p className="text-sm text-gray-700">{orcamento.cliente.cnpj}</p>
-                  </div>
-                )}
-                
-                {orcamento.cliente.endereco && (
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Endereço</p>
-                    <div className="flex items-start gap-2 text-sm text-gray-700">
-                      <MapPin className="h-4 w-4 text-blue-500 mt-0.5" />
-                      <div>
-                        <p>{orcamento.cliente.endereco}</p>
-                        {orcamento.cliente.cidade && (
-                          <p>{orcamento.cliente.cidade}{orcamento.cliente.estado && `, ${orcamento.cliente.estado}`}</p>
-                        )}
-                        {orcamento.cliente.cep && <p>CEP: {orcamento.cliente.cep}</p>}
+                    
+                    {orcamento.cliente.user.telefone && (
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Phone className="h-4 w-4 text-blue-500" />
+                        <span>{orcamento.cliente.user.telefone}</span>
                       </div>
-                    </div>
-                  </div>
+                    )}
+                    
+                    {orcamento.cliente.empresa && (
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Empresa</p>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Building2 className="h-4 w-4 text-blue-500" />
+                          <span>{orcamento.cliente.empresa}</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {orcamento.cliente.cnpj && (
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">CNPJ</p>
+                        <p className="text-sm text-gray-700">{orcamento.cliente.cnpj}</p>
+                      </div>
+                    )}
+                    
+                    {orcamento.cliente.endereco && (
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Endereço</p>
+                        <div className="flex items-start gap-2 text-sm text-gray-700">
+                          <MapPin className="h-4 w-4 text-blue-500 mt-0.5" />
+                          <div>
+                            <p>{orcamento.cliente.endereco}</p>
+                            {orcamento.cliente.cidade && (
+                              <p>{orcamento.cliente.cidade}{orcamento.cliente.estado && `, ${orcamento.cliente.estado}`}</p>
+                            )}
+                            {orcamento.cliente.cep && <p>CEP: {orcamento.cliente.cep}</p>}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </ModernCard>
@@ -271,21 +321,25 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
               </div>
               
               <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Nome</p>
-                  <p className="font-medium text-gray-900">{orcamento.vendedor.user.nome}</p>
-                </div>
-                
-                <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <Mail className="h-4 w-4 text-emerald-500" />
-                  <span>{orcamento.vendedor.user.email}</span>
-                </div>
-                
-                {orcamento.vendedor.user.telefone && (
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <Phone className="h-4 w-4 text-emerald-500" />
-                    <span>{orcamento.vendedor.user.telefone}</span>
-                  </div>
+                {orcamento.vendedor && (
+                  <>
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Nome</p>
+                      <p className="font-medium text-gray-900">{orcamento.vendedor.user.nome}</p>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <Mail className="h-4 w-4 text-emerald-500" />
+                      <span>{orcamento.vendedor.user.email}</span>
+                    </div>
+                    
+                    {orcamento.vendedor.user.telefone && (
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Phone className="h-4 w-4 text-emerald-500" />
+                        <span>{orcamento.vendedor.user.telefone}</span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </ModernCard>
@@ -304,7 +358,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
               <div>
                 <p className="text-sm text-gray-600 mb-1">Data de Criação</p>
                 <p className="font-medium text-gray-900">
-                  {new Date(orcamento.createdAt).toLocaleDateString('pt-BR')}
+                  {orcamento.createdAt ? new Date(orcamento.createdAt).toLocaleDateString('pt-BR') : 'N/A'}
                 </p>
               </div>
               
@@ -389,12 +443,12 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {orcamento.itens?.map((item: { id: string; quantidade: number; precoUnit: number; desconto: number; total: number; produto?: { nome?: string } }) => (
+                  {orcamento.itens?.map((item: { id: string; quantidade: number; precoUnit: number; desconto: number; total: number; produto?: { nome?: string; codigo?: string } }) => (
                     <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-4">
                         <div>
-                          <p className="font-medium text-gray-900">{item.produto.nome}</p>
-                          <p className="text-sm text-gray-500">Código: {item.produto.codigo}</p>
+                          <p className="font-medium text-gray-900">{item.produto?.nome || 'N/A'}</p>
+                          <p className="text-sm text-gray-500">Código: {item.produto?.codigo || 'N/A'}</p>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-center">
@@ -441,7 +495,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
                 <span className="font-semibold">{formatCurrencySafe(orcamento.subtotal, 'BRL')}</span>
               </div>
               
-              {parseFloat(orcamento.desconto || 0) > 0 && (
+              {parseFloat(String(orcamento.desconto || 0)) > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-white opacity-90">Desconto:</span>
                   <span className="font-semibold text-red-200">
@@ -450,7 +504,7 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
                 </div>
               )}
               
-              {parseFloat(orcamento.frete || 0) > 0 && (
+              {parseFloat(String(orcamento.frete || 0)) > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-white opacity-90">Frete Nacional:</span>
                   <span className="font-semibold">+ {formatCurrencySafe(orcamento.frete, 'BRL')}</span>
@@ -458,10 +512,10 @@ export default function OrcamentoView({ orcamento, onClose }: OrcamentoViewProps
               )}
               
               {/* Mostrar frete internacional se existir */}
-              {parseFloat(orcamento.freteInternacional || 0) > 0 && (
+              {parseFloat(String(orcamento.freteInternacional || 0)) > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="text-white opacity-90">Frete Internacional:</span>
-                  <span className="font-semibold">+ ${parseFloat(orcamento.freteInternacional).toFixed(2)}</span>
+                  <span className="font-semibold">+ ${parseFloat(String(orcamento.freteInternacional)).toFixed(2)}</span>
                 </div>
               )}
               

@@ -67,8 +67,8 @@ export default function ClientePerfil() {
       const data = await response.json()
       setCliente(data)
       success('Perfil carregado', 'Dados atualizados com sucesso')
-    } catch (err: any) {
-      error('Erro ao carregar perfil', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar perfil', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setLoading(false)
     }

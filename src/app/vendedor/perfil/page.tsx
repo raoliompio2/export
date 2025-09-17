@@ -43,6 +43,7 @@ interface VendedorData {
     id: string
     comissao: number
     meta: number
+    ativo: boolean
     createdAt: string
   }
   clienteProfile?: any
@@ -103,9 +104,9 @@ export default function VendedorPerfil() {
         })
       }
       success('Perfil carregado', 'Dados atualizados com sucesso')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ Erro ao carregar perfil:', err)
-      error('Erro ao carregar perfil', err.message)
+      error('Erro ao carregar perfil', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setLoading(false)
     }
@@ -141,9 +142,9 @@ export default function VendedorPerfil() {
       await fetchVendedorProfile()
       setEditingConfig(false)
       success('Configurações salvas', 'Suas preferências foram atualizadas')
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ Erro ao salvar:', err)
-      error('Erro ao salvar configurações', err.message)
+      error('Erro ao salvar configurações', err instanceof Error ? err.message : "Erro desconhecido")
     }
   }
 

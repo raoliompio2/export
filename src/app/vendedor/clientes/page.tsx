@@ -63,8 +63,8 @@ export default function VendedorClientes() {
       const data = await response.json()
       setClientes(Array.isArray(data) ? data : [])
       success('Clientes carregados', `${data.length} clientes encontrados`)
-    } catch (err: any) {
-      error('Erro ao carregar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar', err instanceof Error ? err.message : "Erro desconhecido")
       setClientes([])
     } finally {
       setLoading(false)
@@ -83,8 +83,8 @@ export default function VendedorClientes() {
       
       setClientes(prev => prev.filter(c => c.id !== cliente.id))
       success('Cliente excluído', `${cliente.user.nome} foi removido`)
-    } catch (err: any) {
-      error('Erro ao excluir', err.message)
+    } catch (err: unknown) {
+      error('Erro ao excluir', err instanceof Error ? err.message : "Erro desconhecido")
     }
   }
 

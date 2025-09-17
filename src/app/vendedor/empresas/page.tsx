@@ -28,13 +28,26 @@ interface Empresa {
   nome: string
   nomeFantasia?: string
   cnpj: string
+  inscricaoEstadual?: string
+  inscricaoMunicipal?: string
   email: string
   telefone?: string
   website?: string
+  endereco: string
+  numero?: string
+  complemento?: string
+  bairro: string
   cidade: string
   estado: string
-  ativa: boolean
+  cep: string
+  banco?: string
+  agencia?: string
+  conta?: string
   logo?: string
+  corPrimaria: string
+  ativa: boolean
+  createdAt: string | Date
+  updatedAt: string | Date
   _count?: {
     vendedores: number
     produtos: number
@@ -74,8 +87,8 @@ export default function VendedorEmpresas() {
       const disponiveis = data.length - representadas
       
       success('Empresas carregadas', `${representadas} representadas, ${disponiveis} disponíveis`)
-    } catch (err: any) {
-      error('Erro ao carregar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar', err instanceof Error ? err.message : "Erro desconhecido")
       setEmpresas([])
     } finally {
       setLoading(false)

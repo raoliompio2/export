@@ -53,12 +53,12 @@ function getRoleLabel(role: string) {
   }
 }
 
-function getRoleColor(role: string) {
+function getRoleColor(role: string): 'success' | 'warning' | 'danger' | undefined {
   switch (role) {
     case 'ADMIN': return 'danger'
-    case 'VENDEDOR': return 'primary'
+    case 'VENDEDOR': return 'warning'
     case 'CLIENTE': return 'success'
-    default: return 'default'
+    default: return undefined
   }
 }
 
@@ -95,7 +95,7 @@ export default function AdminUsuarios() {
       setUsuarios(Array.isArray(data) ? data : [])
       success('Usuários carregados', `${data.length} usuários encontrados`)
     } catch (err: unknown) {
-      error('Erro ao carregar usuários', err instanceof Error ? err.message : 'Erro desconhecido')
+      error('Erro ao carregar usuários', err instanceof Error ? err instanceof Error ? err.message : "Erro desconhecido" : 'Erro desconhecido')
       setUsuarios([])
     } finally {
       setLoading(false)
@@ -124,7 +124,7 @@ export default function AdminUsuarios() {
       setUsuarios(prev => prev.filter(u => u.id !== usuario.id))
       success('Usuário excluído', `${usuario.nome} foi removido com sucesso`)
     } catch (err: unknown) {
-      error('Erro ao excluir', err instanceof Error ? err.message : 'Erro desconhecido')
+      error('Erro ao excluir', err instanceof Error ? err instanceof Error ? err.message : "Erro desconhecido" : 'Erro desconhecido')
     } finally {
       setDeleting(null)
     }
@@ -195,7 +195,7 @@ export default function AdminUsuarios() {
           {getRoleIcon(usuario.role)}
           <StatusBadge
             status={getRoleLabel(usuario.role)}
-            variant={getRoleColor(usuario.role) as 'success' | 'warning' | 'danger' | 'info'}
+            variant={getRoleColor(usuario.role)}
           />
         </div>
       )

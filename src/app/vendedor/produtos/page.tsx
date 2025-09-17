@@ -58,8 +58,8 @@ export default function VendedorProdutos() {
       const data = await response.json()
       setProdutos(Array.isArray(data) ? data : [])
       success('Produtos carregados', `${data.length} produtos encontrados`)
-    } catch (err: any) {
-      error('Erro ao carregar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar', err instanceof Error ? err.message : "Erro desconhecido")
       setProdutos([])
     } finally {
       setLoading(false)
@@ -83,8 +83,8 @@ export default function VendedorProdutos() {
       
       setProdutos(prev => prev.filter(p => p.id !== produto.id))
       success('Produto excluído', `${produto.nome} foi removido`)
-    } catch (err: any) {
-      error('Erro ao excluir', err.message)
+    } catch (err: unknown) {
+      error('Erro ao excluir', err instanceof Error ? err.message : "Erro desconhecido")
     }
   }
 

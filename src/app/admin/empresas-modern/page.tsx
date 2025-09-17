@@ -27,17 +27,26 @@ interface Empresa {
   nome: string
   nomeFantasia?: string
   cnpj: string
+  inscricaoEstadual?: string
+  inscricaoMunicipal?: string
   email: string
   telefone?: string
   website?: string
   endereco: string
   numero?: string
+  complemento?: string
   bairro: string
   cidade: string
   estado: string
   cep: string
+  banco?: string
+  agencia?: string
+  conta?: string
+  logo?: string
+  corPrimaria: string
   ativa: boolean
-  createdAt: string
+  createdAt: string | Date
+  updatedAt: string | Date
   _count: {
     vendedores: number
     orcamentos: number
@@ -64,8 +73,8 @@ export default function ModernAdminEmpresas() {
       const data = await response.json()
       setEmpresas(Array.isArray(data) ? data : [])
       success('Empresas carregadas', `${data.length} empresas encontradas`)
-    } catch (err: any) {
-      error('Erro ao carregar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar', err instanceof Error ? err.message : "Erro desconhecido")
       setEmpresas([])
     } finally {
       setLoading(false)
@@ -84,8 +93,8 @@ export default function ModernAdminEmpresas() {
       
       setEmpresas(prev => prev.filter(e => e.id !== empresa.id))
       success('Empresa excluída', `${empresa.nome} foi removida`)
-    } catch (err: any) {
-      error('Erro ao excluir', err.message)
+    } catch (err: unknown) {
+      error('Erro ao excluir', err instanceof Error ? err.message : "Erro desconhecido")
     }
   }
 

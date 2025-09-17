@@ -33,14 +33,23 @@ export default function ProdutoView({ produtoId, onClose, onEdit }: ProdutoViewP
     nome: string
     descricao?: string
     codigo: string
-    preco: number
-    precoPromocional?: number
+    preco: number | string
+    precoPromocional?: number | string
     unidade: string
     estoque: number
-    peso?: number
+    estoqueMinimo: number
+    peso?: number | string
     dimensoes?: string
     imagens?: string[]
-    categoria?: { nome: string }
+    status: string
+    destaque: boolean
+    createdAt: string
+    updatedAt: string
+    categoria?: { 
+      nome: string
+      descricao?: string
+      ativa?: boolean
+    }
     empresa?: { nome: string }
   } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -230,20 +239,20 @@ export default function ProdutoView({ produtoId, onClose, onEdit }: ProdutoViewP
                 <div>
                   <p className="text-sm text-gray-600">Preço Principal</p>
                   <p className="text-2xl font-bold text-green-600">
-                    R$ {parseFloat(produto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {parseFloat(String(produto.preco)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </p>
                   <p className="text-sm text-gray-500">por {produto.unidade}</p>
                 </div>
                 
-                {produto.precoPromocional && parseFloat(produto.precoPromocional) > 0 && (
+                {produto.precoPromocional && parseFloat(String(produto.precoPromocional)) > 0 && (
                   <div>
                     <p className="text-sm text-gray-600">Preço Promocional</p>
                     <div className="flex items-center gap-3">
                       <p className="text-xl font-bold text-red-600">
-                        R$ {parseFloat(produto.precoPromocional).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R$ {parseFloat(String(produto.precoPromocional)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </p>
                       <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">
-                        {(((parseFloat(produto.preco) - parseFloat(produto.precoPromocional)) / parseFloat(produto.preco)) * 100).toFixed(0)}% OFF
+                        {(((parseFloat(String(produto.preco)) - parseFloat(String(produto.precoPromocional))) / parseFloat(String(produto.preco))) * 100).toFixed(0)}% OFF
                       </span>
                     </div>
                   </div>
@@ -252,7 +261,7 @@ export default function ProdutoView({ produtoId, onClose, onEdit }: ProdutoViewP
                 <div className="pt-4 border-t border-green-200">
                   <p className="text-sm text-gray-600">Preço Final</p>
                   <p className="text-lg font-bold text-gray-900">
-                    R$ {parseFloat(produto.precoPromocional || produto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    R$ {parseFloat(String(produto.precoPromocional || produto.preco)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
               </div>

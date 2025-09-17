@@ -43,7 +43,7 @@ export default function AprovacaoUsuarios() {
       const data = await response.json()
       setUsers(data.users || [])
     } catch (err: unknown) {
-      error('Erro ao carregar', err instanceof Error ? err.message : 'Erro desconhecido')
+      error('Erro ao carregar', err instanceof Error ? err instanceof Error ? err.message : "Erro desconhecido" : 'Erro desconhecido')
     } finally {
       setLoading(false)
     }
@@ -73,8 +73,8 @@ export default function AprovacaoUsuarios() {
       // Remover da lista
       setUsers(prev => prev.filter(u => u.id !== userId))
       
-    } catch (err: any) {
-      error('Erro ao aprovar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao aprovar', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setProcessingUserId(null)
     }
@@ -107,8 +107,8 @@ export default function AprovacaoUsuarios() {
       // Remover da lista
       setUsers(prev => prev.filter(u => u.id !== userId))
       
-    } catch (err: any) {
-      error('Erro ao rejeitar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao rejeitar', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setProcessingUserId(null)
     }

@@ -96,7 +96,7 @@ export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoForm
       peso: produto?.peso ? Number(produto.peso) : '',
       dimensoes: produto?.dimensoes || '',
       imagemUrl: produto?.imagens?.[0] || '',
-      status: produto?.status || 'ATIVO',
+      status: produto?.status as 'ATIVO' | 'INATIVO' | 'DESCONTINUADO' || 'ATIVO',
       destaque: produto?.destaque || false,
     },
   })
@@ -118,7 +118,7 @@ export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoForm
         peso: produto.peso ? Number(produto.peso) : '',
         dimensoes: produto.dimensoes || '',
         imagemUrl: produto.imagens?.[0] || '',
-        status: produto.status || 'ATIVO',
+        status: produto.status as 'ATIVO' | 'INATIVO' | 'DESCONTINUADO' || 'ATIVO',
         destaque: produto.destaque || false,
       })
     }

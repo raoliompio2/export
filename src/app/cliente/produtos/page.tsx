@@ -79,8 +79,8 @@ export default function ClienteProdutos() {
       
       const data = await response.json()
       setProdutos(Array.isArray(data) ? data.filter((p: Produto) => p.status === 'ATIVO') : [])
-    } catch (err: any) {
-      error('Erro ao carregar produtos', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar produtos', err instanceof Error ? err.message : "Erro desconhecido")
       setProdutos([])
     } finally {
       setLoading(false)
@@ -94,7 +94,7 @@ export default function ClienteProdutos() {
       
       const data = await response.json()
       setCategorias(Array.isArray(data) ? data : [])
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Erro silencioso para categorias
       setCategorias([])
     }

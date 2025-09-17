@@ -190,7 +190,7 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
     const produto = produtos.find(p => p.id === item.produtoId)
     if (!produto) return acc
     
-    const pesoProduto = produto.peso ? parseFloat(produto.peso) : 0
+    const pesoProduto = produto.peso ? (typeof produto.peso === 'string' ? parseFloat(produto.peso) : produto.peso) : 0
     const dimensoesProduto = produto.dimensoes || ''
     
     // Calcular volume a partir das dimensões (formato: "1.2x0.8x0.5")
@@ -249,7 +249,7 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
   const updatePrecoFromProduto = (index: number, produtoId: string) => {
     const produto = produtos.find(p => p.id === produtoId)
     if (produto) {
-      form.setValue(`itens.${index}.precoUnit`, parseFloat(produto.preco))
+      form.setValue(`itens.${index}.precoUnit`, typeof produto.preco === 'string' ? parseFloat(produto.preco) : produto.preco)
     }
   }
 

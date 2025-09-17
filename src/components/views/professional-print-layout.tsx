@@ -200,8 +200,8 @@ export default function ProfessionalPrintLayout({
   // Dados de exportação seguros
   const exportData = createSafeExportData(orcamento)
 
-  // const totalCIF = (orcamento.total / exchangeRate) + 
-  //                 (exportData.freteInternacional + exportData.seguroInternacional + exportData.taxasDesaduanagem)
+  const totalCIF = (orcamento.total / exchangeRate) + 
+                   (exportData.freteInternacional + exportData.seguroInternacional + exportData.taxasDesaduanagem)
 
   return (
     <div className="professional-print-layout">
@@ -237,7 +237,7 @@ export default function ProfessionalPrintLayout({
               <p><strong>Nº:</strong> {orcamento.numero}</p>
               <p><strong>{t.date}:</strong> {formatDate(orcamento.createdAt)}</p>
               {orcamento.validadeAte && (
-                <p><strong>{(t as Record<string, unknown>).validity || 'Validity'}:</strong> {formatDate(orcamento.validadeAte)}</p>
+                <p><strong>{String((t as Record<string, unknown>).validity) || 'Validity'}:</strong> {formatDate(orcamento.validadeAte)}</p>
               )}
             </div>
           </div>

@@ -129,8 +129,8 @@ export default function CarrinhoPage() {
       // Recarregar carrinho (vai ficar vazio) e redirecionar
       await recarregar()
       router.push('/cliente/orcamentos')
-    } catch (err: any) {
-      error('Erro ao finalizar carrinho', err.message)
+    } catch (err: unknown) {
+      error('Erro ao finalizar carrinho', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setFinalizando(false)
     }

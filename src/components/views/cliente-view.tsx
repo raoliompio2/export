@@ -49,6 +49,15 @@ interface Cliente {
     email: string
     telefone?: string
   }
+  vendedor?: {
+    id: string
+    user: {
+      id: string
+      nome: string
+      email: string
+      telefone?: string
+    }
+  }
   orcamentos?: Orcamento[]
 }
 
@@ -311,7 +320,7 @@ export default function ClienteView({ clienteId, onClose, onEdit }: ClienteViewP
                           </td>
                           <td className="px-4 py-3 text-right">
                             <p className="font-medium text-gray-900">
-                              R$ {parseFloat(orcamento.total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                               R$ {(typeof orcamento.total === 'string' ? parseFloat(orcamento.total) : orcamento.total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                             </p>
                           </td>
                           <td className="px-4 py-3 text-center text-sm text-gray-500">

@@ -198,9 +198,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('❌ Erro ao adicionar ao carrinho:', error)
-    console.error('❌ Stack trace completo:', error.stack)
+    console.error('❌ Stack trace completo:', error instanceof Error ? error.stack : String(error))
     return NextResponse.json(
-      { error: 'Erro interno do servidor', details: error.message },
+      { error: 'Erro interno do servidor', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     )
   }

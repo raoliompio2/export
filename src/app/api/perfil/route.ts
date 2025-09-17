@@ -178,11 +178,35 @@ export async function GET(request: NextRequest) {
           totalClientes,
           totalOrcamentos,
           orcamentosAprovados,
-          totalVendas: totalVendas._sum.total || 0
+          totalVendas: Number(totalVendas._sum.total || 0)
         }
 
-        orcamentos = orcamentosData
-        clientes = clientesData
+        orcamentos = orcamentosData.map(orcamento => ({
+          ...orcamento,
+          total: Number(orcamento.total),
+          cliente: {
+            ...orcamento.cliente,
+            empresa: orcamento.cliente.empresa || undefined,
+            user: {
+              ...orcamento.cliente.user
+            }
+          }
+        }))
+        clientes = clientesData.map(cliente => ({
+          ...cliente,
+          empresa: cliente.empresa || undefined,
+          cnpj: cliente.cnpj || undefined,
+          cpf: cliente.cpf || undefined,
+          endereco: cliente.endereco || undefined,
+          cidade: cliente.cidade || undefined,
+          estado: cliente.estado || undefined,
+          cep: cliente.cep || undefined,
+          observacoes: cliente.observacoes || undefined,
+          user: {
+            ...cliente.user,
+            telefone: cliente.user.telefone || undefined
+          }
+        }))
         
         console.log('📊 Estatísticas carregadas:', stats)
       } catch (statsError) {
@@ -305,6 +329,7 @@ export async function PUT(request: NextRequest) {
       nome: string
       email?: string
       telefone?: string
+      avatar?: string
     } = {
       nome: validatedData.userData.nome,
     }

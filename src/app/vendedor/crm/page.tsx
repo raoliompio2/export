@@ -63,8 +63,8 @@ export default function VendedorCrm() {
       const data = await response.json()
       setCrmItems(Array.isArray(data) ? data : [])
       success('CRM carregado', `${data.length} itens encontrados`)
-    } catch (err: any) {
-      error('Erro ao carregar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar', err instanceof Error ? err.message : "Erro desconhecido")
       setCrmItems([])
     } finally {
       setLoading(false)
@@ -83,8 +83,8 @@ export default function VendedorCrm() {
       
       setCrmItems(prev => prev.filter(i => i.id !== item.id))
       success('Item excluído', `${item.titulo} foi removido`)
-    } catch (err: any) {
-      error('Erro ao excluir', err.message)
+    } catch (err: unknown) {
+      error('Erro ao excluir', err instanceof Error ? err.message : "Erro desconhecido")
     }
   }
 

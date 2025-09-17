@@ -75,8 +75,8 @@ export async function GET() {
 
     // Para vendedores, adicionar campo vendedorEmpresa se aplicável
     const empresasComInfo = empresas.map(empresa => {
-      if (user.vendedorProfile) {
-        const vendedorEmpresa = empresa.vendedores.find(ve => ve.vendedorId === user.vendedorProfile.id)
+      if (user.vendedorProfile && user.vendedorProfile.id) {
+        const vendedorEmpresa = empresa.vendedores.find(ve => ve.vendedorId === user.vendedorProfile!.id)
         return {
           ...empresa,
           vendedorEmpresa: vendedorEmpresa || null

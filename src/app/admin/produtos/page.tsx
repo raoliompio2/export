@@ -60,7 +60,7 @@ export default function AdminProdutos() {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [editingProduto, setEditingProduto] = useState<Produto | null>(null)
+  const [editingProduto, setEditingProduto] = useState<Produto | undefined>(undefined)
   const [viewingProduto, setViewingProduto] = useState<Produto | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
@@ -82,8 +82,8 @@ export default function AdminProdutos() {
       const data = await response.json()
       setProdutos(Array.isArray(data) ? data : [])
       success('Produtos carregados', `${data.length} produtos encontrados`)
-    } catch (err: any) {
-      error('Erro ao carregar produtos', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar produtos', err instanceof Error ? err.message : "Erro desconhecido")
       setProdutos([])
     } finally {
       setLoading(false)
@@ -97,7 +97,7 @@ export default function AdminProdutos() {
       
       const data = await response.json()
       setCategorias(Array.isArray(data) ? data : [])
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Erro silencioso para categorias
       setCategorias([])
     }
@@ -111,7 +111,7 @@ export default function AdminProdutos() {
 
   const handleView = (produto: Produto) => {
     setViewingProduto(produto)
-    setEditingProduto(null)
+    setEditingProduto(undefined)
     setShowForm(false)
   }
 
@@ -131,8 +131,8 @@ export default function AdminProdutos() {
 
       setProdutos(prev => prev.filter(p => p.id !== produto.id))
       success('Produto excluído', `${produto.nome} foi removido com sucesso`)
-    } catch (err: any) {
-      error('Erro ao excluir', err.message)
+    } catch (err: unknown) {
+      error('Erro ao excluir', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setDeleting(null)
     }
@@ -140,7 +140,7 @@ export default function AdminProdutos() {
 
   const handleFormClose = () => {
     setShowForm(false)
-    setEditingProduto(null)
+    setEditingProduto(undefined)
   }
 
   const handleViewClose = () => {

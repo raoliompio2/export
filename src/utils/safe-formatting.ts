@@ -51,7 +51,16 @@ export const detectarDescontoReal = (item: { quantidade?: number; precoUnit?: nu
  * @param orcamento - Objeto do orçamento
  * @param context - Contexto onde está sendo usado
  */
-export const debugCalculations = (orcamento: { itens?: Array<{ quantidade?: number; precoUnit?: number; total?: number; desconto?: number }> }, context: string = '') => {
+export const debugCalculations = (orcamento: { 
+  subtotal?: number; 
+  desconto?: number; 
+  frete?: number; 
+  total?: number; 
+  freteInternacional?: number | string; 
+  seguroInternacional?: number | string; 
+  taxasDesaduanagem?: number | string;
+  itens?: Array<{ quantidade?: number; precoUnit?: number; total?: number; desconto?: number; produto?: { nome?: string } }> 
+}, context: string = '') => {
   console.log(`=== DEBUG CÁLCULOS ${context} ===`)
   console.log('Subtotal:', orcamento.subtotal)
   console.log('Desconto:', orcamento.desconto)
@@ -63,7 +72,7 @@ export const debugCalculations = (orcamento: { itens?: Array<{ quantidade?: numb
   
   if (orcamento.itens) {
     console.log('=== ITENS ===')
-    orcamento.itens?.forEach((item: { quantidade?: number; precoUnit?: number; total?: number; desconto?: number }, index: number) => {
+    orcamento.itens?.forEach((item: { quantidade?: number; precoUnit?: number; total?: number; desconto?: number; produto?: { nome?: string } }, index: number) => {
       const descontoReal = detectarDescontoReal(item)
       console.log(`Item ${index + 1}:`, {
         produto: item.produto?.nome,
@@ -173,7 +182,21 @@ export const calcularTotalItem = (quantidade: number, precoUnit: number, descont
  * Dados de exportação seguros
  * Aplica todas as validações necessárias para campos de exportação
  */
-export const createSafeExportData = (orcamento: { numero?: string; itens?: Array<{ produto?: { nome?: string } }> }) => {
+export const createSafeExportData = (orcamento: { 
+  numero?: string; 
+  incoterm?: string;
+  portoDestino?: string;
+  tipoFrete?: string;
+  diasTransito?: number;
+  pesoBruto?: number;
+  volume?: number;
+  medidas?: string;
+  numeroCaixas?: number;
+  freteInternacional?: number;
+  seguroInternacional?: number;
+  taxasDesaduanagem?: number;
+  itens?: Array<{ produto?: { nome?: string } }> 
+}) => {
   const data = {
     incoterm: safeString(orcamento.incoterm, 'CIF'),
     portoDestino: safeString(orcamento.portoDestino, 'A definir'),

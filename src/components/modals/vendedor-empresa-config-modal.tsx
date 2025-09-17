@@ -49,7 +49,7 @@ export default function VendedorEmpresaConfigModal({
       const data = await response.json()
       setComissao(data.comissao?.toString() || '')
       setMeta(data.meta?.toString() || '')
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Se não existir configuração, usar valores padrão
       setComissao(empresa.vendedorEmpresa?.comissao?.toString() || '')
       setMeta(empresa.vendedorEmpresa?.meta?.toString() || '')
@@ -82,8 +82,8 @@ export default function VendedorEmpresaConfigModal({
 
       success('Configurações salvas!', `Suas configurações para ${empresa.nome} foram atualizadas`)
       onSuccess()
-    } catch (err: any) {
-      error('Erro ao salvar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao salvar', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setSubmitting(false)
     }

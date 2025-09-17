@@ -146,8 +146,8 @@ export default function ClienteOrcamentos() {
       const data = await response.json()
       setOrcamentos(Array.isArray(data) ? data : [])
       success(tt('orcamentosCarregados'), `${data.length} orçamentos encontrados`)
-    } catch (err: any) {
-      error(tt('erro'), err.message)
+    } catch (err: unknown) {
+      error(tt('erro'), err instanceof Error ? err.message : "Erro desconhecido")
       setOrcamentos([])
     } finally {
       setLoading(false)
@@ -179,8 +179,8 @@ export default function ClienteOrcamentos() {
         `Orçamento ${novoStatus === 'APROVADO' ? 'aprovado' : 'rejeitado'}!`,
         `Sua decisão foi registrada com sucesso`
       )
-    } catch (err: any) {
-      error('Erro ao atualizar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao atualizar', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setUpdatingStatus(null)
     }

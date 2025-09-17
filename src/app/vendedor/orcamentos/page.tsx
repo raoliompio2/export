@@ -52,7 +52,7 @@ export default function VendedorOrcamentos() {
   const [orcamentos, setOrcamentos] = useState<Orcamento[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
-  const [editingOrcamento, setEditingOrcamento] = useState<Orcamento | null>(null)
+  const [editingOrcamento, setEditingOrcamento] = useState<Orcamento | undefined>(undefined)
   const [viewingOrcamento, setViewingOrcamento] = useState<Orcamento | null>(null)
   // Vendedor sempre vê em BRL, orçamento é gerado em USD
   const { success, error } = useToast()
@@ -71,8 +71,8 @@ export default function VendedorOrcamentos() {
       const data = await response.json()
       setOrcamentos(Array.isArray(data) ? data : [])
       success('Orçamentos carregados', `${data.length} orçamentos encontrados`)
-    } catch (err: any) {
-      error('Erro ao carregar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar', err instanceof Error ? err.message : "Erro desconhecido")
       setOrcamentos([])
     } finally {
       setLoading(false)
@@ -91,8 +91,8 @@ export default function VendedorOrcamentos() {
       
       setOrcamentos(prev => prev.filter(o => o.id !== orcamento.id))
       success('Orçamento excluído', `${orcamento.numero} foi removido`)
-    } catch (err: any) {
-      error('Erro ao excluir', err.message)
+    } catch (err: unknown) {
+      error('Erro ao excluir', err instanceof Error ? err.message : "Erro desconhecido")
     }
   }
 
@@ -107,7 +107,7 @@ export default function VendedorOrcamentos() {
 
   const handleFormClose = () => {
     setShowForm(false)
-    setEditingOrcamento(null)
+    setEditingOrcamento(undefined)
   }
 
   const getStatusColor = (status: string) => {

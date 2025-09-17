@@ -62,7 +62,19 @@ export async function POST(request: NextRequest) {
           itens: []
         }
       }
-      acc[empresaId].itens.push(item)
+      acc[empresaId].itens.push({
+        ...item,
+        observacoes: item.observacoes || undefined,
+        produto: {
+          ...item.produto,
+          preco: Number(item.produto.preco),
+          precoPromocional: item.produto.precoPromocional ? Number(item.produto.precoPromocional) : undefined,
+          empresa: {
+            id: item.produto.empresa.id,
+            nome: item.produto.empresa.nome
+          }
+        }
+      })
       return acc
     }, {} as Record<string, { empresa: { id: string, nome: string }, itens: Array<{ id: string, quantidade: number, observacoes?: string, produto: { id: string, nome: string, preco: number, precoPromocional?: number, empresa: { id: string, nome: string } } }> }>)
 
@@ -128,7 +140,7 @@ export async function POST(request: NextRequest) {
           precoUnit: precoUnitario,
           desconto: 0,
           total: totalItem,
-          observacoes: item.observacoes
+          observacoes: item.observacoes || undefined
         }
       })
 

@@ -50,8 +50,8 @@ export default function SolicitarRepresentacaoModal({
       // Filtrar apenas empresas que o vendedor não representa ainda
       const empresasDisponiveis = data.filter((empresa: any) => !empresa.vendedorEmpresa?.ativo)
       setEmpresas(empresasDisponiveis)
-    } catch (err: any) {
-      error('Erro ao carregar empresas', err.message)
+    } catch (err: unknown) {
+      error('Erro ao carregar empresas', err instanceof Error ? err.message : "Erro desconhecido")
       setEmpresas([])
     } finally {
       setLoading(false)
@@ -84,8 +84,8 @@ export default function SolicitarRepresentacaoModal({
 
       success('Solicitação enviada!', `Sua solicitação para ${selectedEmpresa.nome} foi enviada`)
       onSuccess()
-    } catch (err: any) {
-      error('Erro ao solicitar', err.message)
+    } catch (err: unknown) {
+      error('Erro ao solicitar', err instanceof Error ? err.message : "Erro desconhecido")
     } finally {
       setSubmitting(false)
     }

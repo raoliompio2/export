@@ -194,7 +194,7 @@ export async function PUT(
       // Criar novos itens
       if (processedItens.length > 0) {
         await tx.orcamentoItem.createMany({
-          data: processedItens.map((item) => ({
+          data: processedItens.map((item: { produtoId: string; quantidade: number; precoUnit: number; desconto: number; total: number; observacoes?: string }) => ({
             ...item,
             orcamentoId: id
           }))
