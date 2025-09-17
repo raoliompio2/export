@@ -553,6 +553,106 @@ export default function VendedorPerfil() {
             </div>
           </ModernCard>
 
+          {/* Comissões */}
+          <ModernCard>
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-green-500" />
+                  Comissões
+                </h3>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                </span>
+              </div>
+              
+              {(() => {
+                const comissaoPercent = vendedor.vendedorProfile?.comissao || 0
+                
+                // Filtrar orçamentos do mês atual
+                const agora = new Date()
+                const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1)
+                const fimMes = new Date(agora.getFullYear(), agora.getMonth() + 1, 0, 23, 59, 59)
+                
+                const orcamentosDoMes = vendedor.orcamentos?.filter(orc => {
+                  const dataOrcamento = new Date(orc.createdAt)
+                  return dataOrcamento >= inicioMes && dataOrcamento <= fimMes
+                }) || []
+                
+                // Calcular comissões confirmadas (orçamentos APROVADOS do mês)
+                const orcamentosAprovados = orcamentosDoMes.filter(orc => orc.status === 'APROVADO')
+                const comissaoConfirmada = orcamentosAprovados.reduce((total, orc) => {
+                  const valor = parseFloat(orc.total || '0')
+                  return total + (valor * comissaoPercent / 100)
+                }, 0)
+                
+                // Calcular comissões potenciais (orçamentos ENVIADOS do mês)
+                const orcamentosEnviados = orcamentosDoMes.filter(orc => orc.status === 'ENVIADO')
+                const comissaoPotencial = orcamentosEnviados.reduce((total, orc) => {
+                  const valor = parseFloat(orc.total || '0')
+                  return total + (valor * comissaoPercent / 100)
+                }, 0)
+                
+                return (
+                  <div className="space-y-4">
+                    {/* Comissões Confirmadas */}
+                    <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-green-700">Comissões a Receber</span>
+                        <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                          {orcamentosAprovados.length} vendas
+                        </span>
+                      </div>
+                      <div className="text-2xl font-bold text-green-800 mb-1">
+                        R$ {comissaoConfirmada.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </div>
+                      <div className="text-xs text-green-600">
+                        {comissaoPercent}% sobre vendas aprovadas
+                      </div>
+                    </div>
+
+                    {/* Comissões Potenciais */}
+                    <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-yellow-700">Comissões Potenciais</span>
+                        <span className="text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full">
+                          {orcamentosEnviados.length} enviados
+                        </span>
+                      </div>
+                      <div className="text-2xl font-bold text-yellow-800 mb-1">
+                        R$ {comissaoPotencial.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </div>
+                      <div className="text-xs text-yellow-600">
+                        {comissaoPercent}% sobre orçamentos enviados
+                      </div>
+                    </div>
+
+                    {/* Resumo */}
+                    {(comissaoConfirmada > 0 || comissaoPotencial > 0) && (
+                      <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                        <div className="text-sm font-medium text-blue-700 mb-2">Total Potencial</div>
+                        <div className="text-xl font-bold text-blue-800">
+                          R$ {(comissaoConfirmada + comissaoPotencial).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </div>
+                        <div className="text-xs text-blue-600 mt-1">
+                          Se todas as propostas forem aprovadas
+                        </div>
+                      </div>
+                    )}
+
+                    {comissaoConfirmada === 0 && comissaoPotencial === 0 && (
+                      <div className="text-center py-6">
+                        <DollarSign className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                        <p className="text-sm text-gray-500">Nenhuma comissão ainda</p>
+                        <p className="text-xs text-gray-400">Crie orçamentos para gerar comissões</p>
+                      </div>
+                    )}
+                  </div>
+                )
+              })()}
+            </div>
+          </ModernCard>
+
           {/* Ações Rápidas */}
           <ModernCard>
             <div className="p-6">
