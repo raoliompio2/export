@@ -25,7 +25,7 @@ export const safeToFixed = (value: number | null | undefined, decimals: number =
  * @param item - Item do orçamento
  * @returns Desconto correto (detectado ou informado)
  */
-export const detectarDescontoReal = (item: any): number => {
+export const detectarDescontoReal = (item: { quantidade?: number; precoUnit?: number; total?: number; desconto?: number }): number => {
   const quantidade = Number(item.quantidade) || 0
   const precoUnit = Number(item.precoUnit) || 0
   const total = Number(item.total) || 0
@@ -51,7 +51,7 @@ export const detectarDescontoReal = (item: any): number => {
  * @param orcamento - Objeto do orçamento
  * @param context - Contexto onde está sendo usado
  */
-export const debugCalculations = (orcamento: any, context: string = '') => {
+export const debugCalculations = (orcamento: { itens?: Array<{ quantidade?: number; precoUnit?: number; total?: number; desconto?: number }> }, context: string = '') => {
   console.log(`=== DEBUG CÁLCULOS ${context} ===`)
   console.log('Subtotal:', orcamento.subtotal)
   console.log('Desconto:', orcamento.desconto)
@@ -63,7 +63,7 @@ export const debugCalculations = (orcamento: any, context: string = '') => {
   
   if (orcamento.itens) {
     console.log('=== ITENS ===')
-    orcamento.itens.forEach((item: any, index: number) => {
+    orcamento.itens?.forEach((item: { quantidade?: number; precoUnit?: number; total?: number; desconto?: number }, index: number) => {
       const descontoReal = detectarDescontoReal(item)
       console.log(`Item ${index + 1}:`, {
         produto: item.produto?.nome,
@@ -115,7 +115,7 @@ export const isValidPositiveNumber = (value: number | null | undefined): boolean
  * @param frete - Frete nacional
  * @returns Objeto com os cálculos
  */
-export const calcularTotaisOrcamento = (itens: any[], desconto: number = 0, frete: number = 0) => {
+export const calcularTotaisOrcamento = (itens: Array<{ quantidade?: number; precoUnit?: number; desconto?: number }>, desconto: number = 0, frete: number = 0) => {
   const subtotal = itens.reduce((acc, item) => {
     const totalItem = calcularTotalItem(item.quantidade, item.precoUnit, item.desconto)
     return acc + totalItem
@@ -173,7 +173,7 @@ export const calcularTotalItem = (quantidade: number, precoUnit: number, descont
  * Dados de exportação seguros
  * Aplica todas as validações necessárias para campos de exportação
  */
-export const createSafeExportData = (orcamento: any) => {
+export const createSafeExportData = (orcamento: { numero?: string; itens?: Array<{ produto?: { nome?: string } }> }) => {
   const data = {
     incoterm: safeString(orcamento.incoterm, 'CIF'),
     portoDestino: safeString(orcamento.portoDestino, 'A definir'),

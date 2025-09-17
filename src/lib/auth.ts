@@ -174,7 +174,7 @@ export async function rejectUser(userId: string, motivo: string, adminId: string
 }
 
 // Função para verificar se usuário está aprovado
-export function isUserApproved(user: any): boolean {
+export function isUserApproved(user: { status?: string }): boolean {
   return user?.status === 'APROVADO'
 }
 

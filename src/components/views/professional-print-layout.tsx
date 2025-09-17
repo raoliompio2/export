@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { createSafeExportData, safeToFixed, formatCurrencySafe, debugCalculations, detectarDescontoReal } from '@/utils/safe-formatting'
 
 interface OrcamentoItem {
@@ -211,7 +212,13 @@ export default function ProfessionalPrintLayout({
           <div className="company-info" style={{ flex: '1', marginRight: '30px' }}>
             {orcamento.empresa.logo && (
               <div className="company-logo">
-                <img src={orcamento.empresa.logo} alt={orcamento.empresa.nome} />
+                <Image 
+                  src={orcamento.empresa.logo} 
+                  alt={orcamento.empresa.nome}
+                  width={120}
+                  height={80}
+                  className="max-h-20 w-auto object-contain"
+                />
               </div>
             )}
             <div className="company-details">
@@ -230,7 +237,7 @@ export default function ProfessionalPrintLayout({
               <p><strong>Nº:</strong> {orcamento.numero}</p>
               <p><strong>{t.date}:</strong> {formatDate(orcamento.createdAt)}</p>
               {orcamento.validadeAte && (
-                <p><strong>{(t as any).validity || 'Validity'}:</strong> {formatDate(orcamento.validadeAte)}</p>
+                <p><strong>{(t as Record<string, unknown>).validity || 'Validity'}:</strong> {formatDate(orcamento.validadeAte)}</p>
               )}
             </div>
           </div>
@@ -321,9 +328,11 @@ export default function ProfessionalPrintLayout({
                     </td>
                     <td className="image-cell">
                       {item.produto.imagens && item.produto.imagens.length > 0 ? (
-                        <img 
+                        <Image 
                           src={item.produto.imagens[0]} 
                           alt={item.produto.nome}
+                          width={60}
+                          height={60}
                           className="product-image"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;

@@ -11,12 +11,11 @@ import {
   User,
   Calendar,
   DollarSign,
-  Package,
-  Globe
+  Package
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import ModernButton from '@/components/ui/modern-button'
-import CurrencyConverter from '@/components/ui/currency-converter'
 import ExchangeRateDisplay from '@/components/ui/exchange-rate-display'
 
 interface OrcamentoItem {
@@ -95,14 +94,11 @@ export default function ProfessionalInvoiceView({
   currency = 'USD'
 }: ProfessionalInvoiceViewProps) {
   const [conversionRates, setConversionRates] = useState<{[key: string]: number}>({})
-  const [loading, setLoading] = useState(false)
   const t = useTranslations('orcamentos.proforma')
-  const tc = useTranslations('common')
 
   // Buscar todas as conversões de uma vez
   useEffect(() => {
     const fetchAllConversions = async () => {
-      setLoading(true)
       try {
         const amounts = [
           ...orcamento.itens.map(item => item.precoUnit),
@@ -128,8 +124,6 @@ export default function ProfessionalInvoiceView({
         setConversionRates(conversions)
       } catch (error) {
         console.error('Erro ao buscar conversões:', error)
-      } finally {
-        setLoading(false)
       }
     }
 
@@ -235,9 +229,11 @@ export default function ProfessionalInvoiceView({
             <div className="flex items-start justify-between mb-8">
               <div className="flex items-start gap-6">
                 {orcamento.empresa.logo && (
-                  <img
+                  <Image
                     src={orcamento.empresa.logo}
                     alt={orcamento.empresa.nome}
+                    width={80}
+                    height={80}
                     className="h-20 w-20 object-contain"
                   />
                 )}
