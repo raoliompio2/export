@@ -18,6 +18,40 @@ import {
   Activity
 } from 'lucide-react'
 
+interface Orcamento {
+  id: string
+  numero: string
+  titulo: string
+  status: string
+  total: number | string
+  createdAt: string
+  empresa: {
+    nome: string
+  }
+}
+
+interface Cliente {
+  id: string
+  empresa?: string
+  cnpj?: string
+  cpf?: string
+  endereco?: string
+  cidade?: string
+  estado?: string
+  cep?: string
+  observacoes?: string
+  ativo: boolean
+  createdAt: string
+  updatedAt: string
+  user: {
+    id: string
+    nome: string
+    email: string
+    telefone?: string
+  }
+  orcamentos?: Orcamento[]
+}
+
 interface ClienteViewProps {
   clienteId: string
   onClose: () => void
@@ -25,7 +59,7 @@ interface ClienteViewProps {
 }
 
 export default function ClienteView({ clienteId, onClose, onEdit }: ClienteViewProps) {
-  const [cliente, setCliente] = useState<any>(null)
+  const [cliente, setCliente] = useState<Cliente | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -75,9 +109,9 @@ export default function ClienteView({ clienteId, onClose, onEdit }: ClienteViewP
   }
 
   const totalOrcamentos = cliente.orcamentos?.length || 0
-  const orcamentosAprovados = cliente.orcamentos?.filter((o: any) => o.status === 'APROVADO').length || 0
-  const valorTotal = cliente.orcamentos?.filter((o: any) => o.status === 'APROVADO')
-    .reduce((sum: number, o: any) => sum + parseFloat(o.total), 0) || 0
+  const orcamentosAprovados = cliente.orcamentos?.filter((o: Orcamento) => o.status === 'APROVADO').length || 0
+  const valorTotal = cliente.orcamentos?.filter((o: Orcamento) => o.status === 'APROVADO')
+    .reduce((sum: number, o: Orcamento) => sum + parseFloat(String(o.total)), 0) || 0
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -256,7 +290,7 @@ export default function ClienteView({ clienteId, onClose, onEdit }: ClienteViewP
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {cliente.orcamentos.map((orcamento: any) => (
+                      {cliente.orcamentos.map((orcamento: Orcamento) => (
                         <tr key={orcamento.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3">
                             <p className="font-medium text-gray-900">{orcamento.numero}</p>

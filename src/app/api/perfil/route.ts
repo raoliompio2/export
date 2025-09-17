@@ -215,11 +215,11 @@ const updatePerfilSchema = z.object({
     estado: z.string().optional(),
     cep: z.string().optional(),
     observacoes: z.string().optional(),
-  }).optional(),
+  }).nullable().optional(),
   vendedorData: z.object({
     comissao: z.number().min(0).max(100),
     meta: z.number().min(0),
-  }).optional(),
+  }).nullable().optional(),
 })
 
 export async function PUT(request: NextRequest) {

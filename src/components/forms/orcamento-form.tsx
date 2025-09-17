@@ -39,16 +39,70 @@ const orcamentoSchema = z.object({
   })).min(1, 'Adicione pelo menos um item')
 })
 
+interface Cliente {
+  id: string
+  empresa?: string
+  user: {
+    nome: string
+    email: string
+  }
+}
+
+interface Produto {
+  id: string
+  codigo: string
+  nome: string
+  preco: number | string
+  peso?: number | string
+  dimensoes?: string
+  unidade: string
+}
+
+interface OrcamentoItem {
+  id?: string
+  produtoId: string
+  quantidade: number
+  precoUnit: number | string
+  desconto?: number | string
+  total?: number | string
+  produto?: Produto
+}
+
+interface Orcamento {
+  id?: string
+  titulo?: string
+  clienteId?: string
+  descricao?: string
+  validadeAte?: string | Date
+  observacoes?: string
+  condicoesPagamento?: string
+  prazoEntrega?: string
+  frete?: number | string
+  desconto?: number | string
+  incoterm?: string
+  portoDestino?: string
+  tipoFrete?: string
+  diasTransito?: number
+  pesoBruto?: number
+  volume?: number
+  medidas?: string
+  numeroCaixas?: number
+  freteInternacional?: number
+  seguroInternacional?: number
+  taxasDesaduanagem?: number
+  itens?: OrcamentoItem[]
+}
+
 interface OrcamentoFormProps {
-  orcamento?: any
+  orcamento?: Orcamento
   onClose: () => void
   onSuccess: () => void
 }
 
 export default function OrcamentoForm({ orcamento, onClose, onSuccess }: OrcamentoFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [clientes, setClientes] = useState<any[]>([])
-  const [produtos, setProdutos] = useState<any[]>([])
+  const [clientes, setClientes] = useState<Cliente[]>([])
+  const [produtos, setProdutos] = useState<Produto[]>([])
   const [loadingData, setLoadingData] = useState(true)
 
   type OrcamentoFormData = z.infer<typeof orcamentoSchema>
@@ -63,8 +117,8 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
       observacoes: orcamento?.observacoes || '',
       condicoesPagamento: orcamento?.condicoesPagamento || '',
       prazoEntrega: orcamento?.prazoEntrega || '',
-      frete: orcamento?.frete ? parseFloat(orcamento.frete) : 0,
-      desconto: orcamento?.desconto ? parseFloat(orcamento.desconto) : 0,
+      frete: orcamento?.frete ? parseFloat(String(orcamento.frete)) : 0,
+      desconto: orcamento?.desconto ? parseFloat(String(orcamento.desconto)) : 0,
       
       // Valores padrão para campos de exportação
       incoterm: orcamento?.incoterm || 'CIF',
@@ -79,11 +133,11 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
       seguroInternacional: orcamento?.seguroInternacional || 0,
       taxasDesaduanagem: orcamento?.taxasDesaduanagem || 0,
       
-      itens: orcamento?.itens?.map((item: any) => ({
+      itens: orcamento?.itens?.map((item: OrcamentoItem) => ({
         produtoId: item.produtoId,
         quantidade: item.quantidade,
-        precoUnit: parseFloat(item.precoUnit),
-        desconto: parseFloat(item.desconto || 0)
+        precoUnit: parseFloat(String(item.precoUnit)),
+        desconto: parseFloat(String(item.desconto || 0))
       })) || [{ produtoId: '', quantidade: 1, precoUnit: 0, desconto: 0 }]
     }
   })
@@ -180,9 +234,9 @@ export default function OrcamentoForm({ orcamento, onClose, onSuccess }: Orcamen
       }
 
       onSuccess()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao salvar orçamento:', error)
-      alert(error.message || 'Erro ao salvar orçamento')
+      alert(error instanceof Error ? error.message : 'Erro ao salvar orçamento')
     } finally {
       setIsSubmitting(false)
     }

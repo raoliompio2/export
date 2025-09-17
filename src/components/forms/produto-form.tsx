@@ -26,16 +26,57 @@ const produtoSchema = z.object({
 
 type ProdutoFormData = z.infer<typeof produtoSchema>
 
+interface Categoria {
+  id: string
+  nome: string
+  descricao?: string
+  ativa: boolean
+}
+
+interface Empresa {
+  id: string
+  nome: string
+  nomeFantasia?: string
+  ativa: boolean
+}
+
+interface Produto {
+  id?: string
+  codigo?: string
+  nome?: string
+  descricao?: string
+  categoria?: {
+    id: string
+    nome: string
+  }
+  categoriaId?: string
+  empresa?: {
+    id: string
+    nome: string
+  }
+  empresaId?: string
+  preco?: number | string
+  precoPromocional?: number | string
+  unidade?: string
+  estoque?: number
+  estoqueMinimo?: number
+  peso?: number | string
+  dimensoes?: string
+  imagens?: string[]
+  status?: string
+  destaque?: boolean
+}
+
 interface ProdutoFormProps {
-  produto?: any
+  produto?: Produto
   onClose: () => void
   onSuccess: () => void
 }
 
 export default function ProdutoForm({ produto, onClose, onSuccess }: ProdutoFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [categorias, setCategorias] = useState<any[]>([])
-  const [empresas, setEmpresas] = useState<any[]>([])
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [empresas, setEmpresas] = useState<Empresa[]>([])
   const [userRole, setUserRole] = useState<string>('')
   const [loadingCategorias, setLoadingCategorias] = useState(true)
 

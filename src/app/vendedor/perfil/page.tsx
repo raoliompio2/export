@@ -27,7 +27,7 @@ import {
 import ModernButton from '@/components/ui/modern-button'
 import ModernCard, { StatsCard } from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
-import PerfilForm from '@/components/forms/perfil-form'
+import PerfilFormSimple from '@/components/forms/perfil-form-simple'
 
 interface VendedorData {
   user: {
@@ -722,7 +722,7 @@ export default function VendedorPerfil() {
 
       {/* Form de Edição de Perfil */}
       {showEditForm && vendedor && (
-        <PerfilForm
+        <PerfilFormSimple
           initialData={vendedor}
           onClose={() => setShowEditForm(false)}
           onSuccess={handleEditSuccess}

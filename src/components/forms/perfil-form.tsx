@@ -34,6 +34,26 @@ type UserData = z.infer<typeof userDataSchema>
 type ClienteData = z.infer<typeof clienteDataSchema>
 type VendedorData = z.infer<typeof vendedorDataSchema>
 
+interface ClienteProfile {
+  id: string
+  empresa?: string
+  cnpj?: string
+  cpf?: string
+  endereco?: string
+  cidade?: string
+  estado?: string
+  cep?: string
+  observacoes?: string
+  ativo: boolean
+}
+
+interface VendedorProfile {
+  id: string
+  comissao: number | string
+  meta: number | string
+  ativo: boolean
+}
+
 interface PerfilFormProps {
   initialData: {
     user: {
@@ -44,8 +64,8 @@ interface PerfilFormProps {
       avatar?: string
       role: string
     }
-    clienteProfile?: any
-    vendedorProfile?: any
+    clienteProfile?: ClienteProfile
+    vendedorProfile?: VendedorProfile
   }
   onClose: () => void
   onSuccess: () => void
