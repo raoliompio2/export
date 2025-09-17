@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { SolicitacaoStatus } from '@prisma/client'
 import { z } from 'zod'
 
 const aprovarSchema = z.object({
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (solicitacao.status !== 'PENDENTE') {
+    if (solicitacao.status !== SolicitacaoStatus.PENDENTE) {
       return NextResponse.json(
         { error: 'Solicitação já foi processada' },
         { status: 400 }
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
         prisma.solicitacaoRepresentacao.update({
           where: { id: solicitacaoId },
           data: {
-            status: 'APROVADA',
+            status: SolicitacaoStatus.APROVADA,
             processadoEm: new Date(),
             processadoPor: currentUser.id
           }
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
       await prisma.solicitacaoRepresentacao.update({
         where: { id: solicitacaoId },
         data: {
-          status: 'REJEITADA',
+          status: SolicitacaoStatus.REJEITADA,
           processadoEm: new Date(),
           processadoPor: currentUser.id
         }
