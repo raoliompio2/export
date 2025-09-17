@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser, isUserApproved } from '@/lib/auth'
-import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs'
+import { SignInButton } from '@clerk/nextjs'
 
 export default async function Home() {
   const user = await getCurrentUser()
