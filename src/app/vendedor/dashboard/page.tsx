@@ -75,7 +75,7 @@ export default function ModernVendedorDashboard() {
       vendedorProfile: { meta: 0 } 
     }
   })
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   useEffect(() => {
     fetchDashboardData()
