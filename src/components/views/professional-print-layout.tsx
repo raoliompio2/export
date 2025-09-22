@@ -99,10 +99,12 @@ interface ProfessionalPrintLayoutProps {
 const translations = {
   en: {
     title: 'EXPORT QUOTE',
+    proformaTitle: 'PROFORMA INVOICE',
     date: 'Date',
     customer: 'CUSTOMER',
     commercialConditions: 'COMMERCIAL CONDITIONS',
     items: 'QUOTATION ITEMS',
+    proformaItems: 'INVOICE ITEMS',
     product: 'PRODUCT',
     image: 'IMAGE',
     origin: 'ORIGIN',
@@ -127,15 +129,18 @@ const translations = {
     notes: 'Important Notes',
     customsNote: 'The company is NOT responsible for customs clearance. The client must perform customs clearance and collect the cargo at the destination port.',
     mercosurNote: 'Products of national origin may be eligible for tax benefits under the Mercosur agreement.',
-    quoteNote: 'This is a quote and not a sales order. Prices and conditions are valid until the specified date.'
+    quoteNote: 'This is a quote and not a sales order. Prices and conditions are valid until the specified date.',
+    proformaNote: 'This is a proforma invoice. Payment is required before shipment.'
   },
   pt: {
     title: 'ORÇAMENTO DE EXPORTAÇÃO',
+    proformaTitle: 'FATURA PRÓ-FORMA',
     quote: 'COTAÇÃO',
     client: 'DADOS DO CLIENTE',
     seller: 'VENDEDOR',
     commercialConditions: 'CONDIÇÕES COMERCIAIS',
     items: 'ITENS DO ORÇAMENTO',
+    proformaItems: 'ITENS DA FATURA',
     logistics: 'INFORMAÇÕES LOGÍSTICAS',
     totals: 'RESUMO FINANCEIRO',
     notes: 'OBSERVAÇÕES IMPORTANTES',
@@ -162,7 +167,8 @@ const translations = {
     exchangeRate: 'Cotação USD',
     customsNote: 'A empresa não é responsável pelo desembaraço aduaneiro.',
     mercosurNote: 'Produtos nacionais podem ter benefícios fiscais no Mercosul.',
-    quoteNote: 'Este é um orçamento. Preços válidos até a data especificada.'
+    quoteNote: 'Este é um orçamento. Preços válidos até a data especificada.',
+    proformaNote: 'Esta é uma fatura pró-forma. Pagamento necessário antes do embarque.'
   }
 }
 
@@ -177,6 +183,7 @@ export default function ProfessionalPrintLayout({
   }
   const [exchangeRate, setExchangeRate] = useState(5.42)
   const [exchangeRateDate, setExchangeRateDate] = useState<string>('')
+  const [isProforma, setIsProforma] = useState(false)
   const { language: currentLanguage, isLoaded } = useLanguage()
   
   // Usar o idioma do hook personalizado, com fallback para o prop
@@ -217,6 +224,35 @@ export default function ProfessionalPrintLayout({
 
   return (
     <div className="professional-print-layout">
+      {/* CONTROLE DE TIPO DE DOCUMENTO */}
+      <div className="document-type-control">
+        <div style={{ marginBottom: '10px', fontWeight: 'bold', color: '#374151' }}>
+          Tipo de Documento:
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={() => setIsProforma(false)}
+            style={{
+              backgroundColor: !isProforma ? '#3b82f6' : 'white',
+              color: !isProforma ? 'white' : '#3b82f6',
+              borderColor: '#3b82f6'
+            }}
+          >
+            Quote
+          </button>
+          <button
+            onClick={() => setIsProforma(true)}
+            style={{
+              backgroundColor: isProforma ? '#10b981' : 'white',
+              color: isProforma ? 'white' : '#10b981',
+              borderColor: '#10b981'
+            }}
+          >
+            Proforma Invoice
+          </button>
+        </div>
+      </div>
+
       <div className="print-page">
         
         {/* CABEÇALHO */}
@@ -244,7 +280,9 @@ export default function ProfessionalPrintLayout({
             </div>
           </div>
           <div className="document-info" style={{ flex: '0 0 300px', textAlign: 'right' }}>
-            <h2 className="document-title" style={{ fontSize: '28px', fontWeight: 'bold', color: '#3b82f6', marginBottom: '15px' }}>{t.title}</h2>
+            <h2 className="document-title" style={{ fontSize: '28px', fontWeight: 'bold', color: isProforma ? '#10b981' : '#3b82f6', marginBottom: '15px' }}>
+              {isProforma ? t.proformaTitle : t.title}
+            </h2>
             <div className="document-details">
               <p><strong>Nº:</strong> {orcamento.numero}</p>
               <p><strong>{t.date}:</strong> {formatDate(orcamento.createdAt)}</p>
@@ -313,7 +351,9 @@ export default function ProfessionalPrintLayout({
 
         {/* TABELA DE ITENS */}
         <section className="items-section">
-          <h3 className="section-title">{t.items || (activeLanguage === 'en' ? 'QUOTATION ITEMS' : 'ITENS DO ORÇAMENTO')}</h3>
+          <h3 className="section-title">
+            {isProforma ? t.proformaItems : t.items || (activeLanguage === 'en' ? 'QUOTATION ITEMS' : 'ITENS DO ORÇAMENTO')}
+          </h3>
           <table className="items-table">
             <thead>
               <tr>
@@ -543,7 +583,7 @@ export default function ProfessionalPrintLayout({
             {/* Observações personalizáveis por empresa */}
             <p><strong>Importante:</strong> {orcamento.empresa.observacaoDesaduanagem || t.customsNote}</p>
             <p><strong>Mercosul:</strong> {orcamento.empresa.observacaoMercosul || t.mercosurNote}</p>
-            <p><strong>Validade:</strong> {orcamento.empresa.observacaoValidade || t.quoteNote}</p>
+            <p><strong>{isProforma ? 'Pagamento' : 'Validade'}:</strong> {isProforma ? t.proformaNote : (orcamento.empresa.observacaoValidade || t.quoteNote)}</p>
           </div>
         </section>
 
