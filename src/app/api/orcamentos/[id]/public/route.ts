@@ -38,10 +38,10 @@ export async function GET(
 
     console.log('✅ Retornando orçamento para visualização pública')
 
-    // Adicionar headers para não indexação
+    // Adicionar headers para indexação e cache
     const response = NextResponse.json(orcamento)
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
-    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+    response.headers.set('X-Robots-Tag', 'index, follow')
+    response.headers.set('Cache-Control', 'public, max-age=300') // Cache por 5 minutos
     
     return response
   } catch (error) {

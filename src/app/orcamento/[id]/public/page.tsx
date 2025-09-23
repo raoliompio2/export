@@ -92,23 +92,35 @@ interface Orcamento {
   }>
 }
 
-export default function PublicOrcamentoPage() {
-  const params = useParams()
+interface PublicOrcamentoPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default function PublicOrcamentoPage({ params }: PublicOrcamentoPageProps) {
   const [orcamento, setOrcamento] = useState<Orcamento | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [orcamentoId, setOrcamentoId] = useState<string>('')
   const { language, changeLanguage, isLoaded } = useLanguage()
 
   useEffect(() => {
-    if (!params.id) {
+    const initializeParams = async () => {
+      const resolvedParams = await params
+      setOrcamentoId(resolvedParams.id)
+    }
+    initializeParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!orcamentoId) {
       console.log('❌ ID do orçamento não fornecido')
       return
     }
 
     const fetchOrcamento = async () => {
       try {
-        console.log('🔄 Buscando orçamento:', params.id)
-        const response = await fetch(`/api/orcamentos/${params.id}/public`)
+        console.log('🔄 Buscando orçamento:', orcamentoId)
+        const response = await fetch(`/api/orcamentos/${orcamentoId}/public`)
         
         console.log('📡 Response status:', response.status)
         
@@ -134,7 +146,7 @@ export default function PublicOrcamentoPage() {
     }
 
     fetchOrcamento()
-  }, [params.id])
+  }, [orcamentoId])
 
   if (loading || !isLoaded) {
     return (
