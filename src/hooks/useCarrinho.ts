@@ -187,8 +187,28 @@ export function useCarrinho() {
           return false
         }
 
-        // Recarregar carrinho para sincronizar com servidor
-        await fetchCarrinho()
+        // Atualizar estado local com a resposta do servidor
+        const novoItem = await response.json()
+        
+        if (itemExistente) {
+          // Atualizar item existente
+          setItens(prev => prev.map(item => 
+            item.produto.id === produtoId 
+              ? { ...item, quantidade: novoItem.quantidade }
+              : item
+          ))
+        } else {
+          // Adicionar novo item (substituir item temporário)
+          setItens(prev => prev.map(item => 
+            item.id === tempId 
+              ? novoItem
+              : item
+          ))
+        }
+
+        // Limpar updates otimísticos
+        setOptimisticUpdates(new Map())
+        
         console.log(`🛒 Item adicionado ao carrinho: produtoId=${produtoId}, quantidade=${quantidade}`)
         return true
       } catch (error) {
@@ -234,6 +254,13 @@ export function useCarrinho() {
           return false
         }
 
+        // Item já foi removido otimisticamente, apenas limpar updates
+        setOptimisticUpdates(prev => {
+          const newMap = new Map(prev)
+          newMap.delete(itemId)
+          return newMap
+        })
+
         console.log(`🛒 Item removido do carrinho: itemId=${itemId}`)
         return true
       } catch (error) {
@@ -276,8 +303,21 @@ export function useCarrinho() {
           return false
         }
 
-        // Recarregar carrinho para sincronizar com servidor
-        await fetchCarrinho()
+        // Atualizar estado local com a resposta do servidor
+        const itemAtualizado = await response.json()
+        setItens(prev => prev.map(item => 
+          item.id === itemId 
+            ? { ...item, quantidade: itemAtualizado.quantidade }
+            : item
+        ))
+
+        // Limpar update otimístico
+        setOptimisticUpdates(prev => {
+          const newMap = new Map(prev)
+          newMap.delete(itemId)
+          return newMap
+        })
+
         console.log(`🛒 Quantidade atualizada: itemId=${itemId}, quantidade=${quantidade}`)
         return true
       } catch (error) {
@@ -290,8 +330,6 @@ export function useCarrinho() {
           return newMap
         })
         
-        // Recarregar para estado consistente
-        await fetchCarrinho()
         return false
       }
     })
@@ -322,6 +360,9 @@ export function useCarrinho() {
           return false
         }
 
+        // Carrinho já foi limpo otimisticamente, apenas limpar updates
+        setOptimisticUpdates(new Map())
+        
         console.log('🛒 Carrinho limpo com sucesso')
         return true
       } catch (error) {
