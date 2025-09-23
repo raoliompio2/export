@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import LanguageSelector from '@/components/ui/language-selector'
 import ExchangeRateDisplay from '@/components/ui/exchange-rate-display'
+import CartBadge from '@/components/ui/cart-badge'
 import { useCarrinho } from '@/hooks/useCarrinho'
 
 interface ModernClienteLayoutProps {
@@ -34,7 +35,6 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const t = useTranslations('navigation')
-  const { totalItens } = useCarrinho()
   
   const navigation = [
     { 
@@ -106,11 +106,11 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-purple-400" />
-                <span className="text-sm font-medium text-gray-200">Status VIP</span>
+                <span className="text-sm font-medium text-gray-200">Status Ativo</span>
               </div>
               <CheckCircle className="h-4 w-4 opacity-80 text-purple-400" />
             </div>
-            <div className="text-lg font-bold mb-1 text-white">Cliente Premium</div>
+            <div className="text-lg font-bold mb-1 text-white">Cliente</div>
             <div className="text-gray-300 text-sm flex items-center gap-2">
               <Clock className="h-3 w-3 text-purple-400" />
               Últimos pedidos entregues
@@ -146,10 +146,8 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
                 <div className="flex-1">
                   <div className="font-medium flex items-center gap-2">
                     {item.name}
-                    {item.href === '/cliente/carrinho' && totalItens > 0 && (
-                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] h-5 flex items-center justify-center">
-                        {totalItens > 99 ? '99+' : totalItens}
-                      </span>
+                    {item.href === '/cliente/carrinho' && (
+                      <CartBadge showIcon={false} />
                     )}
                   </div>
                   <div className={`text-xs ${
@@ -167,22 +165,6 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
           })}
         </nav>
 
-        {/* Quick Actions */}
-        <div className="px-4 pb-4">
-          <div className="space-y-3">
-            <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FileText className="h-4 w-4 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-900">Solicitar Orçamento</div>
-                  <div className="text-xs text-gray-500">Cotação rápida</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* User Profile */}
         <div className="absolute bottom-4 left-4 right-4">
@@ -197,7 +179,7 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
               />
               <div className="flex-1">
                 <div className="font-medium text-gray-900 text-sm">Cliente</div>
-                <div className="text-xs text-gray-500">Membro VIP</div>
+                <div className="text-xs text-gray-500">Membro Ativo</div>
               </div>
               <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
             </div>
@@ -238,7 +220,7 @@ export default function ModernClienteLayout({ children }: ModernClienteLayoutPro
               {/* Status Badge */}
               <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-purple-100 rounded-lg text-purple-700">
                 <Star className="h-4 w-4" />
-                <span className="text-sm font-medium">VIP</span>
+                <span className="text-sm font-medium">Ativo</span>
               </div>
 
               {/* Search */}
