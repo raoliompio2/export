@@ -17,11 +17,13 @@ import {
   Share2,
   ChevronDown
 } from 'lucide-react'
-import Image from 'next/image'
 import ModernButton from '@/components/ui/modern-button'
 import ModernCard from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
 import { useCarrinho } from '@/hooks/useCarrinho'
+import OptimizedCurrencyDisplay from '@/components/ui/optimized-currency-display'
+import ClienteProdutoView from '@/components/views/cliente-produto-view'
+import ProductImage from '@/components/ui/product-image'
 
 interface Produto {
   id: string
@@ -162,19 +164,14 @@ export default function ClienteProdutos() {
     <ModernCard variant="bordered" interactive className="group overflow-hidden">
       <div className="relative">
         <div className="aspect-square w-full overflow-hidden bg-gray-100">
-                {produto.imagens.length > 0 ? (
-                  <Image
-                    src={produto.imagens[0]}
-                    alt={produto.nome}
-                    width={300}
-                    height={300}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Package className="h-16 w-16 text-gray-300" />
-                  </div>
-                )}
+          <ProductImage
+            src={produto.imagens.length > 0 ? produto.imagens[0] : ''}
+            alt={produto.nome}
+            width={300}
+            height={300}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fallbackText="Produto sem imagem"
+          />
         </div>
         
         {/* Badges */}
@@ -255,15 +252,27 @@ export default function ClienteProdutos() {
                     {produto.precoPromocional ? (
               <div>
                 <p className="text-lg font-bold text-emerald-600">
-                  R$ {produto.precoPromocional.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  <OptimizedCurrencyDisplay 
+                    amount={produto.precoPromocional} 
+                    fromCurrency="BRL" 
+                    toCurrency="USD"
+                  />
                         </p>
                         <p className="text-sm text-gray-500 line-through">
-                  R$ {produto.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  <OptimizedCurrencyDisplay 
+                    amount={produto.preco} 
+                    fromCurrency="BRL" 
+                    toCurrency="USD"
+                  />
                         </p>
                       </div>
                     ) : (
                       <p className="text-lg font-bold text-gray-900">
-                R$ {produto.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                <OptimizedCurrencyDisplay 
+                  amount={produto.preco} 
+                  fromCurrency="BRL" 
+                  toCurrency="USD"
+                />
               </p>
             )}
             <p className="text-xs text-gray-500">por {produto.unidade}</p>
@@ -453,17 +462,10 @@ export default function ClienteProdutos() {
 
       {/* Modal de Detalhes do Produto */}
       {selectedProduto && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            {/* Conteúdo do modal seria implementado aqui */}
-            <div className="p-6 text-center">
-              <h3 className="text-lg font-semibold mb-4">{selectedProduto.nome}</h3>
-              <ModernButton onClick={() => setSelectedProduto(null)}>
-                Fechar
-              </ModernButton>
-            </div>
-          </div>
-        </div>
+        <ClienteProdutoView 
+          produtoId={selectedProduto.id}
+          onClose={() => setSelectedProduto(null)}
+        />
       )}
     </div>
   )

@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
+      // Clerk (autenticação)
       {
         protocol: 'https',
         hostname: 'img.clerk.com',
@@ -18,13 +19,14 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Imagens de exemplo
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
       },
-      // Domínios externos para imagens de produtos/empresas
+      // Google Images (produtos)
       {
         protocol: 'https',
         hostname: 'encrypted-tbn0.gstatic.com',
@@ -33,10 +35,23 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'sindileq-pe.org.br',
+        hostname: 'encrypted-tbn1.gstatic.com',
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'encrypted-tbn2.gstatic.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'encrypted-tbn3.gstatic.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Mercado Livre
       {
         protocol: 'https',
         hostname: 'http2.mlstatic.com',
@@ -45,18 +60,40 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.gstatic.com',
+        hostname: 'http2.mlstatic.com.br',
         port: '',
         pathname: '/**',
       },
+      // Vibromak (fornecedor)
       {
         protocol: 'https',
-        hostname: '*.mlstatic.com',
+        hostname: 'vibromak.com.br',
+        port: '',
+        pathname: '/**',
+      },
+      // Sindileq
+      {
+        protocol: 'https',
+        hostname: 'sindileq-pe.org.br',
+        port: '',
+        pathname: '/**',
+      },
+      // Cloudinary (CDN comum)
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Outros CDNs comuns
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
       },
     ],
-    // Fallback para imagens que falharem
+    // Configurações otimizadas para produção
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
