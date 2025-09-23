@@ -276,6 +276,8 @@ export function useCarrinho() {
           return false
         }
 
+        // Recarregar carrinho para sincronizar com servidor
+        await fetchCarrinho()
         console.log(`🛒 Quantidade atualizada: itemId=${itemId}, quantidade=${quantidade}`)
         return true
       } catch (error) {
@@ -288,6 +290,8 @@ export function useCarrinho() {
           return newMap
         })
         
+        // Recarregar para estado consistente
+        await fetchCarrinho()
         return false
       }
     })
@@ -335,6 +339,11 @@ export function useCarrinho() {
     fetchCarrinho()
   }, [fetchCarrinho])
 
+  // Função para obter quantidade otimística de um item
+  const getQuantidadeOtimistica = useCallback((itemId: string, quantidadeOriginal: number) => {
+    return optimisticUpdates.get(itemId) ?? quantidadeOriginal
+  }, [optimisticUpdates])
+
   return {
     itens,
     loading,
@@ -343,6 +352,7 @@ export function useCarrinho() {
     removerItem,
     atualizarQuantidade,
     limparCarrinho,
-    recarregar: fetchCarrinho
+    recarregar: fetchCarrinho,
+    getQuantidadeOtimistica
   }
 }

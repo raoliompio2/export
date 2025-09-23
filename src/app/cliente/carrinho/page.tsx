@@ -68,7 +68,8 @@ export default function CarrinhoPage() {
     atualizarQuantidade: atualizarQuantidadeHook, 
     removerItem: removerItemHook, 
     limparCarrinho: limparCarrinhoHook,
-    recarregar 
+    recarregar,
+    getQuantidadeOtimistica
   } = useCarrinho()
 
   // Hook useCarrinho já gerencia o estado do carrinho
@@ -154,7 +155,8 @@ export default function CarrinhoPage() {
     grupo.itens.push(item)
     
     const precoUnitario = item.produto.precoPromocional || item.produto.preco
-    grupo.total += Number(precoUnitario) * item.quantidade
+    const quantidadeExibida = getQuantidadeOtimistica(item.id, item.quantidade)
+    grupo.total += Number(precoUnitario) * quantidadeExibida
     
     return acc
   }, [] as GrupoEmpresa[])
@@ -247,7 +249,8 @@ export default function CarrinhoPage() {
               <div className="space-y-4">
                 {grupo.itens.map((item) => {
                   const precoUnitario = item.produto.precoPromocional || item.produto.preco
-                  const totalItem = Number(precoUnitario) * item.quantidade
+                  const quantidadeExibida = getQuantidadeOtimistica(item.id, item.quantidade)
+                  const totalItem = Number(precoUnitario) * quantidadeExibida
 
                   return (
                     <div key={item.id} className="flex gap-4 p-4 border border-gray-200 rounded-lg">
@@ -287,19 +290,21 @@ export default function CarrinhoPage() {
                           <div className="flex items-center gap-3">
                             <div className="flex items-center border border-gray-300 rounded-lg">
                               <button
-                                onClick={() => atualizarQuantidade(item.id, item.quantidade - 1)}
-                                disabled={updating === item.id || item.quantidade <= 1}
+                                onClick={() => atualizarQuantidade(item.id, quantidadeExibida - 1)}
+                                disabled={updating === item.id || quantidadeExibida <= 1}
                                 className="p-2 hover:bg-gray-50 disabled:opacity-50"
                               >
                                 <Minus className="h-4 w-4" />
                               </button>
                               
-                              <span className="px-4 py-2 min-w-[60px] text-center">
-                                {item.quantidade}
+                              <span className={`px-4 py-2 min-w-[60px] text-center font-medium ${
+                                updating === item.id ? 'opacity-50' : ''
+                              }`}>
+                                {quantidadeExibida}
                               </span>
                               
                               <button
-                                onClick={() => atualizarQuantidade(item.id, item.quantidade + 1)}
+                                onClick={() => atualizarQuantidade(item.id, quantidadeExibida + 1)}
                                 disabled={updating === item.id}
                                 className="p-2 hover:bg-gray-50 disabled:opacity-50"
                               >
@@ -318,7 +323,7 @@ export default function CarrinhoPage() {
                         </div>
 
                         <div className="mt-2 text-right">
-                          <span className="font-medium text-gray-900">
+                          <span className={`font-medium ${updating === item.id ? 'text-gray-500' : 'text-gray-900'}`}>
                             Total: <OptimizedCurrencyDisplay amount={totalItem} fromCurrency="BRL" toCurrency="USD" />
                           </span>
                         </div>
@@ -360,7 +365,7 @@ export default function CarrinhoPage() {
             <div className="border-t border-gray-200 pt-3">
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-gray-900">Total Geral:</span>
-                <span className="text-xl font-bold text-emerald-600">
+                <span className={`text-xl font-bold ${updating ? 'text-gray-500' : 'text-emerald-600'}`}>
                   <OptimizedCurrencyDisplay amount={totalGeral} fromCurrency="BRL" toCurrency="USD" />
                 </span>
               </div>
