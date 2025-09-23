@@ -14,9 +14,7 @@ async function testImageDomains() {
       },
       where: {
         imagens: {
-          not: {
-            equals: []
-          }
+          isEmpty: false
         }
       },
       take: 5
