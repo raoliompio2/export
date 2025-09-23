@@ -17,13 +17,11 @@ import {
   ShoppingCart,
   Star,
   Clock,
-  CheckCircle,
-  Globe
+  CheckCircle
 } from 'lucide-react'
 import LanguageSelector from '@/components/ui/language-selector'
 import ExchangeRateDisplay from '@/components/ui/exchange-rate-display'
 import CartBadge from '@/components/ui/cart-badge'
-import { useCarrinho } from '@/hooks/useCarrinho'
 
 interface ModernClienteLayoutProps {
   children: ReactNode

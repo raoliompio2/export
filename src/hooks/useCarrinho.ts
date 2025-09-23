@@ -251,7 +251,6 @@ export function useCarrinho() {
     return evitarDuplicacao(`update-${itemId}`, async () => {
       try {
         // Update otimístico: atualizar quantidade imediatamente
-        const quantidadeOriginal = itens.find(item => item.id === itemId)?.quantidade || 0
         setOptimisticUpdates(prev => new Map(prev.set(itemId, quantidade)))
 
         const response = await fetch(`/api/carrinho/${itemId}`, {

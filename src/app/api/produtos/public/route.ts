@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const destaque = searchParams.get('destaque')
 
     // Apenas produtos ativos para clientes públicos
-    let whereCondition: any = {
+    const whereCondition: any = {
       status: 'ATIVO'
     }
 
