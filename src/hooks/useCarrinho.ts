@@ -94,7 +94,7 @@ export function useCarrinho() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, []) // Sem dependências para evitar loops
 
   const adicionarItem = useCallback(async (produtoId: string, quantidade: number = 1) => {
     return evitarDuplicacao(`add-${produtoId}`, async () => {
@@ -352,7 +352,8 @@ export function useCarrinho() {
   // Carregar carrinho apenas uma vez no mount
   useEffect(() => {
     fetchCarrinho()
-  }, []) // Removido fetchCarrinho da dependência para evitar loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // fetchCarrinho intencionalmente omitido para evitar loop infinito
 
   // Função para obter quantidade otimística de um item
   const getQuantidadeOtimistica = useCallback((itemId: string, quantidadeOriginal: number) => {
