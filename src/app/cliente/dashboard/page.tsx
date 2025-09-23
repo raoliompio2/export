@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import ModernCard, { StatsCard, ActionCard } from '@/components/ui/modern-card'
 import ModernButton from '@/components/ui/modern-button'
+import OptimizedCurrencyDisplay from '@/components/ui/optimized-currency-display'
 
 interface DashboardData {
   totalOrcamentos: number
@@ -265,7 +266,7 @@ export default function ClienteDashboard() {
                   </div>
                   <div className="text-right">
                         <p className="text-lg font-semibold text-gray-900">
-                          R$ {orcamento.total.toLocaleString('pt-BR')}
+                          <OptimizedCurrencyDisplay amount={orcamento.total} fromCurrency="BRL" toCurrency="USD" />
                         </p>
                         <p className="text-xs text-gray-500">
                           {new Date(orcamento.createdAt).toLocaleDateString('pt-BR')}
@@ -345,7 +346,7 @@ export default function ClienteDashboard() {
                 
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-600 mb-2">
-                    R$ {data.orcamentosRecentes.reduce((sum, orc) => sum + orc.total, 0).toLocaleString('pt-BR')}
+                    <OptimizedCurrencyDisplay amount={data.orcamentosRecentes.reduce((sum, orc) => sum + orc.total, 0)} fromCurrency="BRL" toCurrency="USD" />
                   </div>
                   <p className="text-sm text-gray-600">Valor Total Recente</p>
             </div>

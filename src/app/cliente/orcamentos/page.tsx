@@ -26,7 +26,7 @@ import ModernButton from '@/components/ui/modern-button'
 import ModernCard, { StatsCard } from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
 import { StatusBadge } from '@/components/ui/modern-table'
-import CurrencyConverter from '@/components/ui/currency-converter'
+import OptimizedCurrencyDisplay from '@/components/ui/optimized-currency-display'
 
 const formatCurrency = (value: number, currency: string) => {
   return new Intl.NumberFormat(
@@ -508,6 +508,7 @@ export default function ClienteOrcamentos() {
         <ExportInvoiceView
           orcamento={viewingOrcamento as any}
           onClose={handleViewClose}
+          forceUSD={true}
         />
       )}
     </div>

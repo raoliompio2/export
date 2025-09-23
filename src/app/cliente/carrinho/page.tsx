@@ -21,6 +21,7 @@ import ModernCard from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
 import { useRouter } from 'next/navigation'
 import { useCarrinho } from '@/hooks/useCarrinho'
+import OptimizedCurrencyDisplay from '@/components/ui/optimized-currency-display'
 
 interface CarrinhoItem {
   id: string
@@ -237,7 +238,7 @@ export default function CarrinhoPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{grupo.empresa.nome}</h3>
                   <p className="text-sm text-gray-600">
-                    {grupo.itens.length} item(s) - Total: R$ {grupo.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    {grupo.itens.length} item(s) - Total: <OptimizedCurrencyDisplay amount={grupo.total} fromCurrency="BRL" toCurrency="USD" />
                   </p>
                 </div>
               </div>
@@ -277,7 +278,7 @@ export default function CarrinhoPage() {
                         <div className="flex items-center justify-between">
                           <div className="text-sm">
                             <span className="font-medium text-emerald-600">
-                              R$ {precoUnitario.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              <OptimizedCurrencyDisplay amount={precoUnitario} fromCurrency="BRL" toCurrency="USD" />
                             </span>
                             <span className="text-gray-500"> / {item.produto.unidade}</span>
                           </div>
@@ -318,7 +319,7 @@ export default function CarrinhoPage() {
 
                         <div className="mt-2 text-right">
                           <span className="font-medium text-gray-900">
-                            Total: R$ {totalItem.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                            Total: <OptimizedCurrencyDisplay amount={totalItem} fromCurrency="BRL" toCurrency="USD" />
                           </span>
                         </div>
 
@@ -350,7 +351,7 @@ export default function CarrinhoPage() {
                 <div key={grupo.empresa.id} className="flex justify-between text-sm">
                   <span className="text-gray-600">{grupo.empresa.nome}:</span>
                   <span className="font-medium">
-                    R$ {grupo.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    <OptimizedCurrencyDisplay amount={grupo.total} fromCurrency="BRL" toCurrency="USD" />
                   </span>
                 </div>
               ))}
@@ -360,7 +361,7 @@ export default function CarrinhoPage() {
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-gray-900">Total Geral:</span>
                 <span className="text-xl font-bold text-emerald-600">
-                  R$ {totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  <OptimizedCurrencyDisplay amount={totalGeral} fromCurrency="BRL" toCurrency="USD" />
                 </span>
               </div>
             </div>

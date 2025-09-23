@@ -6,6 +6,7 @@ import { getMessages } from 'next-intl/server'
 import "./globals.css";
 import "../styles/professional-print.css";
 import { ToastProvider } from "@/components/ui/modern-toast";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,16 +32,38 @@ export default async function RootLayout({
   const messages = await getMessages()
   
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        elements: {
+          formButtonPrimary: 'bg-blue-600 hover:bg-blue-700 text-white',
+          card: 'shadow-lg',
+          headerTitle: 'text-gray-900',
+          headerSubtitle: 'text-gray-600',
+          socialButtonsBlockButton: 'border border-gray-300 hover:bg-gray-50',
+          formFieldInput: 'border border-gray-300 focus:border-blue-500',
+          footerActionLink: 'text-blue-600 hover:text-blue-700',
+        },
+      }}
+      localization={{
+        signIn: {
+          start: {
+            title: "Bem-vindo ao Painel de Exportação",
+            subtitle: "Faça login para acessar o sistema",
+          },
+        },
+      }}
+    >
       <html lang="pt-BR">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
           suppressHydrationWarning={true}
         >
           <NextIntlClientProvider messages={messages}>
-            <ToastProvider>
-              {children}
-            </ToastProvider>
+            <CurrencyProvider>
+              <ToastProvider>
+                {children}
+              </ToastProvider>
+            </CurrencyProvider>
           </NextIntlClientProvider>
         </body>
       </html>

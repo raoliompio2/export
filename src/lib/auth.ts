@@ -38,6 +38,9 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
         clienteProfile: true,
         vendedorProfile: true,
       }
+    }).catch((error) => {
+      console.error('❌ Erro ao buscar usuário por clerkId:', error)
+      return null
     })
 
     console.log('🔍 User encontrado por clerkId:', user ? { id: user.id, email: user.email, role: user.role } : 'null')
@@ -52,6 +55,9 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
         clienteProfile: true,
         vendedorProfile: true,
       }
+    }).catch((error) => {
+      console.error('❌ Erro ao buscar usuário por email:', error)
+      return null
     })
 
     console.log('🔍 User encontrado por email:', user ? { id: user.id, email: user.email, role: user.role } : 'null')
@@ -69,23 +75,29 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
           clienteProfile: true,
           vendedorProfile: true,
         }
+      }).catch((error) => {
+        console.error('❌ Erro ao atualizar clerkId:', error)
+        return user // Retorna o usuário original se falhar
       })
       console.log('✅ ClerkId atualizado para user existente')
     } else {
       // Se não encontrou nem por clerkId nem por email, criar novo usuário
       console.log('🆕 Criando novo usuário')
       user = await prisma.user.create({
-      data: {
-        clerkId: clerkUser.id,
-        email: userEmail,
-        nome: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
-        avatar: clerkUser.imageUrl,
-        role: 'CLIENTE', // Padrão é cliente
-      },
+        data: {
+          clerkId: clerkUser.id,
+          email: userEmail,
+          nome: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+          avatar: clerkUser.imageUrl,
+          role: 'CLIENTE', // Padrão é cliente
+        },
         include: {
           clienteProfile: true,
           vendedorProfile: true,
         }
+      }).catch((error) => {
+        console.error('❌ Erro ao criar novo usuário:', error)
+        return null
       })
 
       // NÃO criar perfil automaticamente - só após aprovação
@@ -225,7 +237,7 @@ export async function requireAuth() {
 export async function requireVendedor() {
   const user = await requireAuth()
   if (user.role !== 'VENDEDOR' && user.role !== 'ADMIN') {
-    throw new Error('Acesso restrito a vendedores')
+    return null // Retorna null em vez de lançar erro
   }
   return user
 }
@@ -233,7 +245,26 @@ export async function requireVendedor() {
 export async function requireAdmin() {
   const user = await requireAuth()
   if (user.role !== 'ADMIN') {
-    throw new Error('Acesso restrito a administradores')
+    return null // Retorna null em vez de lançar erro
   }
   return user
+}
+
+// Função auxiliar para redirecionar usuário baseado no role
+export function getUserRedirectPath(user: AuthUser | null): string {
+  if (!user) {
+    return '/' // Não logado, ir para login
+  }
+
+  switch (user.role) {
+    case 'ADMIN':
+      return '/admin/dashboard'
+    case 'VENDEDOR':
+      return '/vendedor/dashboard'
+    case 'CLIENTE':
+      return '/cliente/produtos'
+    default:
+      // Usuário sem role válido ou pendente de aprovação
+      return '/aguardando-aprovacao'
+  }
 }

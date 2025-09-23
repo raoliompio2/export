@@ -18,7 +18,23 @@ export async function PUT(
     const { id } = await params
     const user = await getCurrentUser()
     
-    if (!user || !user.clienteProfile) {
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Usuário não autenticado' },
+        { status: 401 }
+      )
+    }
+
+    // Se for admin, pode usar carrinho para testes
+    let clienteProfile = user.clienteProfile
+    
+    if (!clienteProfile && user.role === 'ADMIN') {
+      clienteProfile = await prisma.cliente.findUnique({
+        where: { userId: user.id }
+      })
+    }
+
+    if (!clienteProfile) {
       return NextResponse.json(
         { error: 'Acesso negado - apenas clientes' },
         { status: 403 }
@@ -32,7 +48,7 @@ export async function PUT(
     const item = await prisma.carrinhoItem.findFirst({
       where: {
         id: id,
-        clienteId: user.clienteProfile.id
+        clienteId: clienteProfile.id
       }
     })
 
@@ -86,7 +102,23 @@ export async function DELETE(
     const { id } = await params
     const user = await getCurrentUser()
     
-    if (!user || !user.clienteProfile) {
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Usuário não autenticado' },
+        { status: 401 }
+      )
+    }
+
+    // Se for admin, pode usar carrinho para testes
+    let clienteProfile = user.clienteProfile
+    
+    if (!clienteProfile && user.role === 'ADMIN') {
+      clienteProfile = await prisma.cliente.findUnique({
+        where: { userId: user.id }
+      })
+    }
+
+    if (!clienteProfile) {
       return NextResponse.json(
         { error: 'Acesso negado - apenas clientes' },
         { status: 403 }
@@ -97,7 +129,7 @@ export async function DELETE(
     const item = await prisma.carrinhoItem.findFirst({
       where: {
         id: id,
-        clienteId: user.clienteProfile.id
+        clienteId: clienteProfile.id
       }
     })
 

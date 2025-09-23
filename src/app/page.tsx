@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser, isUserApproved } from '@/lib/auth'
-import { SignInButton } from '@clerk/nextjs'
 import { currentUser } from '@clerk/nextjs/server'
+import { ConditionalSignIn } from '@/components/ui/conditional-signin'
 
 export default async function Home() {
   try {
@@ -54,6 +54,11 @@ export default async function Home() {
       console.log('❌ Nenhum usuário Clerk encontrado')
     }
   } catch (error) {
+    // Se o erro for NEXT_REDIRECT, não é um erro real - é comportamento esperado
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+      // Re-throw para que o Next.js trate o redirecionamento
+      throw error
+    }
     console.error('❌ Erro ao verificar autenticação:', error)
     // Em caso de erro, continuar para página de login
   }
@@ -76,12 +81,12 @@ export default async function Home() {
               Faça login para acessar o sistema
             </p>
             
-            {/* Botão principal de login */}
-            <SignInButton mode="modal">
+            {/* Botão principal de login - só renderiza se não há usuário logado */}
+            <ConditionalSignIn>
               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
                 Entrar
               </button>
-            </SignInButton>
+            </ConditionalSignIn>
             
             {/* Botão alternativo para usuários já logados */}
             <div className="pt-4 border-t border-gray-200">

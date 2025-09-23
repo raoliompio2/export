@@ -22,12 +22,20 @@ const produtoSchema = z.object({
   destaque: z.boolean().default(false),
 })
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
+
+    // Obter parâmetros de filtro da URL
+    const { searchParams } = new URL(request.url)
+    const search = searchParams.get('search') || ''
+    const categoriaId = searchParams.get('categoriaId') || ''
+    const empresaId = searchParams.get('empresaId') || ''
+    const status = searchParams.get('status') || ''
+    const destaque = searchParams.get('destaque')
 
     // Admin vê todos, vendedor vê apenas produtos das empresas que representa, cliente vê produtos ativos
     let whereCondition: any = {}
@@ -54,6 +62,31 @@ export async function GET() {
       }
     } else if (user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    }
+
+    // Aplicar filtros
+    if (search) {
+      whereCondition.OR = [
+        { nome: { contains: search, mode: 'insensitive' } },
+        { codigo: { contains: search, mode: 'insensitive' } },
+        { descricao: { contains: search, mode: 'insensitive' } }
+      ]
+    }
+
+    if (categoriaId) {
+      whereCondition.categoriaId = categoriaId
+    }
+
+    if (empresaId) {
+      whereCondition.empresaId = empresaId
+    }
+
+    if (status) {
+      whereCondition.status = status
+    }
+
+    if (destaque !== null && destaque !== '') {
+      whereCondition.destaque = destaque === 'true'
     }
 
     const produtos = await prisma.produto.findMany({

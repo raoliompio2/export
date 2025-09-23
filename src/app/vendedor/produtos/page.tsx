@@ -10,7 +10,8 @@ import {
   TrendingUp,
   AlertCircle,
   Star,
-  Filter
+  Filter,
+  X
 } from 'lucide-react'
 import ModernTable, { StatusBadge, AvatarCell } from '@/components/ui/modern-table'
 import ModernButton from '@/components/ui/modern-button'
@@ -18,6 +19,7 @@ import ModernCard, { StatsCard } from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
 import ProdutoForm from '@/components/forms/produto-form'
 import ProdutoView from '@/components/views/produto-view'
+import ProdutoFilters from '@/components/filters/produto-filters'
 
 interface Produto {
   id: string
@@ -44,20 +46,49 @@ export default function VendedorProdutos() {
   const [showForm, setShowForm] = useState(false)
   const [editingProduto, setEditingProduto] = useState<any>(null)
   const [viewingProduto, setViewingProduto] = useState<string | null>(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const [filters, setFilters] = useState({
+    search: '',
+    categoriaId: '',
+    empresaId: '',
+    status: '',
+    destaque: null as boolean | null
+  })
   const { success, error } = useToast()
 
   useEffect(() => {
     fetchProdutos()
-  }, [])
+  }, [filters])
 
   const fetchProdutos = async () => {
     try {
-      const response = await fetch('/api/produtos')
+      setLoading(true)
+      
+      // Construir URL com filtros
+      const params = new URLSearchParams()
+      if (filters.search) params.append('search', filters.search)
+      if (filters.categoriaId) params.append('categoriaId', filters.categoriaId)
+      if (filters.empresaId) params.append('empresaId', filters.empresaId)
+      if (filters.status) params.append('status', filters.status)
+      if (filters.destaque !== null) params.append('destaque', filters.destaque.toString())
+
+      const url = `/api/produtos${params.toString() ? `?${params.toString()}` : ''}`
+      const response = await fetch(url)
+      
       if (!response.ok) throw new Error('Erro ao carregar produtos')
       
       const data = await response.json()
       setProdutos(Array.isArray(data) ? data : [])
-      success('Produtos carregados', `${data.length} produtos encontrados`)
+      
+      const hasFilters = Object.values(filters).some(value => 
+        value !== '' && value !== null
+      )
+      
+      if (hasFilters) {
+        success('Filtros aplicados', `${data.length} produtos encontrados`)
+      } else {
+        success('Produtos carregados', `${data.length} produtos encontrados`)
+      }
     } catch (err: unknown) {
       error('Erro ao carregar', err instanceof Error ? err.message : "Erro desconhecido")
       setProdutos([])
@@ -91,6 +122,14 @@ export default function VendedorProdutos() {
   const handleFormClose = () => {
     setShowForm(false)
     setEditingProduto(null)
+  }
+
+  const handleFiltersChange = (newFilters: typeof filters) => {
+    setFilters(newFilters)
+  }
+
+  const handleFiltersClose = () => {
+    setShowFilters(false)
   }
 
   // Estatísticas
@@ -225,6 +264,7 @@ export default function VendedorProdutos() {
           <ModernButton 
             variant="secondary" 
             icon={<Filter className="h-4 w-4" />}
+            onClick={() => setShowFilters(true)}
           >
             Filtros
           </ModernButton>
@@ -274,6 +314,16 @@ export default function VendedorProdutos() {
           loading={loading}
         />
       </div>
+
+      {/* Filtros */}
+      {showFilters && (
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <ProdutoFilters
+            onFiltersChange={handleFiltersChange}
+            onClose={handleFiltersClose}
+          />
+        </div>
+      )}
 
       {/* Tabela Moderna */}
       <ModernTable

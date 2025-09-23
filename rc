@@ -1,0 +1,27 @@
+warning: in the working copy of 'src/app/admin/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/api/carrinho/[id]/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/cliente/carrinho/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/cliente/dashboard/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/cliente/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/cliente/orcamentos/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/vendedor/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/vendedor/orcamentos/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/ui/currency-converter.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/lib/auth.ts', LF will be replaced by CRLF the next time Git touches it
+src/app/admin/layout.tsx
+src/app/api/carrinho/[id]/route.ts
+src/app/api/produtos/route.ts
+src/app/cliente/carrinho/page.tsx
+src/app/cliente/dashboard/page.tsx
+src/app/cliente/layout.tsx
+src/app/cliente/orcamentos/page.tsx
+src/app/layout.tsx
+src/app/page.tsx
+src/app/vendedor/layout.tsx
+src/app/vendedor/orcamentos/page.tsx
+src/app/vendedor/produtos/page.tsx
+src/components/ui/currency-converter.tsx
+src/components/views/export-invoice-view.tsx
+src/lib/auth.ts

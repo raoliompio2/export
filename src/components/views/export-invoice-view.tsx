@@ -116,6 +116,7 @@ interface ExportInvoiceViewProps {
   language?: 'pt' | 'en' | 'es'
   exportInfo?: ExportInfo // Campos específicos de exportação opcionais
   isPublicView?: boolean // Para view pública
+  forceUSD?: boolean // Força exibição em USD (para clientes)
 }
 
 const translations = {
@@ -142,8 +143,8 @@ const translations = {
     descricao: 'DESCRIÇÃO',
     origem: 'ORIGEM',
     cant: 'CANT.',
-    precoUnit: 'PREÇO UNIT. (BRL/USD)',
-    totalItem: 'TOTAL (BRL/USD)',
+    precoUnit: 'PREÇO UNIT. (USD)',
+    totalItem: 'TOTAL (USD)',
     infoLogistica: 'Informação de Logística',
     freteInternacional: 'Frete Internacional',
     portoDestino: 'Porto de Destino:',
@@ -183,8 +184,8 @@ const translations = {
     descricao: 'DESCRIPTION',
     origem: 'ORIGIN',
     cant: 'QTY.',
-    precoUnit: 'UNIT PRICE (BRL/USD)',
-    totalItem: 'TOTAL (BRL/USD)',
+    precoUnit: 'UNIT PRICE (USD)',
+    totalItem: 'TOTAL (USD)',
     infoLogistica: 'Logistics Information',
     freteInternacional: 'International Freight',
     portoDestino: 'Destination Port:',
@@ -224,8 +225,8 @@ const translations = {
     descricao: 'DESCRIPCIÓN',
     origem: 'ORIGEN',
     cant: 'CANT.',
-    precoUnit: 'PRECIO UNIT. (BRL/USD)',
-    totalItem: 'TOTAL (BRL/USD)',
+    precoUnit: 'PRECIO UNIT. (USD)',
+    totalItem: 'TOTAL (USD)',
     infoLogistica: 'Información de Logística',
     freteInternacional: 'Flete Internacional',
     portoDestino: 'Puerto de Destino:',
@@ -249,7 +250,8 @@ export default function ExportInvoiceView({
   onClose,
   language = 'pt',
   exportInfo = {},
-  isPublicView = false
+  isPublicView = false,
+  forceUSD = false
 }: ExportInvoiceViewProps) {
   const [currentLanguage, setCurrentLanguage] = useState<'pt' | 'en' | 'es'>(language)
   
@@ -298,7 +300,9 @@ export default function ExportInvoiceView({
   }, [])
 
   const formatCurrency = (amount: number, currency: 'BRL' | 'USD') => {
-    return formatCurrencySafe(amount, currency, exchangeRate)
+    // Se forceUSD for true, sempre usar USD
+    const actualCurrency = forceUSD ? 'USD' : currency
+    return formatCurrencySafe(amount, actualCurrency, exchangeRate)
   }
 
   const formatDate = (dateString: string) => {
@@ -636,8 +640,8 @@ export default function ExportInvoiceView({
                           </td>
                           <td className="px-4 py-4 text-center border-b border-gray-200">
                             <div className="space-y-1">
-                              <div className="font-semibold">{formatCurrency(item.precoUnit, 'BRL')}</div>
-                              <div className="text-sm text-gray-600">({formatCurrency(item.precoUnit, 'USD')})</div>
+                              <div className="font-semibold">{formatCurrency(item.precoUnit, 'USD')}</div>
+                              {!forceUSD && <div className="text-sm text-gray-600">({formatCurrency(item.precoUnit, 'BRL')})</div>}
                             </div>
                           </td>
                           <td className="px-4 py-4 text-center border-b border-gray-200">
@@ -651,8 +655,8 @@ export default function ExportInvoiceView({
                           </td>
                           <td className="px-4 py-4 text-center font-semibold border-b border-gray-200">
                             <div className="space-y-1">
-                              <div className="font-bold">{formatCurrency(item.total, 'BRL')}</div>
-                              <div className="text-sm text-gray-600">({formatCurrency(item.total, 'USD')})</div>
+                              <div className="font-bold">{formatCurrency(item.total, 'USD')}</div>
+                              {!forceUSD && <div className="text-sm text-gray-600">({formatCurrency(item.total, 'BRL')})</div>}
                             </div>
                           </td>
                         </tr>

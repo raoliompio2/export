@@ -22,7 +22,7 @@ import ModernButton from '@/components/ui/modern-button'
 import ModernCard, { StatsCard } from '@/components/ui/modern-card'
 import { useToast } from '@/components/ui/modern-toast'
 import OrcamentoForm from '@/components/forms/orcamento-form'
-import CurrencyConverter from '@/components/ui/currency-converter'
+import OptimizedCurrencyDisplay from '@/components/ui/optimized-currency-display'
 import ExportInvoiceView from '@/components/views/export-invoice-view'
 
 interface Orcamento {

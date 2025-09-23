@@ -70,10 +70,10 @@ export default function CurrencyConverter({
   // Se não tem conversão e está carregando, mostrar loading
   if (loading) {
     return (
-      <div className={`flex items-center gap-2 ${className}`}>
+      <span className={`inline-flex items-center gap-2 ${className}`}>
         <RefreshCw className="h-4 w-4 animate-spin text-gray-400" />
         <span className="text-gray-500">Convertendo...</span>
-      </div>
+      </span>
     )
   }
 
