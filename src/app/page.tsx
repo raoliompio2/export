@@ -87,31 +87,6 @@ export default async function Home() {
                 Entrar
               </button>
             </ConditionalSignIn>
-            
-            {/* Botão alternativo para usuários já logados */}
-            <div className="pt-4 border-t border-gray-200">
-              <p className="text-xs text-gray-400 mb-2">Já está logado?</p>
-              <a 
-                href="/admin/dashboard" 
-                className="block w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-center"
-              >
-                Acessar Painel Admin
-              </a>
-              <div className="flex gap-2 mt-2">
-                <a 
-                  href="/vendedor/dashboard" 
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-3 rounded-lg transition-colors text-center text-sm"
-                >
-                  Vendedor
-                </a>
-                <a 
-                  href="/cliente/produtos" 
-                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-3 rounded-lg transition-colors text-center text-sm"
-                >
-                  Cliente
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
