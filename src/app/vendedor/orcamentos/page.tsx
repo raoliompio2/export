@@ -135,7 +135,10 @@ export default function VendedorOrcamentos() {
     total: orcamentos.length,
     aprovados: orcamentos.filter(o => o.status === 'APROVADO').length,
     pendentes: orcamentos.filter(o => o.status === 'ENVIADO').length,
-    valorTotal: orcamentos.reduce((sum, o) => sum + o.total, 0)
+    valorTotal: orcamentos.reduce((sum, o) => {
+      const total = Number(o.total) || 0
+      return sum + total
+    }, 0)
   }
 
   // Configuração das colunas da tabela
@@ -169,19 +172,22 @@ export default function VendedorOrcamentos() {
       key: 'valor',
       label: 'Valor',
       sortable: true,
-      render: (orcamento: Orcamento) => (
-        <div className="text-right">
-          <div className="font-semibold text-gray-900">
-            R$ {orcamento.total.toLocaleString('pt-BR', { 
-              minimumFractionDigits: 2, 
-              maximumFractionDigits: 2 
-            })}
+      render: (orcamento: Orcamento) => {
+        const total = Number(orcamento.total) || 0
+        return (
+          <div className="text-right">
+            <div className="font-semibold text-gray-900">
+              R$ {total.toLocaleString('pt-BR', { 
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 2 
+              })}
+            </div>
+            <div className="text-sm text-gray-500">
+              {orcamento._count?.items || 0} itens
+            </div>
           </div>
-          <div className="text-sm text-gray-500">
-            {orcamento._count?.items || 0} itens
-          </div>
-        </div>
-      )
+        )
+      }
     },
     {
       key: 'validade',
@@ -290,7 +296,7 @@ export default function VendedorOrcamentos() {
         
         <StatsCard
           title="Valor Total"
-          value={`R$ ${Math.round(stats.valorTotal / 1000)}k`}
+          value={stats.valorTotal >= 1000 ? `R$ ${Math.round(stats.valorTotal / 1000)}k` : `R$ ${stats.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
           subtitle="Em propostas"
           icon={<DollarSign className="h-5 w-5" />}
           trend={{ value: 18.7, label: 'vs mês anterior' }}
