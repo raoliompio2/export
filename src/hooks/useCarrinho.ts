@@ -200,7 +200,7 @@ export function useCarrinho() {
         } else {
           // Adicionar novo item (substituir item temporário)
           setItens(prev => prev.map(item => 
-            item.id === tempId 
+            item.id.startsWith('temp-') && item.produto.id === produtoId
               ? novoItem
               : item
           ))
