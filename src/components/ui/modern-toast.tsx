@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react'
 import { 
   CheckCircle, 
   AlertCircle, 
@@ -35,7 +35,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined)
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const addToast = (toast: Omit<Toast, 'id'>) => {
+  const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
     const id = Math.random().toString(36).substring(7)
     const newToast = { ...toast, id }
     
@@ -47,37 +47,40 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         removeToast(id)
       }, toast.duration || 5000)
     }
-  }
+  }, [])
 
-  const removeToast = (id: string) => {
+  const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id))
-  }
+  }, [])
 
-  const success = (title: string, message?: string) => {
+  const success = useCallback((title: string, message?: string) => {
     addToast({ type: 'success', title, message })
-  }
+  }, [addToast])
 
-  const error = (title: string, message?: string) => {
+  const error = useCallback((title: string, message?: string) => {
     addToast({ type: 'error', title, message })
-  }
+  }, [addToast])
 
-  const warning = (title: string, message?: string) => {
+  const warning = useCallback((title: string, message?: string) => {
     addToast({ type: 'warning', title, message })
-  }
+  }, [addToast])
 
-  const info = (title: string, message?: string) => {
+  const info = useCallback((title: string, message?: string) => {
     addToast({ type: 'info', title, message })
-  }
+  }, [addToast])
+
+  // Memoizar o valor do contexto
+  const contextValue = useMemo(() => ({
+    addToast,
+    removeToast,
+    success,
+    error,
+    warning,
+    info
+  }), [addToast, removeToast, success, error, warning, info])
 
   return (
-    <ToastContext.Provider value={{
-      addToast,
-      removeToast,
-      success,
-      error,
-      warning,
-      info
-    }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>
@@ -92,13 +95,14 @@ export function useToast() {
   return context
 }
 
-function ToastContainer({ 
+// Memoizar ToastContainer para evitar re-renders desnecessários
+const ToastContainer = React.memo(({ 
   toasts, 
   onRemove 
 }: { 
   toasts: Toast[]
   onRemove: (id: string) => void 
-}) {
+}) => {
   return (
     <div className="fixed top-4 right-4 z-[9999] space-y-3">
       {toasts.map((toast) => (
@@ -110,29 +114,34 @@ function ToastContainer({
       ))}
     </div>
   )
-}
+})
 
-function ToastItem({ 
+ToastContainer.displayName = 'ToastContainer'
+
+// Memoizar ToastItem para melhor performance
+const ToastItem = React.memo(({ 
   toast, 
   onRemove 
 }: { 
   toast: Toast
   onRemove: () => void 
-}) {
+}) => {
   const [isVisible, setIsVisible] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
 
   useEffect(() => {
     // Animate in
-    setTimeout(() => setIsVisible(true), 50)
+    const timer = setTimeout(() => setIsVisible(true), 50)
+    return () => clearTimeout(timer)
   }, [])
 
-  const handleRemove = () => {
+  const handleRemove = useCallback(() => {
     setIsRemoving(true)
-    setTimeout(onRemove, 200)
-  }
+    const timer = setTimeout(onRemove, 200)
+    return () => clearTimeout(timer)
+  }, [onRemove])
 
-  const getIcon = () => {
+  const getIcon = useCallback(() => {
     switch (toast.type) {
       case 'success':
         return <CheckCircle className="h-5 w-5 text-green-500" />
@@ -143,9 +152,9 @@ function ToastItem({
       case 'info':
         return <Info className="h-5 w-5 text-blue-500" />
     }
-  }
+  }, [toast.type])
 
-  const getStyles = () => {
+  const getStyles = useCallback(() => {
     switch (toast.type) {
       case 'success':
         return 'border-green-200 bg-green-50'
@@ -156,7 +165,7 @@ function ToastItem({
       case 'info':
         return 'border-blue-200 bg-blue-50'
     }
-  }
+  }, [toast.type])
 
   return (
     <div
@@ -202,7 +211,9 @@ function ToastItem({
       </div>
     </div>
   )
-}
+})
+
+ToastItem.displayName = 'ToastItem'
 
 // Hook para usar toasts facilmente
 export const toast = {

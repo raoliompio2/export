@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 
 interface CarrinhoItem {
   id: string
@@ -27,25 +27,16 @@ interface CarrinhoItem {
 export function useCarrinho() {
   const [itens, setItens] = useState<CarrinhoItem[]>([])
   const [loading, setLoading] = useState(false)
-  const [totalItens, setTotalItens] = useState(0)
   const [optimisticUpdates, setOptimisticUpdates] = useState<Map<string, number>>(new Map())
   const [pendingRequests, setPendingRequests] = useState<Set<string>>(new Set())
 
-  // Calcular total otimizado considerando updates pendentes
-  const calcularTotalOtimizado = useCallback((itensAtuais: CarrinhoItem[]) => {
-    let total = 0
-    itensAtuais.forEach(item => {
+  // Memoizar total de itens para evitar recálculos desnecessários
+  const totalItens = useMemo(() => {
+    return itens.reduce((total, item) => {
       const updatePendente = optimisticUpdates.get(item.id)
-      total += updatePendente !== undefined ? updatePendente : item.quantidade
-    })
-    return total
-  }, [optimisticUpdates])
-
-  // Atualizar total quando itens ou updates mudarem
-  useEffect(() => {
-    const novoTotal = calcularTotalOtimizado(itens)
-    setTotalItens(novoTotal)
-  }, [itens, calcularTotalOtimizado])
+      return total + (updatePendente !== undefined ? updatePendente : item.quantidade)
+    }, 0)
+  }, [itens, optimisticUpdates])
 
   // Função para evitar requisições duplicadas
   const evitarDuplicacao = useCallback((requestId: string, operation: () => Promise<boolean>) => {
@@ -71,19 +62,9 @@ export function useCarrinho() {
       const response = await fetch('/api/carrinho')
       
       if (!response.ok) {
-        if (response.status === 403) {
-          // Usuário não é cliente, carrinho vazio
-          console.log('🛒 Usuário não é cliente - carrinho vazio')
+        if (response.status === 403 || response.status === 401) {
+          // Usuário não é cliente ou não autenticado, carrinho vazio
           setItens([])
-          setTotalItens(0)
-          return
-        }
-        
-        if (response.status === 401) {
-          // Usuário não autenticado
-          console.log('🛒 Usuário não autenticado - carrinho vazio')
-          setItens([])
-          setTotalItens(0)
           return
         }
         
@@ -95,9 +76,7 @@ export function useCarrinho() {
           error: errorData
         })
         
-        // Para outros erros, também definir carrinho vazio em vez de quebrar
         setItens([])
-        setTotalItens(0)
         return
       }
       
@@ -111,15 +90,13 @@ export function useCarrinho() {
       console.log(`🛒 Carrinho carregado: ${itensArray.length} itens`)
     } catch (error) {
       console.error('🛒 Erro ao buscar carrinho:', error)
-      // Em caso de erro de rede ou parsing, também definir carrinho vazio
       setItens([])
-      setTotalItens(0)
     } finally {
       setLoading(false)
     }
   }, [])
 
-  const adicionarItem = async (produtoId: string, quantidade: number = 1) => {
+  const adicionarItem = useCallback(async (produtoId: string, quantidade: number = 1) => {
     return evitarDuplicacao(`add-${produtoId}`, async () => {
       try {
         // Update otimístico: encontrar item existente ou simular novo
@@ -130,7 +107,7 @@ export function useCarrinho() {
           const novaQuantidade = itemExistente.quantidade + quantidade
           setOptimisticUpdates(prev => new Map(prev.set(itemExistente.id, novaQuantidade)))
         } else {
-          // Item novo - simular adição temporária (será confirmado pelo servidor)
+          // Item novo - simular adição temporária
           const tempId = `temp-${Date.now()}`
           const tempItem: CarrinhoItem = {
             id: tempId,
@@ -180,10 +157,6 @@ export function useCarrinho() {
             })
           }
           
-          if (response.status === 403) {
-            console.log('🛒 Usuário não tem permissão para adicionar ao carrinho')
-          }
-          
           return false
         }
 
@@ -221,9 +194,9 @@ export function useCarrinho() {
         return false
       }
     })
-  }
+  }, [itens, evitarDuplicacao, fetchCarrinho])
 
-  const removerItem = async (itemId: string) => {
+  const removerItem = useCallback(async (itemId: string) => {
     return evitarDuplicacao(`remove-${itemId}`, async () => {
       try {
         // Update otimístico: remover item imediatamente
@@ -272,9 +245,9 @@ export function useCarrinho() {
         return false
       }
     })
-  }
+  }, [itens, evitarDuplicacao, fetchCarrinho])
 
-  const atualizarQuantidade = async (itemId: string, quantidade: number) => {
+  const atualizarQuantidade = useCallback(async (itemId: string, quantidade: number) => {
     return evitarDuplicacao(`update-${itemId}`, async () => {
       try {
         // Update otimístico: atualizar quantidade imediatamente
@@ -333,9 +306,9 @@ export function useCarrinho() {
         return false
       }
     })
-  }
+  }, [evitarDuplicacao])
 
-  const limparCarrinho = async () => {
+  const limparCarrinho = useCallback(async () => {
     return evitarDuplicacao('clear-cart', async () => {
       try {
         // Update otimístico: limpar carrinho imediatamente
@@ -374,18 +347,20 @@ export function useCarrinho() {
         return false
       }
     })
-  }
+  }, [itens, evitarDuplicacao, fetchCarrinho])
 
+  // Carregar carrinho apenas uma vez no mount
   useEffect(() => {
     fetchCarrinho()
-  }, [fetchCarrinho])
+  }, []) // Removido fetchCarrinho da dependência para evitar loops
 
   // Função para obter quantidade otimística de um item
   const getQuantidadeOtimistica = useCallback((itemId: string, quantidadeOriginal: number) => {
     return optimisticUpdates.get(itemId) ?? quantidadeOriginal
   }, [optimisticUpdates])
 
-  return {
+  // Memoizar o retorno do hook para evitar re-renders desnecessários
+  return useMemo(() => ({
     itens,
     loading,
     totalItens,
@@ -395,5 +370,15 @@ export function useCarrinho() {
     limparCarrinho,
     recarregar: fetchCarrinho,
     getQuantidadeOtimistica
-  }
+  }), [
+    itens,
+    loading,
+    totalItens,
+    adicionarItem,
+    removerItem,
+    atualizarQuantidade,
+    limparCarrinho,
+    fetchCarrinho,
+    getQuantidadeOtimistica
+  ])
 }

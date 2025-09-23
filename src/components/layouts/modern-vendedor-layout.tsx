@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, ReactNode } from 'react'
+import { useState, useEffect, ReactNode, useCallback, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { UserButton } from '@clerk/nextjs'
@@ -33,8 +33,6 @@ interface ModernVendedorLayoutProps {
   children: ReactNode
 }
 
-// Navegação será traduzida dinamicamente no componente
-
 interface VendedorStats {
   meta: number
   vendas: number
@@ -55,7 +53,8 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
   const pathname = usePathname()
   const t = useTranslations('navigation')
 
-  const navigation = [
+  // Memoizar navegação para evitar re-renders
+  const navigation = useMemo(() => [
     { 
       name: t('dashboard'), 
       href: '/vendedor/dashboard', 
@@ -104,14 +103,10 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
       icon: Settings,
       description: 'Preferências'
     },
-  ]
+  ], [t])
 
-  useEffect(() => {
-    fetchVendedorStats()
-    checkUserRole()
-  }, [])
-
-  const checkUserRole = async () => {
+  // Memoizar funções de fetch para evitar re-criações
+  const checkUserRole = useCallback(async () => {
     try {
       const response = await fetch('/api/auth/me')
       if (response.ok) {
@@ -121,9 +116,9 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
     } catch (error) {
       console.error('Erro ao verificar role do usuário:', error)
     }
-  }
+  }, [])
 
-  const fetchVendedorStats = async () => {
+  const fetchVendedorStats = useCallback(async () => {
     try {
       const response = await fetch('/api/vendedor/dashboard')
       if (!response.ok) throw new Error('Erro ao carregar stats')
@@ -149,7 +144,28 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  // Carregar dados apenas uma vez
+  useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([
+        fetchVendedorStats(),
+        checkUserRole()
+      ])
+    }
+    
+    loadData()
+  }, []) // Removido dependências para evitar re-fetch
+
+  // Memoizar handlers para evitar re-renders
+  const handleSidebarToggle = useCallback(() => {
+    setSidebarOpen(prev => !prev)
+  }, [])
+
+  const handleSidebarClose = useCallback(() => {
+    setSidebarOpen(false)
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
@@ -157,7 +173,7 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
       {sidebarOpen && (
         <div 
           className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={handleSidebarClose}
         />
       )}
 
@@ -181,7 +197,7 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
           <TrendingUp className="h-20 w-20 text-emerald-400 hidden" />
           
           <button
-            onClick={() => setSidebarOpen(false)}
+            onClick={handleSidebarClose}
             className="lg:hidden absolute right-2 top-2 p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="h-5 w-5" />
@@ -240,7 +256,7 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25'
                     : 'text-gray-300 hover:bg-white/10 hover:text-white hover:shadow-sm'
                 }`}
-                onClick={() => setSidebarOpen(false)}
+                onClick={handleSidebarClose}
               >
                 <div className={`p-2 rounded-lg transition-colors ${
                   isActive 
@@ -297,7 +313,7 @@ export default function ModernVendedorLayout({ children }: ModernVendedorLayoutP
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => setSidebarOpen(true)}
+                onClick={handleSidebarToggle}
                 className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
               >
                 <Menu className="h-5 w-5" />

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 
 interface CurrencyRateData {
   usdToBrl: number
@@ -23,7 +23,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     usdToBrl: 5.85, // Fallback
     brlToUsd: 0.1709,
     lastUpdated: new Date().toISOString(),
-    loading: true,
+    loading: false, // Começar sem loading
     error: null
   })
 
@@ -46,11 +46,6 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         loading: false,
         error: null
       })
-      
-      console.log('💰 Taxa de câmbio carregada globalmente:', {
-        usdToBrl: result.usdToBrlRate,
-        brlToUsd: result.exchangeRate
-      })
     } catch (error) {
       console.error('Erro ao buscar cotação:', error)
       setData(prev => ({
@@ -61,15 +56,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  useEffect(() => {
-    fetchRate()
-    
-    // Atualizar a cada 5 minutos
-    const interval = setInterval(fetchRate, 5 * 60 * 1000)
-    
-    return () => clearInterval(interval)
-  }, [fetchRate])
-
+  // Memoizar funções para evitar re-renders
   const convertCurrency = useCallback((amount: number, from: 'BRL' | 'USD', to: 'BRL' | 'USD'): number => {
     if (from === to) return amount
     
@@ -80,7 +67,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     }
     
     return amount
-  }, [data])
+  }, [data.brlToUsd, data.usdToBrl])
 
   const formatCurrency = useCallback((amount: number, currency: 'BRL' | 'USD'): string => {
     return new Intl.NumberFormat(
@@ -94,12 +81,25 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     ).format(amount)
   }, [])
 
-  const value: CurrencyContextType = {
+  // Memoizar o valor do contexto para evitar re-renders desnecessários
+  const value = useMemo(() => ({
     ...data,
     convertCurrency,
     formatCurrency,
     refresh: fetchRate
-  }
+  }), [data, convertCurrency, formatCurrency, fetchRate])
+
+  useEffect(() => {
+    // Fetch inicial apenas se não tiver dados
+    if (!data.lastUpdated || data.lastUpdated === new Date(0).toISOString()) {
+      fetchRate()
+    }
+    
+    // Atualizar a cada 10 minutos (reduzido de 5)
+    const interval = setInterval(fetchRate, 10 * 60 * 1000)
+    
+    return () => clearInterval(interval)
+  }, [fetchRate, data.lastUpdated])
 
   return (
     <CurrencyContext.Provider value={value}>
