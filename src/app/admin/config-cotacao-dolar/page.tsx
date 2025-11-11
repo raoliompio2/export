@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   DollarSign, 
   Save, 
@@ -32,11 +32,7 @@ export default function ConfigCotacaoDolarPage() {
   const [config, setConfig] = useState<CurrencyConfig | null>(null)
   const { success, error } = useToast()
 
-  useEffect(() => {
-    fetchCurrentConfig()
-  }, [])
-
-  const fetchCurrentConfig = async () => {
+  const fetchCurrentConfig = useCallback(async () => {
     setLoading(true)
     try {
       // Buscar configuração salva no banco
@@ -82,7 +78,11 @@ export default function ConfigCotacaoDolarPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [error])
+
+  useEffect(() => {
+    fetchCurrentConfig()
+  }, [fetchCurrentConfig])
 
   const handleExchangeRateChange = (rate: number, isCustom: boolean) => {
     setExchangeRate(rate)
@@ -179,7 +179,7 @@ export default function ConfigCotacaoDolarPage() {
         <ModernButton
           onClick={handleForceUpdate}
           variant="outline"
-          size="md"
+          size="default"
           icon={<RefreshCw className="h-4 w-4" />}
           disabled={loading}
         >
