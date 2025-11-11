@@ -23,6 +23,7 @@ import ModernButton from '@/components/ui/modern-button'
 import ProfessionalPrintLayout from './professional-print-layout'
 import { createSafeExportData, safeToFixed, formatCurrencySafe, debugCalculations, detectarDescontoReal } from '@/utils/safe-formatting'
 import InvoiceTotalsSummary from '@/components/ui/invoice-totals-summary'
+import ExchangeRateSelector from '@/components/ui/exchange-rate-selector'
 
 // Interface compatível com o Orcamento existente
 interface OrcamentoItem {
@@ -260,6 +261,7 @@ export default function ExportInvoiceView({
     console.log('🔍 ExportInvoiceView props:', { language, currentLanguage, isPublicView })
   }
   const [exchangeRate, setExchangeRate] = useState(5.42) // Cotação atual
+  const [isCustomRate, setIsCustomRate] = useState(false)
   const [showPrintView, setShowPrintView] = useState(false)
   const t = translations[currentLanguage]
 
@@ -284,20 +286,27 @@ export default function ExportInvoiceView({
   }
 
   useEffect(() => {
-    // Buscar cotação atual do dólar
-    const fetchExchangeRate = async () => {
-      try {
-        const response = await fetch('/api/currency?from=USD&to=BRL&amount=1')
-        if (response.ok) {
-          const data = await response.json()
-          setExchangeRate(data.convertedAmount)
+    // Buscar cotação atual do dólar apenas se não estiver em modo customizado
+    if (!isCustomRate) {
+      const fetchExchangeRate = async () => {
+        try {
+          const response = await fetch('/api/currency?from=USD&to=BRL&amount=1')
+          if (response.ok) {
+            const data = await response.json()
+            setExchangeRate(data.convertedAmount)
+          }
+        } catch (error) {
+          console.error('Erro ao buscar cotação:', error)
         }
-      } catch (error) {
-        console.error('Erro ao buscar cotação:', error)
       }
+      fetchExchangeRate()
     }
-    fetchExchangeRate()
-  }, [])
+  }, [isCustomRate])
+
+  const handleExchangeRateChange = (rate: number, isCustom: boolean) => {
+    setExchangeRate(rate)
+    setIsCustomRate(isCustom)
+  }
 
   const formatCurrency = (amount: number, currency: 'BRL' | 'USD') => {
     // Se forceUSD for true, sempre usar USD
@@ -354,7 +363,16 @@ export default function ExportInvoiceView({
             </h2>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Seletor de cotação */}
+            <ExchangeRateSelector
+              value={exchangeRate}
+              onChange={handleExchangeRateChange}
+              size="sm"
+              showLabel={false}
+              className="print:hidden"
+            />
+            
             {/* Seletor de idioma */}
             <select
               value={currentLanguage}

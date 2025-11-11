@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import ModernButton from '@/components/ui/modern-button'
 import ExchangeRateDisplay from '@/components/ui/exchange-rate-display'
+import ExchangeRateSelector from '@/components/ui/exchange-rate-selector'
 
 interface OrcamentoItem {
   id: string
@@ -94,6 +95,8 @@ export default function ProfessionalInvoiceView({
   currency = 'USD'
 }: ProfessionalInvoiceViewProps) {
   const [conversionRates, setConversionRates] = useState<{[key: string]: number}>({})
+  const [exchangeRate, setExchangeRate] = useState(5.42)
+  const [isCustomRate, setIsCustomRate] = useState(false)
   const t = useTranslations('orcamentos.proforma')
 
   // Buscar todas as conversões de uma vez
@@ -111,12 +114,23 @@ export default function ProfessionalInvoiceView({
 
         const conversions: {[key: string]: number} = {}
         
-        for (const amount of amounts) {
-          if (amount && amount > 0) {
-            const response = await fetch(`/api/currency?from=BRL&to=USD&amount=${amount}`)
-            if (response.ok) {
-              const data = await response.json()
-              conversions[amount.toString()] = data.convertedAmount
+        // Se estiver usando cotação customizada, calcular diretamente
+        if (isCustomRate && exchangeRate > 0) {
+          const brlToUsd = 1 / exchangeRate
+          for (const amount of amounts) {
+            if (amount && amount > 0) {
+              conversions[amount.toString()] = amount * brlToUsd
+            }
+          }
+        } else {
+          // Buscar da API
+          for (const amount of amounts) {
+            if (amount && amount > 0) {
+              const response = await fetch(`/api/currency?from=BRL&to=USD&amount=${amount}`)
+              if (response.ok) {
+                const data = await response.json()
+                conversions[amount.toString()] = data.convertedAmount
+              }
             }
           }
         }
@@ -130,7 +144,30 @@ export default function ProfessionalInvoiceView({
     if (currency === 'USD') {
       fetchAllConversions()
     }
-  }, [orcamento, currency])
+  }, [orcamento, currency, exchangeRate, isCustomRate])
+
+  // Buscar cotação inicial
+  useEffect(() => {
+    if (!isCustomRate) {
+      const fetchExchangeRate = async () => {
+        try {
+          const response = await fetch('/api/currency?from=USD&to=BRL&amount=1')
+          if (response.ok) {
+            const data = await response.json()
+            setExchangeRate(data.convertedAmount)
+          }
+        } catch (error) {
+          console.error('Erro ao buscar cotação:', error)
+        }
+      }
+      fetchExchangeRate()
+    }
+  }, [isCustomRate])
+
+  const handleExchangeRateChange = (rate: number, isCustom: boolean) => {
+    setExchangeRate(rate)
+    setIsCustomRate(isCustom)
+  }
 
   const handlePrint = () => {
     window.print()
@@ -181,9 +218,15 @@ export default function ProfessionalInvoiceView({
             </h2>
           </div>
           
-          <div className="flex items-center gap-3">
-            {/* Mostrar cotação atual */}
-            <ExchangeRateDisplay size="sm" className="mr-4" />
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Seletor de cotação */}
+            <ExchangeRateSelector
+              value={exchangeRate}
+              onChange={handleExchangeRateChange}
+              size="sm"
+              showLabel={false}
+              className="print:hidden"
+            />
             
             <ModernButton
               variant="outline"

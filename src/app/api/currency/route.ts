@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
     const from = searchParams.get('from') || 'BRL'
     const to = searchParams.get('to') || 'USD'
     const amount = parseFloat(searchParams.get('amount') || '1')
+    const customRate = searchParams.get('customRate')
 
     if (isNaN(amount) || amount <= 0) {
       return NextResponse.json(
@@ -66,8 +67,24 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Buscar cotação real do dólar
-    const usdToBrlRate = await getRealExchangeRate()
+    // Se foi fornecida uma cotação customizada, usar ela; caso contrário, buscar cotação real
+    let usdToBrlRate: number
+    let source: string
+    
+    if (customRate) {
+      const parsedCustomRate = parseFloat(customRate)
+      if (isNaN(parsedCustomRate) || parsedCustomRate <= 0) {
+        return NextResponse.json(
+          { error: 'Cotação customizada inválida' },
+          { status: 400 }
+        )
+      }
+      usdToBrlRate = parsedCustomRate
+      source = 'custom'
+    } else {
+      usdToBrlRate = await getRealExchangeRate()
+      source = 'exchangerate-api.com'
+    }
     
     let convertedAmount: number
     let exchangeRate: number
@@ -94,7 +111,8 @@ export async function GET(request: NextRequest) {
       exchangeRate: Number(exchangeRate.toFixed(4)),
       usdToBrlRate: Number(usdToBrlRate.toFixed(4)),
       lastUpdated: new Date().toISOString(),
-      source: 'exchangerate-api.com'
+      source: source,
+      isCustom: !!customRate
     })
 
   } catch (error) {
