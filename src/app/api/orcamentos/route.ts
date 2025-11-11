@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { calcularTotalItem, calcularTotaisOrcamento } from '@/utils/safe-formatting'
 import { gerarNumeroOrcamento } from '@/utils/orcamento-utils'
+import { getCurrentExchangeRate } from '@/utils/currency-utils'
 
 const orcamentoSchema = z.object({
   titulo: z.string().min(1, 'Título é obrigatório'),
@@ -129,6 +130,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Vendedor não está vinculado a nenhuma empresa' }, { status: 400 })
     }
 
+    // Buscar cotação atual do dólar
+    const { rate: cotacaoDolar, source: cotacaoFonte } = await getCurrentExchangeRate()
+
     // Criar orçamento
     const orcamento = await prisma.orcamento.create({
       data: {
@@ -160,6 +164,10 @@ export async function POST(request: NextRequest) {
         freteInternacional: validatedData.freteInternacional,
         seguroInternacional: validatedData.seguroInternacional,
         taxasDesaduanagem: validatedData.taxasDesaduanagem,
+        
+        // Cotação do dólar usada
+        cotacaoDolar,
+        cotacaoFonte,
         
         status: 'ENVIADO'
       },

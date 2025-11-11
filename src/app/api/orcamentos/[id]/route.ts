@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { calcularTotalItem, calcularTotaisOrcamento } from '@/utils/safe-formatting'
+import { getCurrentExchangeRate } from '@/utils/currency-utils'
 
 interface OrcamentoItemInput {
   produtoId: string
@@ -158,6 +159,20 @@ export async function PUT(
       const descontoTotal = Number(desconto) || 0
       const freteTotal = Number(frete) || 0
 
+      // Buscar orçamento atual para preservar cotação original (ou atualizar se necessário)
+      const orcamentoAtual = await tx.orcamento.findUnique({ where: { id } })
+      
+      // Se o orçamento não tem cotação salva, buscar cotação atual
+      // Caso contrário, manter a cotação original do orçamento
+      let cotacaoDolar = orcamentoAtual?.cotacaoDolar
+      let cotacaoFonte = orcamentoAtual?.cotacaoFonte
+      
+      if (!cotacaoDolar) {
+        const { rate, source } = await getCurrentExchangeRate()
+        cotacaoDolar = rate
+        cotacaoFonte = source
+      }
+
       // Atualizar orçamento
       const updated = await tx.orcamento.update({
         where: { id },
@@ -187,6 +202,9 @@ export async function PUT(
           freteInternacional: freteInternacional ? Number(freteInternacional) : null,
           seguroInternacional: seguroInternacional ? Number(seguroInternacional) : null,
           taxasDesaduanagem: taxasDesaduanagem ? Number(taxasDesaduanagem) : null,
+          // Preservar ou atualizar cotação
+          cotacaoDolar: cotacaoDolar ? Number(cotacaoDolar) : null,
+          cotacaoFonte,
           updatedAt: new Date()
         }
       })

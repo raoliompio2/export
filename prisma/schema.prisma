@@ -278,6 +278,10 @@ model Orcamento {
   seguroInternacional Decimal?
   taxasDesaduanagem   Decimal?
   
+  // Cotação do dólar usada no orçamento
+  cotacaoDolar    Decimal?        // Taxa USD/BRL usada
+  cotacaoFonte    String?         // Fonte: 'exchangerate-api.com', 'custom-saved', 'custom-param'
+  
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 

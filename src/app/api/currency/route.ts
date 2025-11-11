@@ -1,56 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Cache em memória para evitar muitas chamadas à API externa
-let cachedRates: { rate: number; timestamp: number } | null = null
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutos
-
-async function getRealExchangeRate(): Promise<number> {
-  // Verificar cache
-  if (cachedRates && Date.now() - cachedRates.timestamp < CACHE_DURATION) {
-    return cachedRates.rate
-  }
-
-  try {
-    // API gratuita e confiável para cotação do dólar
-    const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD', {
-      headers: {
-        'User-Agent': 'Painel-Exportacao/1.0'
-      }
-    })
-
-    if (!response.ok) {
-      throw new Error('Falha na API de cotação')
-    }
-
-    const data = await response.json()
-    const usdToBrl = data.rates.BRL
-
-    if (!usdToBrl || isNaN(usdToBrl)) {
-      throw new Error('Taxa de câmbio inválida')
-    }
-
-    // Atualizar cache
-    cachedRates = {
-      rate: usdToBrl,
-      timestamp: Date.now()
-    }
-
-    return usdToBrl
-  } catch (error) {
-    console.error('Erro ao buscar cotação real:', error)
-    
-    // Fallback: buscar de fonte alternativa
-    try {
-      const fallbackResponse = await fetch('https://api.fixer.io/latest?base=USD&symbols=BRL')
-      const fallbackData = await fallbackResponse.json()
-      return fallbackData.rates.BRL
-    } catch (fallbackError) {
-      console.error('Erro no fallback:', fallbackError)
-      // Último recurso: taxa estimada (atualizar conforme mercado)
-      return 5.85
-    }
-  }
-}
+import { getCurrentExchangeRate } from '@/utils/currency-utils'
 
 export async function GET(request: NextRequest) {
   try {
@@ -67,11 +16,13 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Se foi fornecida uma cotação customizada, usar ela; caso contrário, buscar cotação real
+    // Se foi fornecida uma cotação customizada via parâmetro, usar ela
+    // Caso contrário, buscar cotação atual (considera configuração salva ou cotação do dia)
     let usdToBrlRate: number
     let source: string
     
     if (customRate) {
+      // Prioridade 1: Cotação customizada via parâmetro
       const parsedCustomRate = parseFloat(customRate)
       if (isNaN(parsedCustomRate) || parsedCustomRate <= 0) {
         return NextResponse.json(
@@ -80,10 +31,12 @@ export async function GET(request: NextRequest) {
         )
       }
       usdToBrlRate = parsedCustomRate
-      source = 'custom'
+      source = 'custom-param'
     } else {
-      usdToBrlRate = await getRealExchangeRate()
-      source = 'exchangerate-api.com'
+      // Prioridade 2: Buscar cotação atual (já considera configuração salva ou cotação do dia)
+      const currentRate = await getCurrentExchangeRate()
+      usdToBrlRate = currentRate.rate
+      source = currentRate.source
     }
     
     let convertedAmount: number
@@ -127,15 +80,14 @@ export async function GET(request: NextRequest) {
 // Endpoint para forçar atualização da cotação
 export async function POST() {
   try {
-    // Limpar cache e buscar nova cotação
-    cachedRates = null
-    const newRate = await getRealExchangeRate()
+    // Buscar cotação atual (força atualização)
+    const currentRate = await getCurrentExchangeRate()
 
     return NextResponse.json({
       message: 'Cotação atualizada com sucesso',
-      rate: newRate,
+      rate: currentRate.rate,
       timestamp: new Date().toISOString(),
-      source: 'exchangerate-api.com'
+      source: currentRate.source
     })
   } catch (error) {
     console.error('Erro ao atualizar cotação:', error)

@@ -85,6 +85,12 @@ export default function ModernAdminLayout({ children }: ModernAdminLayoutProps) 
       icon: Settings,
       description: 'Textos dos orçamentos'
     },
+    { 
+      name: 'Cotação do Dólar', 
+      href: '/admin/config-cotacao-dolar', 
+      icon: Globe,
+      description: 'Configurar cotação USD'
+    },
   ]
 
   return (
