@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { z } from 'zod'
 import { calcularTotalItem, calcularTotaisOrcamento } from '@/utils/safe-formatting'
 import { gerarNumeroOrcamento } from '@/utils/orcamento-utils'
@@ -131,7 +132,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Buscar cotação atual do dólar
-    const { rate: cotacaoDolar, source: cotacaoFonte } = await getCurrentExchangeRate()
+    const { rate: cotacaoDolarRate, source: cotacaoFonte } = await getCurrentExchangeRate()
+    const cotacaoDolarDecimal = new Prisma.Decimal(cotacaoDolarRate)
 
     // Criar orçamento
     const orcamento = await prisma.orcamento.create({
@@ -166,7 +168,7 @@ export async function POST(request: NextRequest) {
         taxasDesaduanagem: validatedData.taxasDesaduanagem,
         
         // Cotação do dólar usada
-        cotacaoDolar,
+        cotacaoDolar: cotacaoDolarDecimal,
         cotacaoFonte,
         
         status: 'ENVIADO'

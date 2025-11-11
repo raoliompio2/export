@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { z } from 'zod'
 import { calcularTotalItem, calcularTotaisOrcamento } from '@/utils/safe-formatting'
 import { getCurrentExchangeRate } from '@/utils/currency-utils'
@@ -162,19 +163,17 @@ export async function PUT(
       // Buscar orçamento atual para preservar cotação original (ou atualizar se necessário)
       const orcamentoAtual = await tx.orcamento.findUnique({ where: { id } })
       
-      // Se o orçamento não tem cotação salva, buscar cotação atual
-      // Caso contrário, manter a cotação original do orçamento
-      let cotacaoDolar = orcamentoAtual?.cotacaoDolar
-      let cotacaoFonte = orcamentoAtual?.cotacaoFonte
+      let cotacaoDolarValor = orcamentoAtual?.cotacaoDolar ? Number(orcamentoAtual.cotacaoDolar) : null
+      let cotacaoFonteValor = orcamentoAtual?.cotacaoFonte ?? null
       
-      if (!cotacaoDolar) {
+      if (cotacaoDolarValor === null) {
         const { rate, source } = await getCurrentExchangeRate()
-        cotacaoDolar = rate
-        cotacaoFonte = source
+        cotacaoDolarValor = rate
+        cotacaoFonteValor = source
       }
 
       // Atualizar orçamento
-      const updated = await tx.orcamento.update({
+      await tx.orcamento.update({
         where: { id },
         data: {
           titulo,
@@ -203,8 +202,8 @@ export async function PUT(
           seguroInternacional: seguroInternacional ? Number(seguroInternacional) : null,
           taxasDesaduanagem: taxasDesaduanagem ? Number(taxasDesaduanagem) : null,
           // Preservar ou atualizar cotação
-          cotacaoDolar: cotacaoDolar ? Number(cotacaoDolar) : null,
-          cotacaoFonte,
+          cotacaoDolar: cotacaoDolarValor !== null ? new Prisma.Decimal(cotacaoDolarValor) : null,
+          cotacaoFonte: cotacaoFonteValor,
           updatedAt: new Date()
         }
       })
